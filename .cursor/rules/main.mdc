@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Do not suggest simplifying changes that eliminate previously-requested features or existing content.
+For example, do not suggest that I remove parts of a markdown file so that it will render properly. 

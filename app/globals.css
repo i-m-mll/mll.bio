@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
 
 @config '../tailwind.config.ts';
 
@@ -128,6 +129,104 @@
 .prose th,
 .prose td {
   @apply border border-border p-2 text-left;
+}
+
+/* Code highlighting styles */
+.hljs {
+  @apply bg-transparent;
+}
+
+.prose pre .hljs {
+  @apply text-foreground;
+}
+
+/* Light theme syntax highlighting */
+.hljs-comment,
+.hljs-quote {
+  @apply text-gray-500;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  @apply text-blue-600;
+}
+
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-attribute {
+  @apply text-purple-600;
+}
+
+.hljs-string,
+.hljs-regexp {
+  @apply text-green-600;
+}
+
+.hljs-name,
+.hljs-tag {
+  @apply text-red-600;
+}
+
+.hljs-title {
+  @apply text-blue-700;
+}
+
+.hljs-number {
+  @apply text-orange-600;
+}
+
+/* Dark theme syntax highlighting */
+.dark .hljs-comment,
+.dark .hljs-quote {
+  @apply text-gray-400;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-type {
+  @apply text-blue-400;
+}
+
+.dark .hljs-literal,
+.dark .hljs-symbol,
+.dark .hljs-bullet,
+.dark .hljs-attribute {
+  @apply text-purple-400;
+}
+
+.dark .hljs-string,
+.dark .hljs-regexp {
+  @apply text-green-400;
+}
+
+.dark .hljs-name,
+.dark .hljs-tag {
+  @apply text-red-400;
+}
+
+.dark .hljs-title {
+  @apply text-blue-300;
+}
+
+.dark .hljs-number {
+  @apply text-orange-400;
+}
+
+/* Math equation styles */
+.katex {
+  font-size: 1.1em;
+}
+
+.katex-display {
+  text-align: center;
+  margin: 1em 0;
+}
+
+/* Ensure math renders properly in dark mode */
+.dark .katex {
+  color: hsl(var(--foreground));
 }
 
 /* Callout component styles */

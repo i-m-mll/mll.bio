@@ -4,8 +4,6 @@ date: "2023-06-15"
 description: "Demonstrating the extended Markdown features available in this blog"
 ---
 
-# Extended Markdown Features
-
 This post demonstrates the extended Markdown features available in this blog.
 
 ## Basic Formatting
@@ -34,13 +32,13 @@ Inline code: `const greeting = "Hello, world!";`
 
 Code block with syntax highlighting:
 
-\`\`\`javascript
+```javascript
 function greet(name) {
   return `Hello, ${name}!`;
 }
 
 console.log(greet("Reader"));
-\`\`\`
+```
 
 ## Tables
 

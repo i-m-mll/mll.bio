@@ -4,8 +4,6 @@ date: "2023-06-01"
 description: "My first blog post"
 ---
 
-# Hello World
-
 Welcome to my blog! This is my first post, and I'm excited to share my thoughts and ideas with you.
 
 ## Why I Started This Blog

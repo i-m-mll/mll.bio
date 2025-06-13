@@ -5,6 +5,10 @@ import { useEffect, useState } from "react"
 import * as runtime from "react/jsx-runtime"
 import * as devRuntime from "react/jsx-dev-runtime"
 import { Callout } from "@/components/callout"
+import rehypeHighlight from "rehype-highlight"
+import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
 
 const components = {
   Callout,
@@ -20,6 +24,14 @@ export function MDXContent({ children }: { children: string }) {
         const compiled = await compile(children, {
           outputFormat: "function-body",
           development: process.env.NODE_ENV === "development",
+          remarkPlugins: [
+            [remarkGfm, { singleTilde: false }],
+            remarkMath
+          ],
+          rehypePlugins: [
+            [rehypeHighlight, { ignoreMissing: true }],
+            rehypeKatex
+          ],
         })
         
         const { default: Component } = await run(compiled, {
@@ -28,7 +40,7 @@ export function MDXContent({ children }: { children: string }) {
           baseUrl: import.meta.url,
         })
         
-        setMdxComponent(() => Component)
+        setMdxComponent(() => (props: any) => <Component components={components} {...props} />)
       } catch (error) {
         console.error("Error compiling MDX:", error)
       } finally {
