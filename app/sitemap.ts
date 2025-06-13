@@ -1,6 +1,8 @@
 import { getPosts } from "@/lib/blog"
 import { siteConfig } from "@/lib/config"
 
+export const dynamic = "force-static"
+
 export default async function sitemap() {
   const posts = siteConfig.pages.blog ? await getPosts() : []
 
