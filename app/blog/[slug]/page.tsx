@@ -3,7 +3,6 @@ import { MDXContent } from "@/components/mdx-content"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"
 import { siteConfig } from "@/lib/config"
-import { Comments } from "@/components/comments"
 
 export async function generateStaticParams() {
   // Only generate pages for published posts if blog is enabled
@@ -50,9 +49,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <p className="text-muted-foreground text-sm mb-8">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
         <MDXContent>{post.content}</MDXContent>
       </article>
-
-      {/* Add comments section */}
-      <Comments title={post.frontmatter.title} />
     </div>
   )
 }

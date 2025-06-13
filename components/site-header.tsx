@@ -3,14 +3,19 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { siteConfig } from "@/lib/config"
-import { cn } from "@/lib/utils"
+import { uiConfig } from "@/lib/ui-config"
+import { cn, useScrollDirection } from "@/lib/utils"
 import { ModeToggle } from "@/components/mode-toggle"
 
 export function SiteHeader() {
   const pathname = usePathname()
+  const scrollDirection = useScrollDirection(uiConfig.header.scrollThreshold)
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className={cn(
+      "sticky top-0 z-40 w-full border-b bg-background transition-transform duration-300 ease-in-out",
+      scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
+    )}>
       <div className="container flex h-16 items-center">
         <div className="mr-8">
           <Link href="/" className="flex items-center space-x-2">
@@ -36,7 +41,7 @@ export function SiteHeader() {
                 pathname?.startsWith("/blog") ? "text-foreground" : "text-foreground/60",
               )}
             >
-              Blog
+              Posts
             </Link>
           )}
 

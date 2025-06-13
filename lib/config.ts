@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: "Your Name",
+  name: "MLL",
   description: "Personal website and blog",
-  url: "https://yourwebsite.com",
-  author: "Your Name",
+  url: "https://mll.bio",
+  author: "MLL",
 
   // Toggle pages on/off
   pages: {
@@ -21,7 +21,7 @@ export const siteConfig = {
   // Comments configuration
   comments: {
     // Set to 'giscus' to enable, or false to disable
-    provider: "giscus",
+    provider: false,
 
     // Giscus configuration
     giscus: {
