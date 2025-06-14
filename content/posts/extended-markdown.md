@@ -64,6 +64,10 @@ $$
 \frac{d}{dx}(e^x) = e^x
 $$
 
+## Sidenotes
+
+You can add sidenotes[^1] to provide additional context without interrupting the flow of your main text. These appear in the right margin on larger screens[^2] and become toggleable on mobile devices.
+
 ## Custom Callouts
 
 <Callout type="info">
@@ -99,3 +103,7 @@ You can include images like this:
 ---
 
 That's it! You now have a reference for all the extended Markdown features available in this blog.
+
+[^1]: This is an example sidenote! It provides additional information without cluttering the main text. Unlike traditional footnotes, sidenotes appear in the margin next to the relevant text.
+
+[^2]: The sidenotes automatically adapt to different screen sizes. On mobile devices, they become toggleable by tapping the sidenote number.

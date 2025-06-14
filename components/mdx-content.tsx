@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import * as runtime from "react/jsx-runtime"
 import * as devRuntime from "react/jsx-dev-runtime"
 import { Callout } from "@/components/callout"
+import { Sidenote } from "@/components/sidenote"
+import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import rehypeHighlight from "rehype-highlight"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
@@ -12,6 +14,7 @@ import rehypeKatex from "rehype-katex"
 
 const components = {
   Callout,
+  Sidenote,
 }
 
 export function MDXContent({ children }: { children: string }) {
@@ -19,6 +22,11 @@ export function MDXContent({ children }: { children: string }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Reset sidenote counter for each new page
+    if (typeof globalThis !== 'undefined') {
+      globalThis.__sidenoteCounter = 0
+    }
+
     const compileMDX = async () => {
       try {
         const compiled = await compile(children, {
@@ -26,7 +34,8 @@ export function MDXContent({ children }: { children: string }) {
           development: process.env.NODE_ENV === "development",
           remarkPlugins: [
             [remarkGfm, { singleTilde: false }],
-            remarkMath
+            remarkMath,
+            remarkSidenotes
           ],
           rehypePlugins: [
             [rehypeHighlight, { ignoreMissing: true }],
