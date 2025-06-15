@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import * as runtime from "react/jsx-runtime"
 import * as devRuntime from "react/jsx-dev-runtime"
 import { Callout } from "@/components/callout"
-import { Sidenote } from "@/components/sidenote"
+import { Sidenote, MarginNote } from "@/components/sidenote"
 import { TableOfContents } from "@/components/table-of-contents"
 import { SidenoteProvider, useSidenoteNumber } from "@/components/sidenote-context"
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
@@ -18,6 +18,7 @@ import rehypeKatex from "rehype-katex"
 const components = {
   Callout,
   Sidenote,
+  MarginNote,
   TableOfContents,
 }
 

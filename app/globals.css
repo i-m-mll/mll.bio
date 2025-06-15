@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'typeface-et-book/et-book/et-book.css';
 @import 'katex/dist/katex.min.css';
 
 @config '../tailwind.config.ts';
@@ -60,6 +61,17 @@
     --toc-max-height-offset: 6rem;
     --toc-padding: 1rem;
     
+    /* Mobile inline TOC variables */
+    --mobile-toc-width-percent: 70%;
+    --mobile-toc-left-padding: 2rem;
+    
+    /* Typography variables */
+    --prose-body-font-size: 1.1rem;        /* Paragraph text */
+    --prose-h1-font-size: 2.1rem;      /* Main headings */
+    --prose-h2-font-size: 1.5rem;     /* Section headings */
+    --prose-h3-font-size: 1.25rem;       /* Subsection headings */
+    --prose-h4-font-size: 1.15rem;      /* Minor headings */
+    
     /* Sidenote variables */
     --sidenote-width-offset: 3rem;
     --sidenote-min-width: 180px;
@@ -111,6 +123,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: calc(1rem * var(--global-font-scale));
   }
 }
 
@@ -205,6 +218,23 @@
   position: relative;
   max-width: none;
   counter-reset: sidenote-counter;
+  font-size: calc(var(--prose-body-font-size) * var(--global-font-scale));
+}
+
+.prose h1 {
+  font-size: calc(var(--prose-h1-font-size) * var(--global-font-scale));
+}
+
+.prose h2 {
+  font-size: calc(var(--prose-h2-font-size) * var(--global-font-scale));
+}
+
+.prose h3 {
+  font-size: calc(var(--prose-h3-font-size) * var(--global-font-scale));
+}
+
+.prose h4 {
+  font-size: calc(var(--prose-h4-font-size) * var(--global-font-scale));
 }
 
 .prose pre {
@@ -329,8 +359,37 @@
   user-select: none;
 }
 
+/* Style margin notes - similar to sidenotes but without numbering */
+.marginnote {
+  float: right;
+  clear: right;
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  font-size: var(--sidenote-font-size);
+  line-height: var(--sidenote-line-height);
+  color: rgb(107 114 128); /* muted-foreground equivalent */
+  padding: var(--sidenote-padding);
+  margin-top: 0;
+  margin-bottom: var(--sidenote-margin-bottom);
+  scroll-margin-top: var(--sidenote-scroll-margin);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-style: italic; /* Differentiate margin notes with italics */
+  /* Prevent margin notes from being included in text selection by default */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
 /* Hide sidenotes on tablet and mobile - use Tailwind responsive utilities */
 .sidenote {
+  @apply hidden desktop:block;
+}
+
+/* Hide margin notes on tablet and mobile - use Tailwind responsive utilities */
+.marginnote {
   @apply hidden desktop:block;
 }
 
@@ -340,6 +399,20 @@
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   user-select: text !important;
+}
+
+/* Enable selection when margin note is being selected */
+.marginnote.selecting,
+.marginnote.selecting * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Wrapper for margin notes */
+.marginnote-wrapper {
+  position: relative;
+  display: inline;
 }
 
 /* Positioned sidenotes use absolute positioning */
@@ -386,6 +459,10 @@
 }
 
 .dark .sidenote {
+  color: rgb(156 163 175); /* muted-foreground dark equivalent */
+}
+
+.dark .marginnote {
   color: rgb(156 163 175); /* muted-foreground dark equivalent */
 }
 
@@ -588,6 +665,11 @@ html {
   background: hsl(var(--background));
 }
 
+.mobile-toc .toc-container {
+  width: var(--mobile-toc-width-percent);
+  padding-left: var(--mobile-toc-left-padding);
+}
+
 .mobile-toc-header {
   display: flex;
   justify-content: space-between;
@@ -632,6 +714,11 @@ html {
 
 .mobile-toc-link:hover {
   color: hsl(var(--foreground));
+}
+
+.mobile-toc-link.active {
+  color: hsl(var(--primary));
+  font-weight: 500;
 }
 
 .mobile-toc-link.level-2 {

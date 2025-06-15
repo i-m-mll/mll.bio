@@ -1,13 +1,11 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ThemeProvider } from "@/components/theme-provider"
+import { UiConfigProvider } from "@/components/ui-config-provider"
 import { siteConfig } from "@/lib/config"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
@@ -30,8 +28,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background antialiased`}>
+      <body className="min-h-screen bg-background text-foreground antialiased font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <UiConfigProvider />
           <div className="relative flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>

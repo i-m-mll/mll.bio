@@ -28,6 +28,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['et-book', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

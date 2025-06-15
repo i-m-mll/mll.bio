@@ -9,10 +9,18 @@ export const uiConfig = {
   
   // Mobile Table of Contents
   mobileToc: {
+    // Enable inline mobile TOC above main text
+    enableInlineToc: true,
     // Enable floating TOC button on mobile
     enableFloatingButton: true,
     // Position of the floating button ('top-left' | 'top-right' | 'bottom-left' | 'bottom-right')
     buttonPosition: 'bottom-right',
+  },
+  
+  // Typography settings
+  typography: {
+    // Global font scale multiplier (1 = normal, 1.1 = 10% larger, 0.9 = 10% smaller)
+    globalFontScale: 1,
   },
   
   // Future UI configurations can be added here

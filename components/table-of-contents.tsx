@@ -100,16 +100,16 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
     <>
       {/* Mobile TOC - only visible on mobile and if enabled in config */}
       {uiConfig.mobileToc.enableFloatingButton && (
-        <div className="tablet:hidden">
+        <>
           <button
             onClick={() => setShowMobileToc(!showMobileToc)}
-            className={`fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg`}
+            className={`fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg tablet:hidden`}
           >
             <span className="text-sm font-medium">Contents</span>
           </button>
           
           {showMobileToc && (
-            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm tablet:hidden">
               <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-semibold">Contents</h3>
@@ -140,7 +140,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
               </div>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Desktop/Tablet TOC - hidden on mobile */}
@@ -159,8 +159,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
             className="toc-header"
           >
             <span className="font-semibold text-foreground">Contents</span>
-            <span className={`transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}>
-              ▲
+            <span className={`transform transition-transform text-xs ${isCollapsed ? 'rotate-90' : ''}`}>
+              ▸
             </span>
           </button>
           

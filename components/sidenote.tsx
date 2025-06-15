@@ -8,6 +8,11 @@ interface SidenoteProps {
   content: string
 }
 
+interface MarginNoteProps {
+  id: string
+  content: string
+}
+
 export function Sidenote({ id, content }: SidenoteProps) {
   const [sidenoteNumber, setSidenoteNumber] = useState<number>(0)
   const { getNextNumber } = useSidenoteNumber()
@@ -40,6 +45,19 @@ export function Sidenote({ id, content }: SidenoteProps) {
         <a href={`#${mainTextId}`} className="sidenote-counter">
           {sidenoteNumber}.
         </a>{" "}
+        {content}
+      </span>
+    </span>
+  )
+}
+
+export function MarginNote({ id, content }: MarginNoteProps) {
+  const marginNoteId = `marginnote-${id}`
+
+  return (
+    <span className="marginnote-wrapper">
+      <input type="checkbox" id={marginNoteId} className="margin-toggle-input" />
+      <span className="marginnote" id={`marginnote-content-${id}`}>
         {content}
       </span>
     </span>
