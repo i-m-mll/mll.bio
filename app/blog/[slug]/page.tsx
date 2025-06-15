@@ -1,6 +1,7 @@
 import { getPost, getPosts } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
+import { SidenoteSelection } from "@/components/sidenote-selection"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"
 import { siteConfig } from "@/lib/config"
@@ -45,6 +46,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <div className="blog-layout">
+      <SidenoteSelection />
       <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
       <div className="container py-10">
         <article className="prose dark:prose-invert mx-auto">

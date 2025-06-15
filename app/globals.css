@@ -283,6 +283,8 @@
   display: inline;
 }
 
+/* Remove the problematic selection barriers */
+
 /* Hide the checkbox inputs */
 .margin-toggle-input {
   display: none;
@@ -311,7 +313,7 @@
   color: rgb(96 165 250); /* blue-400 */
 }
 
-/* Style the sidenotes themselves - responsive but contained */
+/* Style the sidenotes themselves - float-based with selection fix */
 .sidenote {
   float: right;
   clear: right;
@@ -328,6 +330,34 @@
   scroll-margin-top: var(--sidenote-scroll-margin);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  /* Prevent sidenotes from being included in text selection by default */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* Enable selection when sidenote is being selected - more specific and with !important */
+.sidenote.selecting,
+.sidenote.selecting * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Positioned sidenotes use absolute positioning */
+.sidenote-positioned {
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+  background: hsl(var(--background));
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .sidenote-positioned {
+  background: hsl(var(--background));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Style the sidenote counter/number link in the margin */
@@ -379,6 +409,10 @@ html {
     float: none;
     clear: none;
     margin-right: 0;
+    /* Re-enable selection on mobile */
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
   }
 
   .margin-toggle-input:checked + .sidenote {
