@@ -46,6 +46,35 @@
     --giscus-border: var(--border);
     --giscus-background: var(--background);
     --giscus-text: var(--foreground);
+    
+    /* Layout variables */
+    --toc-width: 250px;
+    --sidenote-area-width: 20vw;
+    --layout-gap: 2rem;
+    --layout-padding: 1rem;
+    --content-top-padding: 2rem;
+    --content-top-padding-mobile: 1rem;
+    
+    /* TOC variables */
+    --toc-sticky-top: 4rem;
+    --toc-max-height-offset: 6rem;
+    --toc-padding: 1rem;
+    
+    /* Sidenote variables */
+    --sidenote-width-offset: 3rem;
+    --sidenote-min-width: 180px;
+    --sidenote-max-width: 320px;
+    --sidenote-margin-offset: 1rem;
+    --sidenote-font-size: 0.85rem;
+    --sidenote-line-height: 1.4;
+    --sidenote-padding: 0.5rem;
+    --sidenote-margin-bottom: 0.1rem;
+    --sidenote-scroll-margin: 2rem;
+    
+    /* Mobile breakpoint and responsive values */
+    --mobile-breakpoint: 1200px;
+    --mobile-content-width: 78vw;
+    --mobile-sidenote-space: 20vw;
   }
 
   .dark {
@@ -81,6 +110,121 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Blog layout with sidenotes and TOC */
+.blog-layout {
+  display: grid;
+  grid-template-columns: var(--toc-width) 1fr var(--sidenote-area-width);
+  gap: var(--layout-gap);
+  max-width: 100vw;
+  padding: 0 var(--layout-padding);
+  position: relative;
+}
+
+.blog-layout .toc-sidebar {
+  grid-column: 1;
+}
+
+.blog-layout .container {
+  grid-column: 2;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  padding-top: var(--content-top-padding);
+}
+
+/* Sidenote container area */
+.blog-layout .sidenote-area {
+  grid-column: 3;
+  position: relative;
+}
+
+/* Table of Contents styles */
+.toc-sidebar {
+  position: sticky;
+  top: var(--toc-sticky-top);
+  height: fit-content;
+  max-height: calc(100vh - var(--toc-max-height-offset));
+  overflow-y: auto;
+  padding: var(--toc-padding);
+  border-right: 1px solid hsl(var(--border));
+}
+
+.sticky-title {
+  padding-bottom: var(--layout-padding);
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: var(--layout-padding);
+}
+
+.toc-container {
+  background: hsl(var(--background));
+}
+
+.toc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 0.75rem;
+}
+
+.toc-header:hover {
+  color: hsl(var(--primary));
+}
+
+.toc-nav {
+  font-size: 0.8rem;
+}
+
+.toc-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.25rem 0;
+  border: none;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.toc-link:hover {
+  color: hsl(var(--foreground));
+}
+
+.toc-link.active {
+  color: hsl(var(--primary));
+  font-weight: 500;
+}
+
+.toc-link.level-2 {
+  padding-left: 0;
+}
+
+.toc-link.level-3 {
+  padding-left: 1rem;
+  font-size: 0.75rem;
+}
+
+.toc-link.level-4 {
+  padding-left: 1.5rem;
+  font-size: 0.7rem;
+}
+
+.toc-link.level-5,
+.toc-link.level-6 {
+  padding-left: 2rem;
+  font-size: 0.7rem;
 }
 
 /* Custom styles for prose content */
@@ -131,6 +275,148 @@
 .prose th,
 .prose td {
   @apply border border-border p-2 text-left;
+}
+
+/* Sidenotes styling */
+.sidenote-wrapper {
+  position: relative;
+  display: inline;
+}
+
+/* Hide the checkbox inputs */
+.margin-toggle-input {
+  display: none;
+}
+
+/* Make the label clickable but invisible */
+.margin-toggle {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Style the sidenote number (superscript) */
+.sidenote-number {
+  color: rgb(37 99 235); /* blue-600 */
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: normal;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  scroll-margin-top: 2rem; /* Offset for smooth scrolling */
+}
+
+.dark .sidenote-number {
+  color: rgb(96 165 250); /* blue-400 */
+}
+
+/* Style the sidenotes themselves - responsive but contained */
+.sidenote {
+  float: right;
+  clear: right;
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  font-size: var(--sidenote-font-size);
+  line-height: var(--sidenote-line-height);
+  color: rgb(107 114 128); /* muted-foreground equivalent */
+  padding: var(--sidenote-padding);
+  margin-top: 0;
+  margin-bottom: var(--sidenote-margin-bottom);
+  scroll-margin-top: var(--sidenote-scroll-margin);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Style the sidenote counter/number link in the margin */
+.sidenote-counter {
+  color: rgb(37 99 235); /* blue-600 */
+  font-size: 0.75em;
+  font-weight: bold;
+  margin-right: 0.25rem;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.sidenote-counter:hover {
+  text-decoration: none !important;
+  opacity: 0.8;
+}
+
+.sidenote-counter:visited {
+  color: rgb(37 99 235); /* blue-600 - same as unvisited */
+}
+
+.dark .sidenote-counter {
+  color: rgb(96 165 250); /* blue-400 */
+}
+
+.dark .sidenote-counter:visited {
+  color: rgb(96 165 250); /* blue-400 - same as unvisited */
+}
+
+.dark .sidenote {
+  color: rgb(156 163 175); /* muted-foreground dark equivalent */
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile responsive behavior */
+@media (max-width: 1200px) {
+  .sidenote {
+    display: none;
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    width: 100%;
+    float: none;
+    clear: none;
+    margin-right: 0;
+  }
+
+  .margin-toggle-input:checked + .sidenote {
+    display: block;
+  }
+
+  .dark .margin-toggle-input:checked + .sidenote {
+    background: hsl(var(--muted));
+    border-color: hsl(var(--border));
+  }
+
+  .sidenote-number {
+    color: rgb(37 99 235);
+    text-decoration: underline;
+  }
+
+  /* TOC responsive adjustments */
+  .blog-layout {
+    grid-template-columns: 1fr;
+    padding: 0 var(--layout-padding);
+  }
+
+  .blog-layout .toc-sidebar {
+    display: none;
+  }
+
+  .blog-layout .container {
+    grid-column: 1;
+    max-width: var(--mobile-content-width);
+    margin-right: var(--mobile-sidenote-space);
+    padding-top: var(--content-top-padding-mobile);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container.max-w-4xl {
+    max-width: none; /* Remove constraint to use grid layout */
+  }
 }
 
 /* Code highlighting styles */
@@ -255,124 +541,4 @@
 /* Giscus comments styles */
 .giscus-wrapper {
   @apply w-full mt-4;
-}
-
-/* Sidenotes styling */
-.sidenote-wrapper {
-  position: relative;
-  display: inline;
-}
-
-/* Hide the checkbox inputs */
-.margin-toggle-input {
-  display: none;
-}
-
-/* Make the label clickable but invisible */
-.margin-toggle {
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Style the sidenote number (superscript) */
-.sidenote-number {
-  color: rgb(37 99 235); /* blue-600 */
-  cursor: pointer;
-  font-size: 0.8em;
-  font-weight: normal;
-  text-decoration: none;
-  margin: 0;
-  padding: 0;
-  scroll-margin-top: 2rem; /* Offset for smooth scrolling */
-}
-
-.dark .sidenote-number {
-  color: rgb(96 165 250); /* blue-400 */
-}
-
-/* Style the sidenotes themselves */
-.sidenote {
-  float: right;
-  clear: right;
-  margin-right: -280px; /* Move into the right margin */
-  width: 250px;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: rgb(107 114 128); /* muted-foreground equivalent */
-  padding: 0.25rem 0;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  scroll-margin-top: 2rem; /* Offset for smooth scrolling */
-}
-
-/* Style the sidenote counter/number link in the margin */
-.sidenote-counter {
-  color: rgb(37 99 235); /* blue-600 */
-  font-size: 0.75em;
-  font-weight: bold;
-  margin-right: 0.25rem;
-  text-decoration: none !important;
-  cursor: pointer;
-}
-
-.sidenote-counter:hover {
-  text-decoration: none !important;
-  opacity: 0.8;
-}
-
-.sidenote-counter:visited {
-  color: rgb(37 99 235); /* blue-600 - same as unvisited */
-}
-
-.dark .sidenote-counter {
-  color: rgb(96 165 250); /* blue-400 */
-}
-
-.dark .sidenote-counter:visited {
-  color: rgb(96 165 250); /* blue-400 - same as unvisited */
-}
-
-.dark .sidenote {
-  color: rgb(156 163 175); /* muted-foreground dark equivalent */
-}
-
-/* Smooth scrolling for the entire page */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Mobile responsive behavior */
-@media (max-width: 1200px) {
-  .sidenote {
-    display: none;
-    float: none;
-    margin-right: 0;
-    width: auto;
-  }
-  
-  .margin-toggle-input:checked + .sidenote {
-    display: block;
-    margin: 1rem 0;
-    padding: 0.75rem;
-    background-color: rgb(248 250 252); /* muted equivalent */
-    border-radius: 0.375rem;
-    border-left: 3px solid rgb(59 130 246);
-  }
-  
-  .dark .margin-toggle-input:checked + .sidenote {
-    background-color: rgb(15 23 42); /* dark muted equivalent */
-  }
-  
-  .sidenote-number {
-    text-decoration: underline;
-  }
-}
-
-/* Ensure container accounts for the sidenotes */
-@media (min-width: 1200px) {
-  .container.max-w-4xl {
-    max-width: calc(56rem + 300px); /* Content + sidenote space */
-    padding-right: 320px; /* Space for sidenotes */
-  }
 }

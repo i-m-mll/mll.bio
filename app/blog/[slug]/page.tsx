@@ -1,5 +1,6 @@
 import { getPost, getPosts } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
+import { TableOfContents } from "@/components/table-of-contents"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"
 import { siteConfig } from "@/lib/config"
@@ -43,12 +44,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   return (
-    <div className="container max-w-4xl py-10">
-      <article className="prose dark:prose-invert mx-auto">
-        <h1 className="mb-2">{post.frontmatter.title}</h1>
-        <p className="text-muted-foreground text-sm mb-8">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
-        <MDXContent>{post.content}</MDXContent>
-      </article>
+    <div className="blog-layout">
+      <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
+      <div className="container py-10">
+        <article className="prose dark:prose-invert mx-auto">
+          <h1 className="mb-2">{post.frontmatter.title}</h1>
+          <p className="text-muted-foreground text-sm mb-8">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
+          <MDXContent>{post.content}</MDXContent>
+        </article>
+      </div>
     </div>
   )
 }

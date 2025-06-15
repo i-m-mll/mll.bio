@@ -6,7 +6,10 @@ import * as runtime from "react/jsx-runtime"
 import * as devRuntime from "react/jsx-dev-runtime"
 import { Callout } from "@/components/callout"
 import { Sidenote } from "@/components/sidenote"
+import { TableOfContents } from "@/components/table-of-contents"
+import { SidenoteProvider, useSidenoteNumber } from "@/components/sidenote-context"
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
+import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
 import rehypeHighlight from "rehype-highlight"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
@@ -15,17 +18,17 @@ import rehypeKatex from "rehype-katex"
 const components = {
   Callout,
   Sidenote,
+  TableOfContents,
 }
 
-export function MDXContent({ children }: { children: string }) {
+function MDXRenderer({ children }: { children: string }) {
   const [MdxComponent, setMdxComponent] = useState<React.ComponentType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const { resetCounter } = useSidenoteNumber()
 
   useEffect(() => {
     // Reset sidenote counter for each new page
-    if (typeof globalThis !== 'undefined') {
-      globalThis.__sidenoteCounter = 0
-    }
+    resetCounter()
 
     const compileMDX = async () => {
       try {
@@ -38,6 +41,7 @@ export function MDXContent({ children }: { children: string }) {
             remarkSidenotes
           ],
           rehypePlugins: [
+            rehypeHeadingIds,
             [rehypeHighlight, { ignoreMissing: true }],
             rehypeKatex
           ],
@@ -62,7 +66,7 @@ export function MDXContent({ children }: { children: string }) {
     } else {
       setIsLoading(false)
     }
-  }, [children])
+  }, [children, resetCounter])
 
   if (isLoading) {
     return <div className="animate-pulse">Loading...</div>
@@ -73,4 +77,12 @@ export function MDXContent({ children }: { children: string }) {
   }
 
   return <MdxComponent />
+}
+
+export function MDXContent({ children }: { children: string }) {
+  return (
+    <SidenoteProvider>
+      <MDXRenderer>{children}</MDXRenderer>
+    </SidenoteProvider>
+  )
 }
