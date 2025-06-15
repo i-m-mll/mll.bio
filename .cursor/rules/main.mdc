@@ -1,7 +1,8 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-Do not suggest simplifying changes that eliminate previously-requested features or existing content.
-For example, do not suggest that I remove parts of a markdown file so that it will render properly. 
+When writing CSS, create properties for values that are re-used more than once in the styling.
+
+Do not try to run `npm run dev`.

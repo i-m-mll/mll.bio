@@ -2,6 +2,7 @@ import { getPost, getPosts } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
 import { SidenoteSelection } from "@/components/sidenote-selection"
+import { Footnotes } from "@/components/footnotes"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"
 import { siteConfig } from "@/lib/config"
@@ -45,14 +46,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   return (
-    <div className="blog-layout">
+    <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_20vw] gap-8 max-w-full px-2 tablet:px-4">
       <SidenoteSelection />
       <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
-      <div className="container py-10">
+      <div className="container pt-2 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto">
-          <h1 className="mb-2">{post.frontmatter.title}</h1>
+          <h1 className="mb-2 -mt-4 tablet:mt-0">{post.frontmatter.title}</h1>
           <p className="text-muted-foreground text-sm mb-8">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
           <MDXContent>{post.content}</MDXContent>
+          <Footnotes content={post.content} />
         </article>
       </div>
     </div>

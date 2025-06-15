@@ -3,8 +3,6 @@ title: "About Me"
 description: "Learn more about me and my work"
 ---
 
-# About Me
-
 ## Professional Background
 
 I am a [your profession] with [X years] of experience specializing in [your specialty]. My work focuses on [describe your work focus].

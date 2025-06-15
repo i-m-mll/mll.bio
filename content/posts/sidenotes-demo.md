@@ -4,8 +4,6 @@ date: "2024-01-15"
 description: "Demonstrating Tufte-style sidenotes using standard footnote syntax"
 ---
 
-# Sidenotes Demo
-
 This post demonstrates how to use Tufte-style sidenotes[^1] in your blog posts. The sidenotes use standard footnote syntax but are rendered as margin notes instead of appearing at the bottom of the page.
 
 You can have multiple sidenotes in a single paragraph[^2], and they will be positioned appropriately in the right margin on larger screens.

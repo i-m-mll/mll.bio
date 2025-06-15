@@ -7,6 +7,14 @@ export const uiConfig = {
     transitionDuration: 300, // milliseconds
   },
   
+  // Mobile Table of Contents
+  mobileToc: {
+    // Enable floating TOC button on mobile
+    enableFloatingButton: true,
+    // Position of the floating button ('top-left' | 'top-right' | 'bottom-left' | 'bottom-right')
+    buttonPosition: 'bottom-right',
+  },
+  
   // Future UI configurations can be added here
   // animations: {
   //   defaultDuration: 200,

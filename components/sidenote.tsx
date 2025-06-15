@@ -31,9 +31,9 @@ export function Sidenote({ id, content }: SidenoteProps) {
   return (
     <span className="sidenote-wrapper">
       <label htmlFor={sidenoteId} className="margin-toggle">
-        <sup className="sidenote-number" id={mainTextId}>
-          {sidenoteNumber}
-        </sup>
+        <a href={`#footnote-${id}`} className="sidenote-number" id={mainTextId}>
+          <sup>{sidenoteNumber}</sup>
+        </a>
       </label>
       <input type="checkbox" id={sidenoteId} className="margin-toggle-input" />
       <span className="sidenote" id={`sidenote-content-${id}`}>

@@ -46,3 +46,11 @@ export const siteConfig = {
     },
   },
 }
+
+// Responsive breakpoints configuration
+export const breakpoints = {
+  // When sidenotes become footnotes
+  desktop: 1200,
+  // When TOC becomes mobile
+  mobile: 700,
+} as const 

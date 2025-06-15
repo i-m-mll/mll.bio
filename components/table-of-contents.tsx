@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { uiConfig } from "@/lib/ui-config"
 
 interface TocItem {
   id: string
@@ -18,20 +19,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showStickyTitle, setShowStickyTitle] = useState(false)
   const [activeId, setActiveId] = useState<string>("")
-  const [isMobile, setIsMobile] = useState(false)
   const [showMobileToc, setShowMobileToc] = useState(false)
-
-  useEffect(() => {
-    // Check if mobile
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1200)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   useEffect(() => {
     // Extract headings from the content
@@ -89,99 +77,113 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      if (isMobile) {
-        setShowMobileToc(false)
-      }
+      setShowMobileToc(false)
     }
   }
 
-  // Mobile TOC button
-  if (isMobile) {
-    return (
-      <>
-        <button
-          onClick={() => setShowMobileToc(!showMobileToc)}
-          className="fixed top-4 left-4 z-50 bg-background border border-border rounded-md p-2 shadow-lg md:hidden"
-        >
-          <span className="text-sm font-medium">Contents</span>
-        </button>
-        
-        {showMobileToc && (
-          <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden">
-            <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">Contents</h3>
-                <button
-                  onClick={() => setShowMobileToc(false)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <nav className="toc-nav">
-                <ul className="space-y-1">
-                  {tocItems.map((item) => (
-                    <li key={item.id}>
-                      <button
-                        onClick={() => handleHeadingClick(item.id)}
-                        className={`toc-link level-${item.level} ${
-                          activeId === item.id ? 'active' : ''
-                        }`}
-                      >
-                        {item.title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </div>
-          </div>
-        )}
-      </>
-    )
+  // Get button position classes based on config
+  const getButtonPositionClasses = () => {
+    switch (uiConfig.mobileToc.buttonPosition) {
+      case 'top-left':
+        return 'top-4 left-4'
+      case 'top-right':
+        return 'top-4 right-4'
+      case 'bottom-left':
+        return 'bottom-4 left-4'
+      case 'bottom-right':
+      default:
+        return 'bottom-4 right-4'
+    }
   }
 
   return (
-    <div className="toc-sidebar">
-      {showStickyTitle && (
-        <div className="sticky-title">
-          <h2 className="text-lg font-semibold text-foreground mb-4 line-clamp-2">
-            {postTitle}
-          </h2>
+    <>
+      {/* Mobile TOC - only visible on mobile and if enabled in config */}
+      {uiConfig.mobileToc.enableFloatingButton && (
+        <div className="tablet:hidden">
+          <button
+            onClick={() => setShowMobileToc(!showMobileToc)}
+            className={`fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg`}
+          >
+            <span className="text-sm font-medium">Contents</span>
+          </button>
+          
+          {showMobileToc && (
+            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
+              <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold">Contents</h3>
+                  <button
+                    onClick={() => setShowMobileToc(false)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <nav className="toc-nav">
+                  <ul className="space-y-1">
+                    {tocItems.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          onClick={() => handleHeadingClick(item.id)}
+                          className={`toc-link level-${item.level} ${
+                            activeId === item.id ? 'active' : ''
+                          }`}
+                        >
+                          {item.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          )}
         </div>
       )}
-      
-      <div className="toc-container">
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="toc-header"
-        >
-          <span className="font-semibold text-foreground">Contents</span>
-          <span className={`transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}>
-            ▲
-          </span>
-        </button>
-        
-        {!isCollapsed && (
-          <nav className="toc-nav">
-            <ul className="space-y-1">
-              {tocItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => handleHeadingClick(item.id)}
-                    className={`toc-link level-${item.level} ${
-                      activeId === item.id ? 'active' : ''
-                    }`}
-                  >
-                    {item.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
+
+      {/* Desktop/Tablet TOC - hidden on mobile */}
+      <div className="hidden tablet:block toc-sidebar">
+        {showStickyTitle && (
+          <div className="sticky-title">
+            <h2 className="text-lg font-semibold text-foreground mb-4 line-clamp-2">
+              {postTitle}
+            </h2>
+          </div>
         )}
+        
+        <div className="toc-container">
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="toc-header"
+          >
+            <span className="font-semibold text-foreground">Contents</span>
+            <span className={`transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}>
+              ▲
+            </span>
+          </button>
+          
+          {!isCollapsed && (
+            <nav className="toc-nav">
+              <ul className="space-y-1">
+                {tocItems.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => handleHeadingClick(item.id)}
+                      className={`toc-link level-${item.level} ${
+                        activeId === item.id ? 'active' : ''
+                      }`}
+                    >
+                      {item.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 } 
