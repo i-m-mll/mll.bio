@@ -129,94 +129,59 @@
 
 /* Table of Contents styles */
 .toc-sidebar {
-  position: sticky;
+  @apply sticky overflow-y-auto border-r border-border;
   top: var(--toc-sticky-top);
   height: fit-content;
   max-height: calc(100vh - var(--toc-max-height-offset));
-  overflow-y: auto;
   padding: var(--toc-padding);
-  border-right: 1px solid hsl(var(--border));
 }
 
 .sticky-title {
-  padding-bottom: var(--layout-padding);
-  margin-bottom: var(--layout-padding);
+  @apply pb-4 mb-4;
 }
 
 .toc-container {
-  background: hsl(var(--background));
+  @apply bg-background;
 }
 
 .toc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0.5rem 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: hsl(var(--foreground));
-  border-bottom: 1px solid hsl(var(--border));
-  margin-bottom: 0.75rem;
-}
-
-.toc-header:hover {
-  color: hsl(var(--primary));
+  @apply flex justify-between items-center w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
 }
 
 .toc-nav {
-  font-size: 0.8rem;
+  @apply text-xs;
 }
 
 .toc-link {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 0.25rem 0;
-  border: none;
-  background: transparent;
-  color: hsl(var(--muted-foreground));
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1.4;
-  transition: color 0.2s ease;
-}
-
-.toc-link:hover {
-  color: hsl(var(--foreground));
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline transition-colors duration-200 leading-snug hover:text-foreground;
 }
 
 .toc-link.active {
-  color: hsl(var(--primary));
-  font-weight: 500;
+  @apply text-primary font-medium;
 }
 
 .toc-link.level-2 {
-  padding-left: 0;
+  @apply pl-0;
 }
 
 .toc-link.level-3 {
-  padding-left: 1rem;
-  font-size: 0.75rem;
+  @apply pl-4 text-xs;
 }
 
 .toc-link.level-4 {
-  padding-left: 1.5rem;
+  @apply pl-6;
   font-size: 0.7rem;
 }
 
 .toc-link.level-5,
 .toc-link.level-6 {
-  padding-left: 2rem;
+  @apply pl-8;
   font-size: 0.7rem;
 }
 
 /* Custom styles for prose content */
 .prose {
-  position: relative;
-  max-width: none;
+  @apply relative max-w-none;
   counter-reset: sidenote-counter;
   font-size: calc(var(--prose-body-font-size) * var(--global-font-scale));
 }
@@ -282,31 +247,27 @@
 
 /* Sidenotes styling */
 .sidenote-wrapper {
-  position: relative;
-  display: inline;
+  @apply relative inline;
 }
 
 /* Hide the checkbox inputs */
 .margin-toggle-input {
-  display: none;
+  @apply hidden;
 }
 
 /* Make the label clickable but invisible */
 .margin-toggle {
-  cursor: pointer;
+  @apply cursor-pointer;
   color: inherit;
   text-decoration: none;
 }
 
 /* Style the sidenote number (superscript) */
 .sidenote-number {
-  color: rgb(37 99 235); /* blue-600 */
-  cursor: pointer;
+  @apply text-blue-600 cursor-pointer no-underline m-0 p-0;
   font-size: 0.8em;
   font-weight: normal;
   text-decoration: none !important;
-  margin: 0;
-  padding: 0;
   scroll-margin-top: 5rem; /* More offset for better visibility when scrolling back */
 }
 
@@ -323,74 +284,45 @@
 }
 
 .sidenote-number:visited {
-  color: rgb(37 99 235); /* Keep same color when visited */
+  @apply text-blue-600;
   text-decoration: none !important;
 }
 
 .dark .sidenote-number {
-  color: rgb(96 165 250); /* blue-400 */
+  @apply text-blue-400;
 }
 
 .dark .sidenote-number:visited {
-  color: rgb(96 165 250); /* Keep same color when visited in dark mode */
+  @apply text-blue-400;
   text-decoration: none !important;
 }
 
 /* Style the sidenotes themselves - float-based with selection fix */
 .sidenote {
-  float: right;
-  clear: right;
+  @apply float-right clear-right text-gray-500 mt-0 break-words select-none hidden desktop:block;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
   margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
   font-size: var(--sidenote-font-size);
   line-height: var(--sidenote-line-height);
-  color: rgb(107 114 128); /* muted-foreground equivalent */
   padding: var(--sidenote-padding);
-  margin-top: 0;
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  /* Prevent sidenotes from being included in text selection by default */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
 }
 
 /* Style margin notes - similar to sidenotes but without numbering */
 .marginnote {
-  float: right;
-  clear: right;
+  @apply float-right clear-right text-gray-500 mt-0 break-words select-none italic hidden desktop:block;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
   margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
   font-size: var(--sidenote-font-size);
   line-height: var(--sidenote-line-height);
-  color: rgb(107 114 128); /* muted-foreground equivalent */
   padding: var(--sidenote-padding);
-  margin-top: 0;
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  font-style: italic; /* Differentiate margin notes with italics */
-  /* Prevent margin notes from being included in text selection by default */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
-
-/* Hide sidenotes on tablet and mobile - use Tailwind responsive utilities */
-.sidenote {
-  @apply hidden desktop:block;
-}
-
-/* Hide margin notes on tablet and mobile - use Tailwind responsive utilities */
-.marginnote {
-  @apply hidden desktop:block;
 }
 
 /* Enable selection when sidenote is being selected - more specific and with !important */
@@ -411,64 +343,57 @@
 
 /* Wrapper for margin notes */
 .marginnote-wrapper {
-  position: relative;
-  display: inline;
+  @apply relative inline;
 }
 
 /* Positioned sidenotes use absolute positioning */
 .sidenote-positioned {
+  @apply bg-background border border-transparent rounded shadow-sm;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
-  background: hsl(var(--background));
-  border: 1px solid transparent;
-  border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .dark .sidenote-positioned {
-  background: hsl(var(--background));
+  @apply bg-background;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Style the sidenote counter/number link in the margin */
 .sidenote-counter {
-  color: rgb(37 99 235); /* blue-600 */
+  @apply text-blue-600 font-bold mr-1 cursor-pointer hover:opacity-80;
   font-size: 0.75em;
-  font-weight: bold;
-  margin-right: 0.25rem;
   text-decoration: none !important;
-  cursor: pointer;
 }
 
 .sidenote-counter:hover {
   text-decoration: none !important;
-  opacity: 0.8;
 }
 
 .sidenote-counter:visited {
-  color: rgb(37 99 235); /* blue-600 - same as unvisited */
+  @apply text-blue-600; /* blue-600 - same as unvisited */
 }
 
 .dark .sidenote-counter {
-  color: rgb(96 165 250); /* blue-400 */
+  @apply text-blue-400;
 }
 
 .dark .sidenote-counter:visited {
-  color: rgb(96 165 250); /* blue-400 - same as unvisited */
+  @apply text-blue-400; /* blue-400 - same as unvisited */
 }
 
 .dark .sidenote {
-  color: rgb(156 163 175); /* muted-foreground dark equivalent */
+  @apply text-gray-400; /* muted-foreground dark equivalent */
 }
 
 .dark .marginnote {
-  color: rgb(156 163 175); /* muted-foreground dark equivalent */
+  @apply text-gray-400; /* muted-foreground dark equivalent */
 }
 
 /* Smooth scrolling for the entire page */
 html {
-  scroll-behavior: smooth;
+  @apply scroll-smooth;
 }
 
 /* Code highlighting styles */
@@ -556,12 +481,11 @@ html {
 
 /* Math equation styles */
 .katex {
-  font-size: 1.1em;
+  @apply text-lg;
 }
 
 .katex-display {
-  text-align: center;
-  margin: 1em 0;
+  @apply text-center my-4;
 }
 
 /* Ensure math renders properly in dark mode */
@@ -597,33 +521,20 @@ html {
 
 /* Footnotes section styles - show only on tablet and mobile using Tailwind */
 .footnotes-section {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  padding-bottom: 2rem;
-  border-top: 1px solid hsl(var(--border));
-  @apply block desktop:hidden;
+  @apply mt-12 pt-4 pb-8 border-t border-border block desktop:hidden;
 }
 
 .footnotes-list {
-  list-style: none;
-  padding: 0;
+  @apply list-none p-0;
 }
 
 .footnote-item {
-  margin-bottom: 0.75rem;
-  padding-left: 2rem;
-  position: relative;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  @apply mb-3 pl-8 relative text-sm leading-relaxed;
   scroll-margin-top: 5rem; /* Better scroll positioning when navigating to footnotes */
 }
 
 .footnote-number-link {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-weight: 600;
-  color: rgb(37 99 235); /* Match sidenote number color */
+  @apply absolute left-0 top-0 font-semibold text-blue-600 cursor-pointer;
   text-decoration: none !important;
   scroll-margin-top: 4rem; /* Better scroll positioning */
 }
@@ -641,28 +552,26 @@ html {
 }
 
 .footnote-number-link:visited {
-  color: rgb(37 99 235); /* Keep same color when visited */
+  @apply text-blue-600; /* Keep same color when visited */
   text-decoration: none !important;
 }
 
 .dark .footnote-number-link {
-  color: rgb(96 165 250); /* Match dark mode sidenote number color */
+  @apply text-blue-400; /* Match dark mode sidenote number color */
 }
 
 .dark .footnote-number-link:visited {
-  color: rgb(96 165 250); /* Keep same color when visited in dark mode */
+  @apply text-blue-400; /* Keep same color when visited in dark mode */
   text-decoration: none !important;
 }
 
 .footnote-content {
-  display: inline;
+  @apply inline;
 }
 
 /* Mobile TOC styles - match sidebar TOC but without right border */
 .mobile-toc {
-  margin: 1.5rem 0;
-  padding: 0.2rem;
-  background: hsl(var(--background));
+  @apply my-6 p-1 bg-background;
 }
 
 .mobile-toc .toc-container {
@@ -671,80 +580,46 @@ html {
 }
 
 .mobile-toc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0.5rem 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: hsl(var(--foreground));
-  border-bottom: 1px solid hsl(var(--border));
-  margin-bottom: 0.75rem;
-}
-
-.mobile-toc-header:hover {
-  color: hsl(var(--primary));
+  @apply flex justify-between items-center w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
 }
 
 .mobile-toc-nav {
-  font-size: 0.8rem;
+  @apply text-xs;
 }
 
 .mobile-toc-nav ul {
-  list-style: none;
-  padding: 0;
+  @apply list-none p-0;
 }
 
 .mobile-toc-link {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 0.25rem 0;
-  border: none;
-  background: transparent;
-  color: hsl(var(--muted-foreground));
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1.4;
-  transition: color 0.2s ease;
-}
-
-.mobile-toc-link:hover {
-  color: hsl(var(--foreground));
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline leading-snug transition-colors duration-200 hover:text-foreground;
 }
 
 .mobile-toc-link.active {
-  color: hsl(var(--primary));
-  font-weight: 500;
+  @apply text-primary font-medium;
 }
 
 .mobile-toc-link.level-2 {
-  padding-left: 0;
+  @apply pl-0;
 }
 
 .mobile-toc-link.level-3 {
-  padding-left: 1rem;
-  font-size: 0.75rem;
+  @apply pl-4 text-xs;
 }
 
 .mobile-toc-link.level-4 {
-  padding-left: 1.5rem;
+  @apply pl-6;
   font-size: 0.7rem;
 }
 
 .mobile-toc-link.level-5,
 .mobile-toc-link.level-6 {
-  padding-left: 2rem;
+  @apply pl-8;
   font-size: 0.7rem;
 }
 
 /* Footer styles */
 .footer-container {
+  @apply flex items-center py-2.5;
   min-height: var(--footer-height);
-  display: flex;
-  align-items: center;
-  padding: 0.625rem 0; /* Add back vertical padding for proper spacing */
 }

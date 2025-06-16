@@ -23,6 +23,13 @@ export const uiConfig = {
     globalFontScale: 1,
   },
   
+  // Theme settings
+  theme: {
+    // When true, automatically follows the user's OS light/dark mode preference
+    // When false, uses manual theme switching only
+    followSystemTheme: true,
+  },
+  
   // Future UI configurations can be added here
   // animations: {
   //   defaultDuration: 200,
