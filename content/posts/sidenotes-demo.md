@@ -6,7 +6,8 @@ description: "Demonstrating both Tufte-style sidenotes and margin notes"
 
 This post demonstrates how to use both Tufte-style sidenotes[^1] and margin notes[!margin: Margin notes are unnumbered and appear without any superscript in the main text.] in your blog posts. 
 
-Sidenotes use standard footnote syntax and are numbered sequentially[^2], while margin notes use a different syntax and appear without numbers[!margin: They're perfect for brief clarifications that don't need explicit referencing.].
+Sidenotes use standard footnote syntax and are numbered sequentially[^2], while margin notes use a
+different syntax and appear without numbers[!margin: They're perfect for brief clarifications that don't need explicit referencing. They're perfect for brief clarifications that don't need explicit referencing. They're perfect for brief clarifications that don't need explicit referencing.].
 
 ## About Tufte-Style Sidenotes
 
@@ -21,11 +22,13 @@ Margin notes are different from sidenotes in several ways[!margin: Notice how th
 - **Sidenotes**: Numbered, referenced with superscript numbers in the text
 - **Margin notes**: Unnumbered, inserted inline without visible markers
 
-Both types of notes appear in the right margin[^5] and help maintain reading flow without disrupting the main text.
+Both types of notes appear in the right margin[^5] and help maintain reading flow without disrupting
+the main text. 
 
 ## Responsive Design
 
-On mobile devices, both sidenotes and margin notes become toggleable - tap the sidenote number to show or hide the note content.
+On mobile devices, both sidenotes and margin notes become toggleable - tap the sidenote number to
+show or hide the note content. [!margin: Babbo!]
 
 ## How to Use
 
@@ -34,9 +37,7 @@ On mobile devices, both sidenotes and margin notes become toggleable - tap the s
 - `[^1]: Your sidenote content` for the definition
 
 **For margin notes**, use the inline syntax:
-- `[!margin: Your margin note content]` placed directly in the text
-
-[!margin: This margin note demonstrates the inline syntax - it appears exactly where it's placed in the markdown.]
+- `[!margin: Your margin note content]` placed directly in the text [!margin: This margin note demonstrates the inline syntax - it appears exactly where it's placed in the markdown.]
 
 [^1]: This is your first sidenote! It appears in the right margin with a number that corresponds to the superscript in the text.
 

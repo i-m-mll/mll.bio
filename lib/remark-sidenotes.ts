@@ -4,6 +4,7 @@ import type { Root, FootnoteDefinition, FootnoteReference, Text, Paragraph } fro
 export function remarkSidenotes() {
   return (tree: Root) => {
     const footnoteDefinitions = new Map<string, string>()
+    let sidenoteCounter = 0
     
     // First pass: collect footnote definitions and remove them
     visit(tree, 'footnoteDefinition', (node: FootnoteDefinition, index, parent) => {
@@ -92,6 +93,8 @@ export function remarkSidenotes() {
       if (parent && index !== undefined) {
         const definition = footnoteDefinitions.get(node.identifier)
         if (definition) {
+          sidenoteCounter++
+          
           // Create a JSX element for the sidenote
           const sidenoteElement = {
             type: 'mdxJsxTextElement',
@@ -106,6 +109,11 @@ export function remarkSidenotes() {
                 type: 'mdxJsxAttribute', 
                 name: 'content',
                 value: definition
+              },
+              {
+                type: 'mdxJsxAttribute',
+                name: 'number',
+                value: sidenoteCounter.toString()
               }
             ],
             children: []

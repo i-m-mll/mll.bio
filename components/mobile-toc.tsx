@@ -77,10 +77,10 @@ export function MobileToc({ content }: MobileTocProps) {
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="mobile-toc-header"
         >
-          <span className="font-semibold text-foreground">Contents</span>
-          <span className={`transform transition-transform text-xs ${isCollapsed ? 'rotate-90' : ''}`}>
+          <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
             ▸
           </span>
+          <span className="font-semibold text-foreground">Contents</span>
         </button>
         
         {!isCollapsed && (

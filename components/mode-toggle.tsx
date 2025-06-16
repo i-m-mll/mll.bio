@@ -28,8 +28,8 @@ export function ModeToggle() {
   }
 
   // Determine which icon to show
-  const showSunIcon = mounted && (theme === "dark" || (!uiConfig.theme.followSystemTheme && theme === "system"))
-  const showMoonIcon = mounted && theme === "light"
+  const showSunIcon = mounted && theme === "light"
+  const showMoonIcon = mounted && (theme === "dark" || (!uiConfig.theme.followSystemTheme && theme === "system"))
   const showSystemIcon = mounted && uiConfig.theme.followSystemTheme && theme === "system"
 
   return (
@@ -45,7 +45,7 @@ export function ModeToggle() {
     >
       <span className="sr-only">Toggle theme</span>
       <div className="relative">
-        {/* Sun icon - shown for dark theme or when system theme is disabled */}
+        {/* Sun icon - shown for light theme */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -71,7 +71,7 @@ export function ModeToggle() {
           <path d="m19.07 4.93-1.41 1.41" />
         </svg>
         
-        {/* Moon icon - shown for light theme */}
+        {/* Moon icon - shown for dark theme */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"

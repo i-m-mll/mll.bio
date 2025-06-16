@@ -25,11 +25,32 @@ export const uiConfig = {
   
   // Theme settings
   theme: {
-    // When true, automatically follows the user's OS light/dark mode preference
-    // When false, uses manual theme switching only
-    followSystemTheme: true,
+    // Color mode ('auto' | 'light' | 'dark')
+    defaultMode: 'auto',
+    // Enable theme persistence (remember user preference)
+    persistMode: true,
   },
   
+  // Sidenotes configuration
+  sidenotes: {
+    // Minimum space between consecutive notes in the margin
+    // This controls how tightly packed sidenotes can be in the margins
+    minSpaceBetweenNotes: '0.5rem',
+    
+    // Maximum length of a note before truncation kicks in
+    // Set to null to disable truncation entirely
+    maxNoteLength: 200, // characters
+    
+    // Text to append when a note is truncated
+    truncationSuffix: '…',
+    
+    // Button text for expanding truncated notes
+    expandButtonText: 'more',
+    
+    // Button text for collapsing expanded notes
+    collapseButtonText: 'less',
+  },
+
   // Future UI configurations can be added here
   // animations: {
   //   defaultDuration: 200,
@@ -40,4 +61,25 @@ export const uiConfig = {
   //   mobile: 768,
   //   tablet: 1024,
   // },
+} as const
+
+// Utility function to apply sidenote configuration to CSS custom properties
+export function applySidenoteConfig() {
+  if (typeof document !== 'undefined') {
+    const root = document.documentElement
+    root.style.setProperty('--sidenote-min-space-between', uiConfig.sidenotes.minSpaceBetweenNotes)
+    
+    // Debug: log the value being set
+    console.log('Setting --sidenote-min-space-between to:', uiConfig.sidenotes.minSpaceBetweenNotes)
+  }
+}
+
+// Apply configuration on module load and DOM ready
+if (typeof window !== 'undefined') {
+  // Apply immediately if document is already ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applySidenoteConfig)
+  } else {
+    applySidenoteConfig()
+  }
 } 

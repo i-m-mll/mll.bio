@@ -80,8 +80,9 @@
     --sidenote-font-size: 0.85rem;
     --sidenote-line-height: 1.4;
     --sidenote-padding: 0.5rem;
-    --sidenote-margin-bottom: 0.1rem;
+    --sidenote-margin-bottom: 0.5rem;
     --sidenote-scroll-margin: 2rem;
+    /* --sidenote-min-space-between will be set dynamically by applySidenoteConfig() */
     
     /* Mobile breakpoint and responsive values */
     --mobile-content-width: 78vw;
@@ -145,7 +146,7 @@
 }
 
 .toc-header {
-  @apply flex justify-between items-center w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
 }
 
 .toc-nav {
@@ -297,32 +298,83 @@
   text-decoration: none !important;
 }
 
-/* Style the sidenotes themselves - float-based with selection fix */
+/* Style the sidenotes themselves - improved CSS-only positioning */
 .sidenote {
-  @apply float-right clear-right text-gray-500 mt-0 break-words select-none hidden desktop:block;
+  @apply text-gray-500 mt-0 break-words select-none hidden desktop:block;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
-  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
   font-size: var(--sidenote-font-size);
   line-height: var(--sidenote-line-height);
   padding: var(--sidenote-padding);
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Enhanced positioning - better alignment with anchor points */
+  float: right;
+  clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  margin-top: -1.2em; /* Pull notes upward to align better with superscript */
+  position: relative;
+  top: -0.3em; /* Additional fine-tuning for vertical alignment */
 }
 
-/* Style margin notes - similar to sidenotes but without numbering */
+/* Style margin notes - improved CSS-only positioning */
 .marginnote {
-  @apply float-right clear-right text-gray-500 mt-0 break-words select-none italic hidden desktop:block;
+  @apply text-gray-500 mt-0 break-words select-none italic hidden desktop:block;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
-  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
   font-size: var(--sidenote-font-size);
   line-height: var(--sidenote-line-height);
   padding: var(--sidenote-padding);
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Enhanced positioning - align with inline text */
+  float: right;
+  clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  margin-top: -1em; /* Pull notes upward to align with inline text */
+  position: relative;
+  top: -0.2em; /* Fine-tuning for baseline alignment */
+}
+
+/* Special handling for the first note in each section to reduce initial gap */
+.sidenote:first-of-type {
+  margin-top: -1.5em; /* Pull the first note up more aggressively */
+}
+
+.marginnote:first-of-type {
+  margin-top: -1.3em; /* Pull the first margin note up more aggressively */
+}
+
+/* Apply configurable minimum spacing between consecutive notes */
+/* Use BROAD selectors to catch all consecutive note combinations */
+
+/* Any sidenote that comes after any wrapper containing a note */
+*:has(.sidenote, .marginnote) ~ * .sidenote,
+*:has(.sidenote, .marginnote) ~ * .marginnote {
+  margin-top: calc(-0.8em + var(--sidenote-min-space-between, 0.5rem)) !important;
+}
+
+/* Fallback: Direct sibling approach for all notes except first */
+.sidenote:not(:first-of-type),
+.marginnote:not(:first-of-type) {
+  margin-top: calc(-0.8em + var(--sidenote-min-space-between, 0.5rem)) !important;
+}
+
+/* Better handling for notes that appear close together in the text */
+.sidenote-wrapper + .sidenote-wrapper,
+.marginnote-wrapper + .marginnote-wrapper,
+.sidenote-wrapper + .marginnote-wrapper,
+.marginnote-wrapper + .sidenote-wrapper {
+  margin-left: 0.1em; /* Small spacing in the main text */
+}
+
+/* Wrapper for margin notes */
+.marginnote-wrapper {
+  @apply relative inline;
 }
 
 /* Enable selection when sidenote is being selected - more specific and with !important */
@@ -341,21 +393,25 @@
   user-select: text !important;
 }
 
-/* Wrapper for margin notes */
-.marginnote-wrapper {
-  @apply relative inline;
-}
-
-/* Positioned sidenotes use absolute positioning */
-.sidenote-positioned {
+/* Enhanced positioned sidenotes and margin notes - keep for potential future use */
+.sidenote-positioned,
+.marginnote-positioned {
   @apply bg-background border border-transparent rounded shadow-sm;
+  /* Override float positioning for positioned notes */
+  float: none !important;
+  clear: none !important;
+  margin-right: 0 !important;
+  /* Enhanced styling for positioned notes */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  /* Ensure consistent sizing */
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.dark .sidenote-positioned {
+.dark .sidenote-positioned,
+.dark .marginnote-positioned {
   @apply bg-background;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -580,7 +636,7 @@ html {
 }
 
 .mobile-toc-header {
-  @apply flex justify-between items-center w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
 }
 
 .mobile-toc-nav {
@@ -622,4 +678,46 @@ html {
 .footer-container {
   @apply flex items-center py-2.5;
   min-height: var(--footer-height);
+}
+
+/* Sidenote truncation and toggle functionality */
+.sidenote-truncatable {
+  /* Add visual indication that content can be expanded */
+  position: relative;
+}
+
+.sidenote-toggle-button {
+  @apply ml-1 text-blue-600 hover:text-blue-800 text-xs font-medium cursor-pointer bg-transparent border-none underline;
+  /* Remove default button styling */
+  padding: 0;
+  margin-left: 0.25rem;
+  font-size: 0.75em;
+  line-height: inherit;
+}
+
+.sidenote-toggle-button:hover {
+  @apply text-blue-800;
+  text-decoration: underline;
+}
+
+.sidenote-toggle-button:focus {
+  @apply outline-none ring-2 ring-blue-500;
+  border-radius: 2px;
+}
+
+.dark .sidenote-toggle-button {
+  @apply text-blue-400 hover:text-blue-300;
+}
+
+.dark .sidenote-toggle-button:hover {
+  @apply text-blue-300;
+}
+
+.dark .sidenote-toggle-button:focus {
+  @apply ring-blue-400;
+}
+
+/* Ensure smooth transitions when expanding/collapsing */
+.sidenote-truncatable {
+  transition: height 0.2s ease-in-out;
 }

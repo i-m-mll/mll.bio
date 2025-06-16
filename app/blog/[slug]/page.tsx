@@ -52,7 +52,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <SidenoteSelection />
       <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
       <div className="container pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
-        <article className="prose dark:prose-invert mx-auto">
+        <article className="prose dark:prose-invert mx-auto relative">
           <p className="text-muted-foreground text-sm mb-2">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
           <h1 className="mb-8">{post.frontmatter.title}</h1>
           {uiConfig.mobileToc.enableInlineToc && <MobileToc content={post.content} />}
