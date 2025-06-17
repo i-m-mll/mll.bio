@@ -1,0 +1,163 @@
+/* Custom styles for prose content */
+.prose {
+  @apply relative max-w-none;
+  counter-reset: sidenote-counter;
+  font-size: calc(var(--prose-body-font-size) * var(--global-font-scale));
+}
+
+.prose h1 {
+  font-size: calc(var(--prose-h1-font-size) * var(--global-font-scale));
+}
+
+.prose h2 {
+  font-size: calc(var(--prose-h2-font-size) * var(--global-font-scale));
+}
+
+.prose h3 {
+  font-size: calc(var(--prose-h3-font-size) * var(--global-font-scale));
+}
+
+.prose h4 {
+  font-size: calc(var(--prose-h4-font-size) * var(--global-font-scale));
+}
+
+.prose pre {
+  @apply bg-muted p-4 rounded-md overflow-x-auto;
+}
+
+.prose code {
+  @apply bg-muted px-1 py-0.5 rounded;
+  font-size: 0.8em;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+  font-size: 0.8em;
+}
+
+.prose img {
+  @apply rounded-md mx-auto;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  @apply scroll-m-20;
+}
+
+.prose a {
+  @apply font-medium underline underline-offset-4;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-muted pl-4 italic;
+}
+
+.prose table {
+  @apply w-full border-collapse;
+}
+
+.prose thead {
+  @apply bg-muted;
+}
+
+.prose th,
+.prose td {
+  @apply border border-border p-2 text-left;
+}
+
+/* Code highlighting styles */
+.hljs {
+  @apply bg-transparent;
+}
+
+.prose pre .hljs {
+  @apply text-foreground;
+}
+
+/* Light theme syntax highlighting */
+.hljs-comment,
+.hljs-quote {
+  @apply text-gray-500;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  @apply text-blue-600;
+}
+
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-attribute {
+  @apply text-purple-600;
+}
+
+.hljs-string,
+.hljs-regexp {
+  @apply text-green-600;
+}
+
+.hljs-name,
+.hljs-tag {
+  @apply text-red-600;
+}
+
+.hljs-title {
+  @apply text-blue-700;
+}
+
+.hljs-number {
+  @apply text-orange-600;
+}
+
+/* Dark theme syntax highlighting */
+.dark .hljs-comment,
+.dark .hljs-quote {
+  @apply text-gray-400;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-type {
+  @apply text-blue-400;
+}
+
+.dark .hljs-literal,
+.dark .hljs-symbol,
+.dark .hljs-bullet,
+.dark .hljs-attribute {
+  @apply text-purple-400;
+}
+
+.dark .hljs-string,
+.dark .hljs-regexp {
+  @apply text-green-400;
+}
+
+.dark .hljs-name,
+.dark .hljs-tag {
+  @apply text-red-400;
+}
+
+.dark .hljs-title {
+  @apply text-blue-300;
+}
+
+.dark .hljs-number {
+  @apply text-orange-400;
+}
+
+/* Code styling within sidenotes and margin notes */
+.sidenote code,
+.marginnote code {
+  @apply bg-muted px-1 py-0.5 rounded;
+  font-size: 0.8em;
+  font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', 'Roboto Mono', Consolas, 'Liberation Mono', Menlo, Monaco, monospace;
+}
+
+.dark .sidenote code,
+.dark .marginnote code {
+  @apply bg-muted;
+} 

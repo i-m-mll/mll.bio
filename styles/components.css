@@ -1,0 +1,25 @@
+/* Callout component styles */
+.callout {
+  @apply my-6 rounded-md p-4 border;
+}
+
+.callout-info {
+  @apply bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900;
+}
+
+.callout-warning {
+  @apply bg-yellow-50 border-yellow-200 dark:bg-yellow-950 dark:border-yellow-900;
+}
+
+.callout-error {
+  @apply bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-900;
+}
+
+.callout-success {
+  @apply bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-900;
+}
+
+/* Giscus comments styles */
+.giscus-wrapper {
+  @apply w-full mt-4;
+} 

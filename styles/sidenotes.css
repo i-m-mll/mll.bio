@@ -1,0 +1,343 @@
+/* Sidenotes styling */
+.sidenote-wrapper {
+  @apply relative inline;
+}
+
+/* Hide the checkbox inputs */
+.margin-toggle-input {
+  @apply hidden;
+}
+
+/* Make the label clickable but invisible */
+.margin-toggle {
+  @apply cursor-pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Style the sidenote number (superscript) */
+.sidenote-number {
+  @apply text-blue-600 cursor-pointer no-underline m-0 p-0 no-decoration;
+  font-size: 0.8em;
+  font-weight: normal;
+  scroll-margin-top: 5rem; /* More offset for better visibility when scrolling back */
+  vertical-align: super; /* Make it a proper superscript */
+  line-height: 0; /* Prevent affecting line height */
+}
+
+.sidenote-number:visited {
+  @apply text-blue-600;
+}
+
+.dark .sidenote-number {
+  @apply text-blue-400;
+}
+
+.dark .sidenote-number:visited {
+  @apply text-blue-400;
+}
+
+/* Style the sidenotes themselves - improved CSS-only positioning */
+.sidenote {
+  @apply text-gray-500 mt-0 break-words select-none;
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+  font-size: var(--sidenote-font-size);
+  line-height: var(--sidenote-line-height);
+  padding: var(--sidenote-padding);
+  margin-bottom: var(--sidenote-margin-bottom);
+  scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Enhanced positioning - better alignment with anchor points */
+  float: right;
+  clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  margin-top: -1.2em; /* Restore original sidenote positioning for superscript alignment */
+  position: relative;
+  top: -0.3em; /* Additional fine-tuning for vertical alignment */
+  
+  /* Ensure anchor links work properly */
+  pointer-events: auto;
+  visibility: visible;
+  
+  /* Show on desktop, completely hide on mobile/tablet to avoid ID conflicts */
+  display: block;
+}
+
+/* Sidenotes are hidden on mobile/tablet using Tailwind classes */
+.sidenote {
+  @apply max-desktop:hidden;
+}
+
+/* Add visual feedback when sidenote is targeted by anchor link */
+.sidenote:target {
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-opacity, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  animation: fade-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out;
+}
+
+.dark .sidenote:target {
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-opacity, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  animation: fade-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out;
+}
+
+@keyframes fade-highlight {
+  0% { 
+    background-color: rgba(59, 130, 246, 0.25);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+  100% { 
+    background-color: rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+@keyframes fade-highlight-dark {
+  0% { 
+    background-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+  100% { 
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+}
+
+/* Style margin notes - improved CSS-only positioning */
+.marginnote {
+  @apply text-gray-500 mt-0 break-words select-none hidden desktop:block;
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+  font-size: var(--sidenote-font-size);
+  line-height: var(--sidenote-line-height);
+  padding: var(--sidenote-padding);
+  margin-bottom: var(--sidenote-margin-bottom);
+  scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Enhanced positioning - align with inline text */
+  float: right;
+  clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  /* margin-top handled by specific rule below with !important */
+  position: relative;
+  top: -0.1em; /* Reduced fine-tuning for more natural positioning */
+}
+
+/* Responsive behavior for margin notes on tablet and mobile using Tailwind classes */
+.marginnote {
+  @apply max-desktop:block max-desktop:static max-desktop:italic max-desktop:text-gray-600;
+  @apply max-desktop:w-auto max-desktop:max-w-none max-desktop:float-none max-desktop:clear-none;
+  @apply max-desktop:my-5 max-desktop:ml-6 max-desktop:-mb-2 max-desktop:py-2 max-desktop:px-0;
+  @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
+}
+
+.dark .marginnote {
+  @apply max-desktop:text-gray-400;
+}
+
+/* Special handling for the first note in each section to reduce initial gap */
+.sidenote:first-of-type {
+  margin-top: -1.5em; /* Pull the first note up more aggressively */
+}
+
+/* Removed redundant first-of-type rule - handled by general .marginnote rule below */
+
+/* Apply configurable minimum spacing between consecutive notes */
+/* Use BROAD selectors to catch all consecutive note combinations */
+
+/* Any sidenote that comes after any wrapper containing a note */
+*:has(.sidenote, .marginnote) ~ * .sidenote,
+*:has(.sidenote, .marginnote) ~ * .marginnote {
+  margin-top: calc(-0.8em + var(--sidenote-min-space-between)) !important;
+}
+
+/* Apply consistent spacing to all margin notes */
+.marginnote {
+  margin-top: calc(-0.8em + var(--sidenote-min-space-between)) !important;
+}
+
+/* Fallback: Direct sibling approach for sidenotes except first */
+.sidenote:not(:first-of-type) {
+  margin-top: calc(-0.8em + var(--sidenote-min-space-between)) !important;
+}
+
+/* Better handling for notes that appear close together in the text */
+.sidenote-wrapper + .sidenote-wrapper,
+.marginnote-wrapper + .marginnote-wrapper,
+.sidenote-wrapper + .marginnote-wrapper,
+.marginnote-wrapper + .sidenote-wrapper {
+  margin-left: 0.1em; /* Small spacing in the main text */
+}
+
+/* Wrapper for margin notes */
+.marginnote-wrapper {
+  @apply relative inline;
+}
+
+/* Enable selection when sidenote is being selected - more specific and with !important */
+.sidenote.selecting,
+.sidenote.selecting * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Enable selection when margin note is being selected */
+.marginnote.selecting,
+.marginnote.selecting * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Enhanced positioned sidenotes and margin notes - keep for potential future use */
+.sidenote-positioned,
+.marginnote-positioned {
+  @apply bg-background border border-transparent rounded shadow-sm;
+  /* Override float positioning for positioned notes */
+  float: none !important;
+  clear: none !important;
+  margin-right: 0 !important;
+  /* Enhanced styling for positioned notes */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  /* Ensure consistent sizing */
+  width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
+  min-width: var(--sidenote-min-width);
+  max-width: var(--sidenote-max-width);
+}
+
+.dark .sidenote-positioned,
+.dark .marginnote-positioned {
+  @apply bg-background;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Style the sidenote counter/number link in the margin */
+.sidenote-counter {
+  @apply text-blue-600 font-bold mr-1 cursor-pointer hover:opacity-80 no-decoration;
+  font-size: 0.75em;
+}
+
+.sidenote-counter:visited {
+  @apply text-blue-600; /* blue-600 - same as unvisited */
+}
+
+.dark .sidenote-counter {
+  @apply text-blue-400;
+}
+
+.dark .sidenote-counter:visited {
+  @apply text-blue-400; /* blue-400 - same as unvisited */
+}
+
+.dark .sidenote {
+  @apply text-gray-400; /* muted-foreground dark equivalent */
+}
+
+.dark .marginnote {
+  @apply text-gray-400; /* muted-foreground dark equivalent */
+}
+
+/* Footnotes section styles - accessible on all devices for hyperlink navigation */
+.footnotes-section {
+  @apply mt-12 pt-4 pb-8 border-t border-border;
+  /* On desktop: position off-screen but keep accessible for anchor navigation */
+  @apply desktop:absolute desktop:left-[-9999px] desktop:w-px desktop:h-px desktop:overflow-hidden;
+  @apply desktop:clip-sr-only desktop:clip-path-sr-only;
+  /* On mobile/tablet: show normally */
+  @apply max-desktop:block max-desktop:static max-desktop:w-auto max-desktop:h-auto max-desktop:overflow-visible;
+  @apply max-desktop:clip-auto max-desktop:clip-path-none;
+}
+
+.footnotes-list {
+  @apply list-none p-0;
+}
+
+.footnote-item {
+  @apply mb-3 pl-8 relative text-sm leading-relaxed;
+  scroll-margin-top: 5rem; /* Better scroll positioning when navigating to footnotes */
+}
+
+.footnote-number-link {
+  @apply absolute left-0 top-0 font-semibold text-blue-600 cursor-pointer no-decoration;
+  scroll-margin-top: 4rem; /* Better scroll positioning */
+}
+
+.footnote-number-link:visited {
+  @apply text-blue-600; /* Keep same color when visited */
+}
+
+.dark .footnote-number-link {
+  @apply text-blue-400; /* Match dark mode sidenote number color */
+}
+
+.dark .footnote-number-link:visited {
+  @apply text-blue-400; /* Keep same color when visited in dark mode */
+}
+
+.footnote-content {
+  @apply inline;
+}
+
+/* Add highlighting for footnotes when targeted by anchor links */
+.footnote-item:target {
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-opacity, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  animation: fade-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out;
+}
+
+.dark .footnote-item:target {
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-opacity, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  animation: fade-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out;
+}
+
+/* Sidenote truncation and toggle functionality */
+.sidenote-truncatable {
+  /* Add visual indication that content can be expanded */
+  position: relative;
+}
+
+.sidenote-toggle-button {
+  @apply ml-1 text-blue-600 hover:text-blue-800 text-xs font-medium cursor-pointer bg-transparent border-none underline;
+  /* Remove default button styling */
+  padding: 0;
+  margin-left: 0.25rem;
+  font-size: 0.75em;
+  line-height: inherit;
+}
+
+.sidenote-toggle-button:hover {
+  @apply text-blue-800;
+  text-decoration: underline;
+}
+
+.sidenote-toggle-button:focus {
+  @apply outline-none ring-2 ring-blue-500;
+  border-radius: 2px;
+}
+
+.dark .sidenote-toggle-button {
+  @apply text-blue-400 hover:text-blue-300;
+}
+
+.dark .sidenote-toggle-button:hover {
+  @apply text-blue-300;
+}
+
+.dark .sidenote-toggle-button:focus {
+  @apply ring-blue-400;
+}
+
+/* Ensure smooth transitions when expanding/collapsing */
+.sidenote-truncatable {
+  transition: height 0.2s ease-in-out;
+} 

@@ -25,6 +25,8 @@ export const uiConfig = {
   
   // Theme settings
   theme: {
+    // Enable following system theme (allows cycling through system/light/dark)
+    followSystemTheme: true,
     // Color mode ('auto' | 'light' | 'dark')
     defaultMode: 'auto',
     // Enable theme persistence (remember user preference)
@@ -33,22 +35,22 @@ export const uiConfig = {
   
   // Sidenotes configuration
   sidenotes: {
-    // Minimum space between consecutive notes in the margin
-    // This controls how tightly packed sidenotes can be in the margins
-    minSpaceBetweenNotes: '0.5rem',
+    // Minimum space between consecutive sidenotes in the margin
+    minSpaceBetweenNotes: '0.5rem' as string,
     
-    // Maximum length of a note before truncation kicks in
-    // Set to null to disable truncation entirely
-    maxNoteLength: 200, // characters
+    // Maximum length for sidenote truncation (null to disable)
+    maxNoteLength: null as number | null,
     
-    // Text to append when a note is truncated
-    truncationSuffix: '…',
+    // Text to show when content is truncated
+    truncationSuffix: '...',
     
-    // Button text for expanding truncated notes
+    // Text for expand/collapse buttons
     expandButtonText: 'more',
-    
-    // Button text for collapsing expanded notes
     collapseButtonText: 'less',
+    
+    // Highlighting when targeted by anchor links
+    highlightOpacity: 0.15, // How strong the highlight background is (0-1)
+    highlightFadeDuration: '3s', // How long the highlight takes to fade out
   },
 
   // Future UI configurations can be added here
@@ -65,12 +67,22 @@ export const uiConfig = {
 
 // Utility function to apply sidenote configuration to CSS custom properties
 export function applySidenoteConfig() {
-  if (typeof document !== 'undefined') {
+  if (typeof window !== 'undefined') {
     const root = document.documentElement
-    root.style.setProperty('--sidenote-min-space-between', uiConfig.sidenotes.minSpaceBetweenNotes)
+    const { sidenotes } = uiConfig
     
-    // Debug: log the value being set
-    console.log('Setting --sidenote-min-space-between to:', uiConfig.sidenotes.minSpaceBetweenNotes)
+    // Set minimum spacing between sidenotes
+    root.style.setProperty('--sidenote-min-space-between', sidenotes.minSpaceBetweenNotes)
+    
+    // Set highlighting configuration
+    root.style.setProperty('--sidenote-highlight-opacity', sidenotes.highlightOpacity.toString())
+    root.style.setProperty('--sidenote-highlight-fade-duration', sidenotes.highlightFadeDuration)
+    
+    console.log('Applied sidenote config:', {
+      minSpaceBetween: sidenotes.minSpaceBetweenNotes,
+      highlightOpacity: sidenotes.highlightOpacity,
+      highlightFadeDuration: sidenotes.highlightFadeDuration
+    })
   }
 }
 

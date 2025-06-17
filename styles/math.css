@@ -1,0 +1,13 @@
+/* Math equation styles */
+.katex {
+  @apply text-lg;
+}
+
+.katex-display {
+  @apply text-center my-4;
+}
+
+/* Ensure math renders properly in dark mode */
+.dark .katex {
+  color: hsl(var(--foreground));
+} 

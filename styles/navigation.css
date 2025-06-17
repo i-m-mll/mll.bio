@@ -1,0 +1,100 @@
+/* Table of Contents styles */
+.toc-sidebar {
+  @apply sticky overflow-y-auto border-r border-border;
+  top: var(--toc-sticky-top);
+  height: fit-content;
+  max-height: calc(100vh - var(--toc-max-height-offset));
+  padding: var(--toc-padding);
+}
+
+.sticky-title {
+  @apply pb-4 mb-4;
+}
+
+.toc-container {
+  @apply bg-background;
+}
+
+.toc-header {
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+}
+
+.toc-nav {
+  @apply text-xs;
+}
+
+.toc-link {
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline transition-colors duration-200 leading-snug hover:text-foreground;
+}
+
+.toc-link.active {
+  @apply text-primary font-medium;
+}
+
+.toc-link.level-2 {
+  @apply pl-0;
+}
+
+.toc-link.level-3 {
+  @apply pl-4 text-xs;
+}
+
+.toc-link.level-4 {
+  @apply pl-6;
+  font-size: 0.7rem;
+}
+
+.toc-link.level-5,
+.toc-link.level-6 {
+  @apply pl-8;
+  font-size: 0.7rem;
+}
+
+/* Mobile TOC styles - match sidebar TOC but without right border */
+.mobile-toc {
+  @apply my-6 p-1 bg-background;
+}
+
+.mobile-toc .toc-container {
+  width: var(--mobile-toc-width-percent);
+  padding-left: var(--mobile-toc-left-padding);
+}
+
+.mobile-toc-header {
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+}
+
+.mobile-toc-nav {
+  @apply text-xs;
+}
+
+.mobile-toc-nav ul {
+  @apply list-none p-0;
+}
+
+.mobile-toc-link {
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline leading-snug transition-colors duration-200 hover:text-foreground;
+}
+
+.mobile-toc-link.active {
+  @apply text-primary font-medium;
+}
+
+.mobile-toc-link.level-2 {
+  @apply pl-0;
+}
+
+.mobile-toc-link.level-3 {
+  @apply pl-4 text-xs;
+}
+
+.mobile-toc-link.level-4 {
+  @apply pl-6;
+  font-size: 0.7rem;
+}
+
+.mobile-toc-link.level-5,
+.mobile-toc-link.level-6 {
+  @apply pl-8;
+  font-size: 0.7rem;
+} 

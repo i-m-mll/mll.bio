@@ -3,6 +3,13 @@ description:
 globs: 
 alwaysApply: true
 ---
-When writing CSS, create properties for values that are re-used more than once in the styling.
+The project uses Tailwind CSS; use Tailwind classes instead of writing custom CSS, wherever
+possible. In particular, do not hardcode *any* media query dimensions into CSS, but use the theme
+properties defined in [tailwind.config.ts](mdc:tailwind.config.ts).
 
-Do not try to run `npm run dev`.
+When writing CSS, when values that are re-used more than once in the styling, create variables for
+them. When designing Next.js/React/TS components with UI parameters, prefer to store them in
+[ui-config.ts](mdc:lib/ui-config.ts). 
+
+Do not try to run `npm run dev`!
+

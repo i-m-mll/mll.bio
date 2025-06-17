@@ -5,9 +5,10 @@ modified: "2025-06-16"
 description: "Hashing the unhashable"
 ---
 
+Simple test to verify basic parsing. <MarginNote>This is a simple test</MarginNote>
+
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional]() transformations; the substance is [PyTree]() arguments.
-[!margin: PyTrees [allow us]() to treat arbitrary types and compositions of tree-structured data in a unified way.]
+The basis of JAX's power is [functional]() transformations; the substance is [PyTree]() arguments. <MarginNote>PyTrees [allow us](https://jax.readthedocs.io/en/latest/pytrees.html) to treat arbitrary types and compositions of tree-structured data in a unified way.</MarginNote>
 
 ## *Where*-functions
 
@@ -16,9 +17,7 @@ are they used for, in practice?
 
 ### as pointers for out-of-place updates
 
-They are often used to specify nodes whose values will be replaced: 
-[!margin: Why not update the nodes by in-place assignment? Because writing purely functional code
-means our PyTrees should be immutable.]
+They are often used to specify nodes whose values will be replaced: <MarginNote>Why not update the nodes by in-place assignment? Because writing purely functional code means our PyTrees should be immutable.</MarginNote>
 
 ```python
 import jax
@@ -46,7 +45,8 @@ updated_tree = eqx.tree_at(
     (5, (6.28, 1.618)),
 ) # == Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
 ```
-[!margin: An Equinox `Module` is a type of Python [dataclass](), which JAX can manipulate as a PyTree.]
+
+<MarginNote>An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
 
 ### as training hyperparameters
 
@@ -59,8 +59,7 @@ where_train = lambda model: (
 )
 ```
 
-[!margin: Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this
-case, our *where*-function assumes that our model possesses whichever nodes it refers to.]
+<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our *where*-function assumes that our model possesses whichever nodes it refers to.</MarginNote>
 
 Notice that `where_train` has the flavour of a hyperparameter: on different training runs or phases,
 we might want to train different parts of the model. So we might want to encode `where_train` in our
@@ -133,4 +132,4 @@ Any Python object that can be [hashed]()[^1] can be used as a key in a `dict`.
 
 While Python functions *are* hashable, their hash is essentially just a pointer to their memory address.
 
-Clearly, It's not possible in general to test the semantic equivalence of functions. 
+Clearly, It's not possible in general to test the semantic equivalence of functions.

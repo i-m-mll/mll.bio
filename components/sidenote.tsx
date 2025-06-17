@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { uiConfig, applySidenoteConfig } from "@/lib/ui-config"
+import React from "react"
 
 interface SidenoteProps {
   id: string
@@ -12,8 +13,8 @@ interface SidenoteProps {
 }
 
 interface MarginNoteProps {
-  id: string
-  content: string
+  id?: string
+  children: React.ReactNode
 }
 
 export function Sidenote({ id, number, type = 'sidenote', children, content }: SidenoteProps) {
@@ -120,20 +121,22 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   // Return the structure that the CSS expects - wrap in sidenote-wrapper
   return (
     <span className="sidenote-wrapper">
-      <label htmlFor={`sidenote-${id}`} className="margin-toggle sidenote-number">
-        {numberValue}
+      <label htmlFor={`sidenote-toggle-${id}`} className="margin-toggle sidenote-number">
+        <a href={`#sidenote-${id}`} id={`sidenote-ref-${id}`} className="sidenote-number">
+          {numberValue}
+        </a>
       </label>
       <input 
         type="checkbox" 
-        id={`sidenote-${id}`} 
+        id={`sidenote-toggle-${id}`} 
         className="margin-toggle-input" 
       />
       <span 
         ref={contentRef}
-        id={id} 
+        id={`sidenote-${id}`} 
         className={className}
       >
-        <a href={`#fnref${id}`} className="sidenote-counter" aria-label={`Return to footnote ${id}`}>
+        <a href={`#sidenote-ref-${id}`} className="sidenote-counter" aria-label={`Return to footnote ${id}`}>
           {numberValue}.
         </a>{" "}
         {renderContent()}
@@ -142,16 +145,27 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   )
 }
 
-export function MarginNote({ id, content }: MarginNoteProps) {
+export function MarginNote({ id, children }: MarginNoteProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
-  const marginNoteId = `marginnote-${id}`
+  const marginNoteId = `marginnote-${id || Math.random().toString(36).substr(2, 9)}`
 
   // Apply configuration on mount
   useEffect(() => {
     applySidenoteConfig()
   }, [])
+
+  // Convert children to text for length checking
+  const getTextContent = (node: React.ReactNode): string => {
+    if (typeof node === 'string') return node
+    if (typeof node === 'number') return node.toString()
+    if (Array.isArray(node)) return node.map(getTextContent).join('')
+    if (node && typeof node === 'object' && 'props' in node) {
+      return getTextContent(node.props.children)
+    }
+    return ''
+  }
 
   useEffect(() => {
     // Check if truncation should be enabled
@@ -161,13 +175,14 @@ export function MarginNote({ id, content }: MarginNoteProps) {
       return
     }
     
-    if (content.length > maxNoteLength) {
+    const textContent = getTextContent(children)
+    if (textContent.length > maxNoteLength) {
       setShouldTruncate(true)
       setIsExpanded(false) // Start collapsed
     } else {
       setShouldTruncate(false)
     }
-  }, [content])
+  }, [children])
 
   const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text
@@ -184,15 +199,16 @@ export function MarginNote({ id, content }: MarginNoteProps) {
 
   const renderContent = () => {
     if (!shouldTruncate) {
-      return content
+      return children
     }
 
     const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
+    const textContent = getTextContent(children)
     
     if (isExpanded) {
       return (
         <>
-          {content}
+          {children}
           <button
             className="sidenote-toggle-button"
             onClick={() => setIsExpanded(false)}
@@ -203,7 +219,7 @@ export function MarginNote({ id, content }: MarginNoteProps) {
         </>
       )
     } else {
-      const truncatedText = truncateText(content, maxNoteLength!)
+      const truncatedText = truncateText(textContent, maxNoteLength!)
       return (
         <>
           {truncatedText}

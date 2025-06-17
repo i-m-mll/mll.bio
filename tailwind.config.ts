@@ -31,6 +31,13 @@ const config = {
       fontFamily: {
         sans: ['et-book', 'serif'],
       },
+
+      fontSize: {
+        'note': '0.85rem',
+      },
+      lineHeight: {
+        'note': '1.4',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -119,6 +126,12 @@ const config = {
             code: {
               color: "var(--foreground)",
             },
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
             "a code": {
               color: "var(--foreground)",
             },
@@ -138,7 +151,41 @@ const config = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    function({ addUtilities }: any) {
+      const newUtilities = {
+        '.clip-sr-only': {
+          clip: 'rect(0, 0, 0, 0)',
+        },
+        '.clip-auto': {
+          clip: 'auto',
+        },
+        '.clip-path-sr-only': {
+          'clip-path': 'inset(50%)',
+        },
+                 '.clip-path-none': {
+           'clip-path': 'none',
+         },
+         '.no-decoration': {
+           'text-decoration': 'none !important',
+         },
+         '.no-decoration:hover': {
+           'text-decoration': 'none !important',
+         },
+         '.no-decoration:focus': {
+           'text-decoration': 'none !important',
+         },
+         '.no-decoration:active': {
+           'text-decoration': 'none !important',
+         },
+         '.no-decoration:visited': {
+           'text-decoration': 'none !important',
+         },
+       };
+       addUtilities(newUtilities);
+    },
+  ],
 } satisfies Config
 
 export default config

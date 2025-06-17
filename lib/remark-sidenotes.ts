@@ -25,70 +25,8 @@ export function remarkSidenotes() {
         return index
       }
     })
-    
-    // Second pass: process margin notes syntax [!margin: content]
-    visit(tree, 'text', (node: Text, index, parent) => {
-      if (parent && index !== undefined) {
-        const marginNoteRegex = /\[!margin:\s*(.*?)\]/g
-        const text = node.value
-        let match
-        let hasMarginNotes = false
-        const newNodes: any[] = []
-        let lastIndex = 0
-        
-        while ((match = marginNoteRegex.exec(text)) !== null) {
-          hasMarginNotes = true
-          
-          // Add text before the margin note
-          if (match.index > lastIndex) {
-            newNodes.push({
-              type: 'text',
-              value: text.slice(lastIndex, match.index)
-            })
-          }
-          
-          // Add the margin note JSX element
-          const marginNoteContent = match[1].trim()
-          const marginNoteId = `margin-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-          
-          newNodes.push({
-            type: 'mdxJsxTextElement',
-            name: 'MarginNote',
-            attributes: [
-              {
-                type: 'mdxJsxAttribute',
-                name: 'id',
-                value: marginNoteId
-              },
-              {
-                type: 'mdxJsxAttribute',
-                name: 'content',
-                value: marginNoteContent
-              }
-            ],
-            children: []
-          })
-          
-          lastIndex = match.index + match[0].length
-        }
-        
-        if (hasMarginNotes) {
-          // Add remaining text after the last margin note
-          if (lastIndex < text.length) {
-            newNodes.push({
-              type: 'text',
-              value: text.slice(lastIndex)
-            })
-          }
-          
-          // Replace the text node with the new nodes
-          parent.children.splice(index, 1, ...newNodes)
-          return index + newNodes.length
-        }
-      }
-    })
 
-    // Third pass: replace footnote references with sidenote JSX elements
+    // Second pass: replace footnote references with sidenote JSX elements
     visit(tree, 'footnoteReference', (node: FootnoteReference, index, parent) => {
       if (parent && index !== undefined) {
         const definition = footnoteDefinitions.get(node.identifier)
