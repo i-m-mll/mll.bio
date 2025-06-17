@@ -22,7 +22,12 @@
 }
 
 .prose pre {
-  @apply bg-muted p-4 rounded-md overflow-x-auto;
+  @apply bg-muted p-4 rounded-md;
+  overflow-x: var(--code-block-overflow, auto);
+  white-space: var(--code-block-white-space, pre);
+  word-wrap: break-word;
+  /* Ensure long lines can break in wrap mode */
+  overflow-wrap: break-word;
 }
 
 .prose code {

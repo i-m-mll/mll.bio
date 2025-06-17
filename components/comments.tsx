@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { siteConfig } from "@/lib/config"
+import { siteConfig } from "@/lib/config/site"
 
 export function Comments({ title }: { title: string }) {
   const { theme } = useTheme()

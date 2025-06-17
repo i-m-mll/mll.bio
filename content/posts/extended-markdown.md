@@ -1,7 +1,8 @@
 ---
 title: "Extended Markdown Features"
-date: "2023-06-15"
+published: "2023-06-15"
 description: "Demonstrating the extended Markdown features available in this blog"
+showtoc: false
 ---
 
 This post demonstrates the extended Markdown features available in this blog.

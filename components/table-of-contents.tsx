@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { uiConfig } from "@/lib/ui-config"
+import { uiConfig } from "@/lib/config/ui"
+import { renderInlineMarkdown } from "@/lib/utils"
 
 interface TocItem {
   id: string
   title: string
+  renderedTitle: string
   level: number
 }
 
@@ -30,9 +32,10 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
     while ((match = headingRegex.exec(content)) !== null) {
       const level = match[1].length
       const title = match[2].trim()
+      const renderedTitle = renderInlineMarkdown(title)
       const id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
       
-      items.push({ id, title, level })
+      items.push({ id, title, renderedTitle, level })
     }
 
     setTocItems(items)
@@ -111,7 +114,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
           {showMobileToc && (
             <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm tablet:hidden">
               <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-1">
                   <h3 className="font-semibold">Contents</h3>
                   <button
                     onClick={() => setShowMobileToc(false)}
@@ -130,9 +133,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
                           className={`toc-link level-${item.level} ${
                             activeId === item.id ? 'active' : ''
                           }`}
-                        >
-                          {item.title}
-                        </button>
+                          dangerouslySetInnerHTML={{ __html: item.renderedTitle }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -147,16 +149,17 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
       <div className="hidden tablet:block toc-sidebar">
         {showStickyTitle && (
           <div className="sticky-title">
-            <h2 className="text-lg font-semibold text-foreground mb-4 line-clamp-2">
-              {postTitle}
-            </h2>
+            <h2 
+              className="text-lg font-semibold text-foreground mb-4 line-clamp-2"
+              dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(postTitle) }}
+            />
           </div>
         )}
         
         <div className="toc-container">
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="toc-header"
+            className="flex items-center gap-3 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
           >
             <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
               ▸
@@ -174,9 +177,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
                       className={`toc-link level-${item.level} ${
                         activeId === item.id ? 'active' : ''
                       }`}
-                    >
-                      {item.title}
-                    </button>
+                      dangerouslySetInnerHTML={{ __html: item.renderedTitle }}
+                    />
                   </li>
                 ))}
               </ul>

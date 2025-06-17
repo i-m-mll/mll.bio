@@ -1,31 +1,42 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { useEffect, useState } from "react"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function useScrollDirection(threshold: number = 5) {
-  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(null)
-  const [lastScrollY, setLastScrollY] = useState(0)
+/**
+ * Simple inline markdown renderer for ToC headings and other short text snippets.
+ * Handles common inline formatting without the overhead of full MDX compilation.
+ */
+export function renderInlineMarkdown(text: string): string {
+  return text
+    // Bold: **text** or __text__
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    // Italic: *text* or _text_ (but not if preceded/followed by alphanumeric to avoid conflicts)
+    .replace(/(?<!\w)\*(.*?)\*(?!\w)/g, '<em>$1</em>')
+    .replace(/(?<!\w)_(.*?)_(?!\w)/g, '<em>$1</em>')
+    // Inline code: `text`
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    // Strikethrough: ~~text~~
+    .replace(/~~(.*?)~~/g, '<del>$1</del>')
+}
 
-  useEffect(() => {
-    const updateScrollDirection = () => {
-      const scrollY = window.pageYOffset
-      const direction = scrollY > lastScrollY ? "down" : "up"
-      
-      if (direction !== scrollDirection && Math.abs(scrollY - lastScrollY) > threshold) {
-        setScrollDirection(direction)
-      }
-      setLastScrollY(scrollY > 0 ? scrollY : 0)
-    }
-
-    const onScroll = () => window.requestAnimationFrame(updateScrollDirection)
-    
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [scrollDirection, lastScrollY, threshold])
-
-  return scrollDirection
+/**
+ * Specialized inline markdown renderer for abstracts.
+ * The abstract itself is rendered in italic, so markdown *italic* becomes regular text (inverted).
+ */
+export function renderAbstractMarkdown(text: string): string {
+  return text
+    // Bold: **text** or __text__ - keep as bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    // Italic: *text* or _text* - invert to regular text (remove italic)
+    .replace(/(?<!\w)\*(.*?)\*(?!\w)/g, '<span style="font-style: normal;">$1</span>')
+    .replace(/(?<!\w)_(.*?)_(?!\w)/g, '<span style="font-style: normal;">$1</span>')
+    // Inline code: `text`
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    // Strikethrough: ~~text~~
+    .replace(/~~(.*?)~~/g, '<del>$1</del>')
 }

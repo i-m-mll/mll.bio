@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { TocList } from "@/components/toc-list"
+import { TocHeader } from "@/components/toc-header"
 
 interface TocItem {
   id: string
@@ -73,33 +75,17 @@ export function MobileToc({ content }: MobileTocProps) {
   return (
     <div className="tablet:hidden mb-6 mobile-toc">
       <div className="toc-container">
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="mobile-toc-header"
-        >
-          <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
-            ▸
-          </span>
-          <span className="font-semibold text-foreground">Contents</span>
-        </button>
+        <TocHeader 
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed(!isCollapsed)}
+        />
         
         {!isCollapsed && (
-          <nav className="mobile-toc-nav">
-            <ul className="space-y-1">
-              {tocItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => handleHeadingClick(item.id)}
-                    className={`mobile-toc-link level-${item.level} ${
-                      activeId === item.id ? 'active' : ''
-                    }`}
-                  >
-                    {item.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <TocList
+            items={tocItems}
+            activeId={activeId}
+            onItemClick={handleHeadingClick}
+          />
         )}
       </div>
     </div>

@@ -16,7 +16,7 @@
 }
 
 .toc-header {
-  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary;
 }
 
 .toc-nav {
@@ -61,7 +61,7 @@
 }
 
 .mobile-toc-header {
-  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-3 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary;
 }
 
 .mobile-toc-nav {

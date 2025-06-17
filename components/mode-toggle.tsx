@@ -1,7 +1,7 @@
 "use client"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { uiConfig } from "@/lib/ui-config"
+import { uiConfig } from "@/lib/config/ui"
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme()

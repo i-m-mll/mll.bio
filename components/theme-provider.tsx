@@ -1,7 +1,7 @@
 "use client"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 import type { ComponentProps } from "react"
-import { uiConfig } from "@/lib/ui-config"
+import { uiConfig } from "@/lib/config/ui"
 
 type ThemeProviderProps = ComponentProps<typeof NextThemesProvider>
 

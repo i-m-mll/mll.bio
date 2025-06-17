@@ -1,7 +1,7 @@
 import { getPosts } from "@/lib/blog"
 import { PostList } from "@/components/post-list"
 import { notFound } from "next/navigation"
-import { siteConfig } from "@/lib/config"
+import { siteConfig } from "@/lib/config/site"
 
 export const metadata = {
   title: "Posts",

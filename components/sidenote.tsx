@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { uiConfig, applySidenoteConfig } from "@/lib/ui-config"
+import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
 
 interface SidenoteProps {

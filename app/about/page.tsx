@@ -1,7 +1,7 @@
 import { getPage } from "@/lib/content"
 import { MDXContent } from "@/components/mdx-content"
 import { notFound } from "next/navigation"
-import { siteConfig } from "@/lib/config"
+import { siteConfig } from "@/lib/config/site"
 
 export const metadata = {
   title: "About",

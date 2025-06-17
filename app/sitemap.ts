@@ -1,5 +1,5 @@
 import { getPosts } from "@/lib/blog"
-import { siteConfig } from "@/lib/config"
+import { siteConfig } from "@/lib/config/site"
 
 export const dynamic = "force-static"
 
@@ -8,7 +8,7 @@ export default async function sitemap() {
 
   const postEntries = posts.map((post) => ({
     url: `${siteConfig.url}/blog/${post.slug}`,
-    lastModified: new Date(post.frontmatter.date),
+    lastModified: new Date(post.frontmatter.updated || post.frontmatter.published),
   }))
 
   const routes = ["", "/blog"]

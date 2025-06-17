@@ -1,23 +1,21 @@
 ---
-title: "Semantic hashing of python *where*-functions"
-created: "2025-06-16"
-modified: "2025-06-16"
-description: "Hashing the unhashable"
+title: Semantic hashing of Python *where*-functions
+published: 2025-06-16
+updated: 2025-06-16
+description: Hashing the unhashable
 ---
 
-Simple test to verify basic parsing. <MarginNote>This is a simple test</MarginNote>
-
-For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional]() transformations; the substance is [PyTree]() arguments. <MarginNote>PyTrees [allow us](https://jax.readthedocs.io/en/latest/pytrees.html) to treat arbitrary types and compositions of tree-structured data in a unified way.</MarginNote>
+For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). <MarginNote>PyTrees [allow us](https://jax.readthedocs.io/en/latest/pytrees.html) to treat arbitrary types and compositions of tree-structured data in a unified way.</MarginNote>
+The basis of JAX's power is [functional]() transformations; the substance is [PyTree]() arguments. 
 
 ## *Where*-functions
 
-*Where*-functions are just those functions which select one or more nodes from a [PyTree](). What
-are they used for, in practice? 
+*Where*-functions are just those functions which select one or more nodes from a PyTree. What
+are they used for? 
 
-### as pointers for out-of-place updates
+### As specs for out-of-place updates
 
-They are often used to specify nodes whose values will be replaced: <MarginNote>Why not update the nodes by in-place assignment? Because writing purely functional code means our PyTrees should be immutable.</MarginNote>
+They are often used to specify nodes whose values will be replaced: 
 
 ```python
 import jax
@@ -48,38 +46,35 @@ updated_tree = eqx.tree_at(
 
 <MarginNote>An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
 
-### as training hyperparameters
+### As training hyperparameters
 
 Another common use case for a *where*-function is to define the parts of a model which will be trained:
-
-```python
+<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our *where*-function assumes that our model possesses whichever nodes it refers to.</MarginNote>
+```python 
 where_train = lambda model: (  
-    model.net.hidden,  # Train the hidden layer of the neural network module,
-    model.net.readout,  # and also train the linear output layer.
+    model.layer1,  
+    model.layer3, 
 )
 ```
-
-<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our *where*-function assumes that our model possesses whichever nodes it refers to.</MarginNote>
 
 Notice that `where_train` has the flavour of a hyperparameter: on different training runs or phases,
 we might want to train different parts of the model. So we might want to encode `where_train` in our
 hyperparameter data, similarly to how we would encode the number of training iterations, or the
-learning rate.
+learning rate. 
 
-### for specifying model initialization data
+However, there are issues with trying to encode functions as data.
 
-I wrote the library [Feedbax]() for training models of optimal feedback control. 
-A Feedbax model is a PyTree of Equinox `Module` nodes, whose leaves encode the parameters of the
-model.
-When one of those `Module` nodes is called, it is passed another PyTree, whose leaves are JAX arrays which encode the
-current system state to be transformed by that node of the model.
+### For specifying model initializations
 
-Though the system states typically have default starting values, the user may want to provide custom
-initializations for some part(s) of the state. 
-Of course, we could specify which parts will be initialized using one or more *where*-functions. And
-it might seem natural to map from a *where*-function, to the data we'll use to initialize the
-respective part of the state.
-We do something like this:
+<MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
+Our models may be PyTrees of callable `Module`s. The arguments we pass to these modules may also be
+PyTrees of data, or states. 
+
+States typically have default initializations, but the user may want to provide custom
+initializations for some part(s) of the state, without needing to construct the entire PyTree
+themselves. 
+We might provide the custom intitializations as a mapping from one or more *where*-functions, which
+specify the part(s) of the state to initialize, to the respective data to initialize with:
 
 ```python
 from collections.abc import Callable
@@ -102,7 +97,7 @@ for where_func, init_substate in init_state_mapping.items():
     state = eqx.tree_at(where_func, state, init_substate)
 ```
 
-This works, however we'll encounter some strange behaviour if we try to treat `init_state_mapping`
+This does work, but we'll encounter some strange behaviour if we try to treat `init_state_mapping`
 as a mapping from parts-of-state to state-data. 
 
 For example, if in some other context we want to determine which data will be used to initialize
@@ -133,3 +128,6 @@ Any Python object that can be [hashed]()[^1] can be used as a key in a `dict`.
 While Python functions *are* hashable, their hash is essentially just a pointer to their memory address.
 
 Clearly, It's not possible in general to test the semantic equivalence of functions.
+
+Switching to `tuple[Callable, data]` might seem to work for specifying initializations, but it
+doesn't really help because `lambda x: x != lambda x: x`.

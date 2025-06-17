@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from 'react'
-import { uiConfig } from '@/lib/ui-config'
+import { uiConfig, applyCodeBlockConfig } from '@/lib/config/ui'
 
 export function UiConfigProvider() {
   useEffect(() => {
@@ -10,6 +10,9 @@ export function UiConfigProvider() {
     
     // Typography settings
     root.style.setProperty('--global-font-scale', uiConfig.typography.globalFontScale.toString())
+    
+    // Apply code block configuration
+    applyCodeBlockConfig()
   }, [])
 
   return null // This component doesn't render anything

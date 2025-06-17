@@ -14,7 +14,7 @@ export const uiConfig = {
     // Enable floating TOC button on mobile
     enableFloatingButton: true,
     // Position of the floating button ('top-left' | 'top-right' | 'bottom-left' | 'bottom-right')
-    buttonPosition: 'bottom-right',
+    buttonPosition: 'bottom-right' as 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
   },
   
   // Typography settings
@@ -33,10 +33,19 @@ export const uiConfig = {
     persistMode: true,
   },
   
+  // Code blocks configuration
+  codeBlocks: {
+    // Overflow behavior for code blocks ('wrap' | 'scroll')
+    // 'wrap': Text wraps within container, better for mobile
+    // 'scroll': Horizontal scrollbar appears when needed, preserves formatting
+    //! TODO: Fix 'scroll'
+    overflowBehavior: 'wrap' as 'wrap' | 'scroll',
+  },
+  
   // Sidenotes configuration
   sidenotes: {
     // Minimum space between consecutive sidenotes in the margin
-    minSpaceBetweenNotes: '0.5rem' as string,
+    minSpaceBetweenNotes: '0rem',
     
     // Maximum length for sidenote truncation (null to disable)
     maxNoteLength: null as number | null,
@@ -86,12 +95,34 @@ export function applySidenoteConfig() {
   }
 }
 
+// Utility function to apply code block configuration to CSS custom properties
+export function applyCodeBlockConfig() {
+  if (typeof window !== 'undefined') {
+    const root = document.documentElement
+    const { codeBlocks } = uiConfig
+    
+    // Set code block overflow behavior
+    root.style.setProperty('--code-block-overflow', codeBlocks.overflowBehavior === 'wrap' ? 'wrap' : 'auto')
+    root.style.setProperty('--code-block-white-space', codeBlocks.overflowBehavior === 'wrap' ? 'pre-wrap' : 'pre')
+    
+    console.log('Applied code block config:', {
+      overflowBehavior: codeBlocks.overflowBehavior,
+    })
+  }
+}
+
+// Combined function to apply all UI configurations
+export function applyUIConfig() {
+  applySidenoteConfig()
+  applyCodeBlockConfig()
+}
+
 // Apply configuration on module load and DOM ready
 if (typeof window !== 'undefined') {
   // Apply immediately if document is already ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applySidenoteConfig)
+    document.addEventListener('DOMContentLoaded', applyUIConfig)
   } else {
-    applySidenoteConfig()
+    applyUIConfig()
   }
 } 

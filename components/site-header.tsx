@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { siteConfig } from "@/lib/config"
-import { uiConfig } from "@/lib/ui-config"
-import { cn, useScrollDirection } from "@/lib/utils"
+import { siteConfig } from "@/lib/config/site"
+import { uiConfig } from "@/lib/config/ui"
+import { cn } from "@/lib/utils"
+import { useScrollDirection } from "@/lib/hooks"
 import { ModeToggle } from "@/components/mode-toggle"
 
 export function SiteHeader() {

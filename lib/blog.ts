@@ -7,13 +7,33 @@ export interface Post {
   content: string
   frontmatter: {
     title: string
-    date: string
+    published: string
+    updated?: string
     description: string
+    abstract?: string
+    showtoc?: boolean
     draft?: boolean
+    // Keep 'date' for backward compatibility
+    date?: string
   }
 }
 
 const postsDirectory = path.join(process.cwd(), "content/posts")
+
+// Helper function to format date to "24 May 2025"
+function formatDate(dateInput: string | Date): string {
+  const date = new Date(dateInput)
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+  
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+  
+  return `${day} ${month} ${year}`
+}
 
 export async function getPosts(): Promise<Post[]> {
   // Create posts directory if it doesn't exist
@@ -36,22 +56,31 @@ export async function getPosts(): Promise<Post[]> {
 
       const { data, content } = matter(fileContents)
 
+      // Use 'published' if available, otherwise fall back to 'date'
+      const publishedDate = data.published || data.date || new Date().toISOString()
+      const updatedDate = data.updated
+
       return {
         slug,
         content,
         frontmatter: {
           title: data.title || slug,
-          date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+          published: formatDate(publishedDate),
+          updated: updatedDate ? formatDate(updatedDate) : undefined,
           description: data.description || "",
+          abstract: data.abstract || undefined,
+          showtoc: data.showtoc !== false,
           draft: data.draft || false,
+          // Keep 'date' for backward compatibility
+          date: formatDate(publishedDate),
         },
       }
     })
     // Filter out draft posts
     .filter((post) => !post.frontmatter.draft)
-    // Sort posts by date
+    // Sort posts by published date (most recent first)
     .sort((a, b) => {
-      return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+      return new Date(b.frontmatter.published).getTime() - new Date(a.frontmatter.published).getTime()
     })
 
   return posts
@@ -79,13 +108,23 @@ export async function getPost(slug: string): Promise<Post | null> {
       return null
     }
 
+    // Use 'published' if available, otherwise fall back to 'date'
+    const publishedDate = data.published || data.date || new Date().toISOString()
+    const updatedDate = data.updated
+
     return {
       slug,
       content,
       frontmatter: {
         title: data.title || slug,
-        date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+        published: formatDate(publishedDate),
+        updated: updatedDate ? formatDate(updatedDate) : undefined,
         description: data.description || "",
+        abstract: data.abstract || undefined,
+        showtoc: data.showtoc !== false,
+        draft: data.draft || false,
+        // Keep 'date' for backward compatibility
+        date: formatDate(publishedDate),
       },
     }
   } catch (error) {

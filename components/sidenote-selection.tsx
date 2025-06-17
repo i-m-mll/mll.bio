@@ -4,28 +4,161 @@ import { useEffect } from 'react'
 
 export function SidenoteSelection() {
   useEffect(() => {
+    let isSelectingInNote = false
+    let currentSelectingNote: HTMLElement | null = null
+
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       const sidenote = target.closest('.sidenote') as HTMLElement
+      const marginnote = target.closest('.marginnote') as HTMLElement
+      
+      // Clear all previous selecting states
+      document.querySelectorAll('.sidenote.selecting, .marginnote.selecting').forEach(el => {
+        el.classList.remove('selecting')
+      })
       
       if (sidenote) {
-        console.log('Mouse down in sidenote, enabling selection')
-        // Enable selection for this sidenote immediately
+        isSelectingInNote = true
+        currentSelectingNote = sidenote
         sidenote.classList.add('selecting')
         
-        // Also enable selection for the entire document temporarily
-        // to ensure the selection can start
+        // Enable selection for the entire document temporarily
+        document.body.style.userSelect = 'text'
+        document.body.style.webkitUserSelect = 'text'
+      } else if (marginnote) {
+        isSelectingInNote = true
+        currentSelectingNote = marginnote
+        marginnote.classList.add('selecting')
+        
+        // Enable selection for the entire document temporarily
         document.body.style.userSelect = 'text'
         document.body.style.webkitUserSelect = 'text'
       } else {
-        // Clear selection state from all sidenotes when clicking outside
-        document.querySelectorAll('.sidenote.selecting').forEach(el => {
-          el.classList.remove('selecting')
-        })
+        isSelectingInNote = false
+        currentSelectingNote = null
         
         // Reset document selection
         document.body.style.userSelect = ''
         document.body.style.webkitUserSelect = ''
+      }
+    }
+
+    const handleSelectionChange = () => {
+      const selection = window.getSelection()
+      if (!selection || selection.rangeCount === 0) {
+        return
+      }
+
+      const range = selection.getRangeAt(0)
+
+      // If user is selecting within a note, constrain to that note
+      if (isSelectingInNote && currentSelectingNote) {
+        const startContainer = range.startContainer
+        const endContainer = range.endContainer
+        
+        // Check if either the start or end has moved outside the note
+        const startInNote = currentSelectingNote.contains(startContainer)
+        const endInNote = currentSelectingNote.contains(endContainer)
+        
+        if (!startInNote || !endInNote) {
+          try {
+            const newRange = document.createRange()
+            
+            // If start is outside note, use first text node in note as start
+            if (!startInNote) {
+              const walker = document.createTreeWalker(
+                currentSelectingNote,
+                NodeFilter.SHOW_TEXT,
+                null
+              )
+              const firstTextNode = walker.nextNode()
+              if (firstTextNode) {
+                newRange.setStart(firstTextNode, 0)
+              }
+            } else {
+              newRange.setStart(range.startContainer, range.startOffset)
+            }
+            
+            // If end is outside note, use last text node in note as end
+            if (!endInNote) {
+              const walker = document.createTreeWalker(
+                currentSelectingNote,
+                NodeFilter.SHOW_TEXT,
+                null
+              )
+              let lastTextNode = null
+              let node
+              while (node = walker.nextNode()) {
+                lastTextNode = node
+              }
+              
+              if (lastTextNode) {
+                newRange.setEnd(lastTextNode, lastTextNode.textContent?.length || 0)
+              }
+            } else {
+              newRange.setEnd(range.endContainer, range.endOffset)
+            }
+            
+            selection.removeAllRanges()
+            selection.addRange(newRange)
+          } catch (error) {
+            console.warn('Note selection constraint failed:', error)
+          }
+        }
+        return
+      }
+
+      // If selecting in main text, filter out note content
+      const commonAncestor = range.commonAncestorContainer
+      const containerElement = commonAncestor.nodeType === Node.TEXT_NODE 
+        ? commonAncestor.parentElement 
+        : commonAncestor as HTMLElement
+
+      if (containerElement && containerElement.querySelector && 
+          (containerElement.querySelector('.sidenote') || containerElement.querySelector('.marginnote'))) {
+        
+        // Selection contains notes, we need to clean it up
+        try {
+          // Get all text nodes in the selection, excluding those in notes
+          const walker = document.createTreeWalker(
+            range.commonAncestorContainer,
+            NodeFilter.SHOW_TEXT,
+            {
+              acceptNode: (node) => {
+                // Reject text nodes that are inside notes
+                const parent = node.parentElement
+                if (parent && (parent.closest('.sidenote') || parent.closest('.marginnote'))) {
+                  return NodeFilter.FILTER_REJECT
+                }
+                
+                // Accept text nodes that are within the selection range
+                if (range.intersectsNode(node)) {
+                  return NodeFilter.FILTER_ACCEPT
+                }
+                
+                return NodeFilter.FILTER_REJECT
+              }
+            }
+          )
+
+          const textNodes: Node[] = []
+          let node
+          while (node = walker.nextNode()) {
+            textNodes.push(node)
+          }
+
+          if (textNodes.length > 0) {
+            // Create a new range that only includes the main text
+            const newRange = document.createRange()
+            newRange.setStart(textNodes[0], 0)
+            newRange.setEnd(textNodes[textNodes.length - 1], textNodes[textNodes.length - 1].textContent?.length || 0)
+            
+            selection.removeAllRanges()
+            selection.addRange(newRange)
+          }
+        } catch (error) {
+          console.warn('Selection cleanup failed:', error)
+        }
       }
     }
 
@@ -35,26 +168,27 @@ export function SidenoteSelection() {
         const selection = window.getSelection()
         const selectedText = selection?.toString().trim() || ''
         
-        console.log('Mouse up, selected text:', selectedText)
-        
         if (selectedText === '') {
           // No text selected, can disable selection
-          document.querySelectorAll('.sidenote.selecting').forEach(el => {
+          document.querySelectorAll('.sidenote.selecting, .marginnote.selecting').forEach(el => {
             el.classList.remove('selecting')
           })
           document.body.style.userSelect = ''
           document.body.style.webkitUserSelect = ''
+          isSelectingInNote = false
+          currentSelectingNote = null
         }
-        // If there is selected text, keep the 'selecting' class
       }, 10)
     }
 
     // Add event listeners
     document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('selectionchange', handleSelectionChange)
     document.addEventListener('mouseup', handleMouseUp)
 
     return () => {
       document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('selectionchange', handleSelectionChange)
       document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [])

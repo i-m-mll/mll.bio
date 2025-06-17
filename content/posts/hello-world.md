@@ -1,7 +1,9 @@
 ---
-title: "Hello World"
-date: "2023-06-01"
+title: "Hello **World** - My *First* Post"
+published: "2023-06-01"
+updated: "2023-06-15"
 description: "My first blog post"
+abstract: "This is my **first** blog post where I introduce myself and share some initial thoughts about blogging. Welcome to my journey!"
 ---
 
 Welcome to my blog! This is my first post, and I'm excited to share my thoughts and ideas with you.

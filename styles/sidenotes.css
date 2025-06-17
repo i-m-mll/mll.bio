@@ -39,7 +39,7 @@
 
 /* Style the sidenotes themselves - improved CSS-only positioning */
 .sidenote {
-  @apply text-gray-500 mt-0 break-words select-none;
+  @apply text-gray-500 mt-0 break-words;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
@@ -48,6 +48,15 @@
   padding: var(--sidenote-padding);
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Prevent sidenotes from being included in text selection by default */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  
+  /* Selection containment - prevent selections from extending outside */
+  contain: style layout;
+  isolation: isolate;
   
   /* Enhanced positioning - better alignment with anchor points */
   float: right;
@@ -108,7 +117,7 @@
 
 /* Style margin notes - improved CSS-only positioning */
 .marginnote {
-  @apply text-gray-500 mt-0 break-words select-none hidden desktop:block;
+  @apply text-gray-500 mt-0 break-words hidden desktop:block;
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));
   min-width: var(--sidenote-min-width);
   max-width: var(--sidenote-max-width);
@@ -117,6 +126,15 @@
   padding: var(--sidenote-padding);
   margin-bottom: var(--sidenote-margin-bottom);
   scroll-margin-top: var(--sidenote-scroll-margin);
+  
+  /* Prevent margin notes from being included in text selection by default */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  
+  /* Selection containment - prevent selections from extending outside */
+  contain: style layout;
+  isolation: isolate;
   
   /* Enhanced positioning - align with inline text */
   float: right;
@@ -130,9 +148,13 @@
 /* Responsive behavior for margin notes on tablet and mobile using Tailwind classes */
 .marginnote {
   @apply max-desktop:block max-desktop:static max-desktop:italic max-desktop:text-gray-600;
-  @apply max-desktop:w-auto max-desktop:max-w-none max-desktop:float-none max-desktop:clear-none;
+  @apply max-desktop:float-none max-desktop:clear-none;
   @apply max-desktop:my-5 max-desktop:ml-6 max-desktop:-mb-2 max-desktop:py-2 max-desktop:px-0;
   @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
+  /* Mobile width constraints for blockquote-like wrapping - wrap sooner than main text */
+  @apply max-desktop:max-w-[calc(100%-4rem)] max-desktop:w-[calc(100%-4rem)];
+  /* Re-enable selection on mobile for margin notes */
+  @apply max-desktop:select-text;
 }
 
 .dark .marginnote {
@@ -184,6 +206,11 @@
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   user-select: text !important;
+  
+  /* Create a selection boundary */
+  contain: style layout !important;
+  isolation: isolate !important;
+  position: relative !important;
 }
 
 /* Enable selection when margin note is being selected */
@@ -192,7 +219,14 @@
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   user-select: text !important;
+  
+  /* Create a selection boundary */
+  contain: style layout !important;
+  isolation: isolate !important;
+  position: relative !important;
 }
+
+
 
 /* Enhanced positioned sidenotes and margin notes - keep for potential future use */
 .sidenote-positioned,

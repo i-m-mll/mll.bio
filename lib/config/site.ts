@@ -21,7 +21,7 @@ export const siteConfig = {
   // Comments configuration
   comments: {
     // Set to 'giscus' to enable, or false to disable
-    provider: false,
+    provider: false as 'giscus' | false,
 
     // Giscus configuration
     giscus: {

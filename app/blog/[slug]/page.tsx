@@ -1,13 +1,14 @@
 import { getPost, getPosts } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
+import { StickyTitle } from "@/components/sticky-title"
 import { SidenoteSelection } from "@/components/sidenote-selection"
 import { Footnotes } from "@/components/footnotes"
 import { MobileToc } from "@/components/mobile-toc"
 import { notFound } from "next/navigation"
-import { format } from "date-fns"
-import { siteConfig } from "@/lib/config"
-import { uiConfig } from "@/lib/ui-config"
+import { siteConfig } from "@/lib/config/site"
+import { uiConfig } from "@/lib/config/ui"
+import { renderInlineMarkdown, renderAbstractMarkdown } from "@/lib/utils"
 
 export async function generateStaticParams() {
   // Only generate pages for published posts if blog is enabled
@@ -23,7 +24,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
+  const { slug } = await params
+  const post = await getPost(slug)
 
   if (!post) {
     return {}
@@ -41,7 +43,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     notFound()
   }
 
-  const post = await getPost(params.slug)
+  const { slug } = await params
+  const post = await getPost(slug)
 
   if (!post) {
     notFound()
@@ -50,12 +53,36 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_20vw] gap-8 max-w-full px-2 tablet:px-4">
       <SidenoteSelection />
-      <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
+      {post.frontmatter.showtoc ? (
+        <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
+      ) : (
+        <StickyTitle title={post.frontmatter.title} />
+      )}
       <div className="container pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
+        <article className="prose dark:prose-invert mx-auto relative mb-8">
+          <div className="text-muted-foreground text-sm mb-6">
+            <div>Published: {post.frontmatter.published}</div>
+            {post.frontmatter.updated && (
+              <div>Updated: {post.frontmatter.updated}</div>
+            )}
+          </div>
+          <h1 
+            className="mb-2"
+            dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
+          />
+          {post.frontmatter.abstract && (
+            <div 
+              className="text-muted-foreground italic text-lg"
+              dangerouslySetInnerHTML={{ __html: renderAbstractMarkdown(post.frontmatter.abstract) }}
+            />
+          )}
+        </article>
+        
+        {post.frontmatter.showtoc && uiConfig.mobileToc.enableInlineToc && (
+          <MobileToc content={post.content} />
+        )}
+        
         <article className="prose dark:prose-invert mx-auto relative">
-          <p className="text-muted-foreground text-sm mb-2">{format(new Date(post.frontmatter.date), "MMMM d, yyyy")}</p>
-          <h1 className="mb-8">{post.frontmatter.title}</h1>
-          {uiConfig.mobileToc.enableInlineToc && <MobileToc content={post.content} />}
           <MDXContent>{post.content}</MDXContent>
           <Footnotes content={post.content} />
         </article>
