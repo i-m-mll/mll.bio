@@ -1,12 +1,14 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export function SidenoteSelection() {
-  useEffect(() => {
-    let isSelectingInNote = false
-    let currentSelectingNote: HTMLElement | null = null
+  let isSelectingInNote = false
+  let currentSelectingNote: HTMLElement | null = null
+  const lastClickedTargetRef = useRef<string | null>(null)
 
+  useEffect(() => {
+    // Handle mouse down events for note selection
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       const sidenote = target.closest('.sidenote') as HTMLElement
@@ -190,6 +192,170 @@ export function SidenoteSelection() {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('selectionchange', handleSelectionChange)
       document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Ensure in-text superscript links navigate to footnotes on mobile/tablet.
+    // Problem: both the hidden .sidenote span and the footnote <li> share the same id (e.g., "sidenote-1").
+    // Browsers jump to the *first* element with the id, which is the hidden sidenote span, so scrolling appears broken.
+    // Solution: When the viewport is <= 1050px (our `desktop` breakpoint), temporarily remove the id attribute from the hidden sidenote spans.
+    // When the viewport is > 1050px, restore the ids so links jump to the visible sidenotes again.
+
+    const DESKTOP_BREAKPOINT = 1050 // keep in sync with Tailwind `desktop` screen
+
+    const updateSidenoteIds = () => {
+      const isMobile = window.innerWidth <= DESKTOP_BREAKPOINT
+      const sidenoteEls = document.querySelectorAll<HTMLElement>('.sidenote, .marginnote')
+      sidenoteEls.forEach((el) => {
+        const currentId = el.getAttribute('id')
+        const storedOriginal = el.getAttribute('data-orig-id')
+
+        if (isMobile) {
+          // If id exists, stash it and remove it to avoid duplicate ids
+          if (currentId) {
+            el.setAttribute('data-orig-id', currentId)
+            el.removeAttribute('id')
+          }
+        } else {
+          // On desktop, ensure the element *has* its original id
+          const idToRestore = storedOriginal || currentId
+          if (idToRestore && !el.getAttribute('id')) {
+            el.setAttribute('id', idToRestore)
+          }
+        }
+      })
+    }
+
+    // Initial run
+    updateSidenoteIds()
+
+    // Listen for viewport size changes
+    window.addEventListener('resize', updateSidenoteIds)
+
+    // Intercept clicks on superscript links on mobile/tablet to ensure smooth navigation
+    const handleAnchorClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest('a.sidenote-number') as HTMLAnchorElement | null
+      if (!anchor) return
+
+      const href = anchor.getAttribute('href') || ''
+      if (!href.startsWith('#')) return
+
+      const targetId = href.slice(1)
+      const targetEl = document.getElementById(targetId)
+      
+      if (!targetEl) return
+
+      const isMobile = window.innerWidth <= DESKTOP_BREAKPOINT
+      const isRepeatClick = lastClickedTargetRef.current === targetId
+
+      // Update tracked target
+      lastClickedTargetRef.current = targetId
+
+      if (isMobile) {
+        e.preventDefault()
+        // Smooth scroll to target
+        document.documentElement.style.scrollBehavior = 'smooth'
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        setTimeout(() => {
+          document.documentElement.style.scrollBehavior = ''
+        }, 600)
+        
+        // Always set hash for mobile to trigger animation
+        location.hash = href
+      }
+
+      // Handle repeat clicks for animation restart
+      if (isRepeatClick) {
+        e.preventDefault()
+        // Force animation restart using CSS class approach
+        const isDark = document.documentElement.classList.contains('dark')
+        const animationClass = isDark ? 'highlight-replay-dark' : 'highlight-replay'
+        
+        // Remove class if it exists
+        targetEl.classList.remove(animationClass)
+        void targetEl.offsetWidth // force reflow
+        
+        // Add the class to trigger animation
+        targetEl.classList.add(animationClass)
+        
+        // Remove the class after animation completes
+        targetEl.addEventListener('animationend', () => {
+          targetEl.classList.remove(animationClass)
+        }, { once: true })
+      } else if (!isMobile) {
+        // First-time click on desktop: let default behavior work
+        location.hash = href
+      }
+    }
+
+    document.addEventListener('click', handleAnchorClick)
+
+    // Handle clicks on return links from sidenotes/footnotes to highlight corresponding text
+    const handleReturnLinkClick = (e: MouseEvent) => {
+      const returnLink = (e.target as HTMLElement).closest('a.sidenote-counter, a.footnote-number-link') as HTMLAnchorElement | null
+      if (!returnLink) return
+
+      const href = returnLink.getAttribute('href') || ''
+      if (!href.startsWith('#')) return
+
+      // Don't prevent default - let normal navigation work
+      // e.preventDefault()
+      
+      const targetId = href.slice(1)
+      const targetEl = document.getElementById(targetId)
+      
+      if (!targetEl) return
+
+      // Simple approach: just highlight the parent paragraph or wrapper containing the superscript
+      const textToHighlight = targetEl.closest('p, div, li, blockquote') as HTMLElement || targetEl.parentElement
+      if (!textToHighlight) return
+
+      // Apply highlight animation with a delay to allow navigation to complete
+      setTimeout(() => {
+        const isDark = document.documentElement.classList.contains('dark')
+        const animationClass = isDark ? 'text-highlight-dark' : 'text-highlight'
+        
+        // Remove existing highlights
+        textToHighlight.classList.remove(animationClass)
+        void textToHighlight.offsetWidth // force reflow
+        
+        // Add highlight
+        textToHighlight.classList.add(animationClass)
+        
+        // Clean up after animation
+        textToHighlight.addEventListener('animationend', () => {
+          textToHighlight.classList.remove(animationClass)
+        }, { once: true })
+      }, 100)
+    }
+
+    document.addEventListener('click', handleReturnLinkClick)
+
+    // Observe DOM mutations to catch late-rendered sidenotes (e.g. MDX content)
+    const observer = new MutationObserver((mutations) => {
+      let shouldUpdate = false
+      for (const m of mutations) {
+        m.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            if (node.classList.contains('sidenote') || node.classList.contains('marginnote') || node.querySelector('.sidenote, .marginnote')) {
+              shouldUpdate = true
+            }
+          }
+        })
+      }
+      if (shouldUpdate) {
+        updateSidenoteIds()
+      }
+    })
+
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      window.removeEventListener('resize', updateSidenoteIds)
+      document.removeEventListener('click', handleAnchorClick)
+      document.removeEventListener('click', handleReturnLinkClick)
+      observer.disconnect()
     }
   }, [])
 

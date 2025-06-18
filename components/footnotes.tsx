@@ -14,7 +14,10 @@ interface FootnoteItem {
 
 // Hook to check if we're in mobile/tablet mode
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth <= 1050
+  })
 
   useEffect(() => {
     const checkIsMobile = () => {

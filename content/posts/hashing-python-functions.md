@@ -3,14 +3,21 @@ title: Semantic hashing of Python *where*-functions
 published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
+abstract: 
 ---
 
-For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). <MarginNote>PyTrees [allow us](https://jax.readthedocs.io/en/latest/pytrees.html) to treat arbitrary types and compositions of tree-structured data in a unified way.</MarginNote>
-The basis of JAX's power is [functional]() transformations; the substance is [PyTree]() arguments. 
+For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
+The basis of JAX's power is [functional]() transformations, and the flexibility in structuring
+computation graphs with `grad`, `vmap`, and `jit`.
+But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
+arguments, or the ability to
+to compute over arbitrary types of tree-structured inputs in a unified way.
+To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX[^1] knows how to
+treat like any other tree because it's been told how to flatten and unflatten them".
 
 ## *Where*-functions
 
-*Where*-functions are just those functions which select one or more nodes from a PyTree. What
+*Where*-functions are just functions which select one or more nodes from a PyTree. What
 are they used for? 
 
 ### As specs for out-of-place updates
@@ -122,8 +129,8 @@ What causes this strange behaviour?
 
 ## Can functions be hashed semantically?
 
-Any Python object that can be [hashed]()[^1] can be used as a key in a `dict`.
-[^1]: That is, any object for which the builtin `hash()` will return a unique string.
+Any Python object that can be [hashed]()[^2] can be used as a key in a `dict`.
+[^2]: That is, any object for which the builtin `hash()` will return a unique string.
 
 While Python functions *are* hashable, their hash is essentially just a pointer to their memory address.
 

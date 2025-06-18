@@ -38,9 +38,11 @@ export function ModeToggle() {
       className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-10 w-10"
       disabled={!mounted}
       title={
-        uiConfig.theme.followSystemTheme 
-          ? `Current theme: ${theme || 'system'} (cycles: system → light → dark)`
-          : `Toggle theme (current: ${theme || 'light'})`
+        !mounted 
+          ? "Toggle theme"
+          : uiConfig.theme.followSystemTheme 
+            ? `Current theme: ${theme || 'system'} (cycles: system → light → dark)`
+            : `Toggle theme (current: ${theme || 'light'})`
       }
     >
       <span className="sr-only">Toggle theme</span>

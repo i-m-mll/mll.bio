@@ -148,8 +148,17 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
 export function MarginNote({ id, children }: MarginNoteProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldTruncate, setShouldTruncate] = useState(false)
+  const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
-  const marginNoteId = `marginnote-${id || Math.random().toString(36).substr(2, 9)}`
+
+  // Generate ID on client side to avoid hydration mismatch
+  useEffect(() => {
+    if (!id && !generatedId) {
+      setGeneratedId(`mn-${Math.random().toString(36).substr(2, 9)}`)
+    }
+  }, [id, generatedId])
+
+  const marginNoteId = id || generatedId || 'temp-id'
 
   // Apply configuration on mount
   useEffect(() => {
@@ -240,11 +249,11 @@ export function MarginNote({ id, children }: MarginNoteProps) {
 
   return (
     <span className="marginnote-wrapper">
-      <input type="checkbox" id={marginNoteId} className="margin-toggle-input" />
+      <input type="checkbox" id={`marginnote-${marginNoteId}`} className="margin-toggle-input" />
       <span 
         ref={contentRef}
         className={className} 
-        id={`marginnote-content-${id}`}
+        id={`marginnote-content-${marginNoteId}`}
       >
         {renderContent()}
       </span>

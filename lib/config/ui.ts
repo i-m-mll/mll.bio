@@ -58,8 +58,11 @@ export const uiConfig = {
     collapseButtonText: 'less',
     
     // Highlighting when targeted by anchor links
-    highlightOpacity: 0.15, // How strong the highlight background is (0-1)
-    highlightFadeDuration: '3s', // How long the highlight takes to fade out
+    highlightStartOpacity: 0.25, // Opacity at start of highlight (0-1)
+    highlightEndOpacity: 0.0,   // Opacity after fade completes (0-1)
+    highlightBorderStartOpacity: 0.5,
+    highlightBorderEndOpacity: 0.01,
+    highlightFadeDuration: '1.5s', // How long the highlight takes to fade out
   },
 
   // Future UI configurations can be added here
@@ -83,13 +86,17 @@ export function applySidenoteConfig() {
     // Set minimum spacing between sidenotes
     root.style.setProperty('--sidenote-min-space-between', sidenotes.minSpaceBetweenNotes)
     
-    // Set highlighting configuration
-    root.style.setProperty('--sidenote-highlight-opacity', sidenotes.highlightOpacity.toString())
+    // Set highlighting configuration variables
+    root.style.setProperty('--sidenote-highlight-start-opacity', sidenotes.highlightStartOpacity.toString())
+    root.style.setProperty('--sidenote-highlight-end-opacity', sidenotes.highlightEndOpacity.toString())
+    root.style.setProperty('--sidenote-highlight-border-start-opacity', sidenotes.highlightBorderStartOpacity.toString())
+    root.style.setProperty('--sidenote-highlight-border-end-opacity', sidenotes.highlightBorderEndOpacity.toString())
     root.style.setProperty('--sidenote-highlight-fade-duration', sidenotes.highlightFadeDuration)
     
     console.log('Applied sidenote config:', {
       minSpaceBetween: sidenotes.minSpaceBetweenNotes,
-      highlightOpacity: sidenotes.highlightOpacity,
+      highlightStartOpacity: sidenotes.highlightStartOpacity,
+      highlightEndOpacity: sidenotes.highlightEndOpacity,
       highlightFadeDuration: sidenotes.highlightFadeDuration
     })
   }

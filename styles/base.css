@@ -44,7 +44,7 @@
     
     /* Layout variables */
     --toc-width: 250px;
-    --sidenote-area-width: 20vw;
+    --sidenote-area-width: 22vw;
     --layout-gap: 2rem;
     --layout-padding: 1rem;
     --content-top-padding: 2rem;
@@ -67,16 +67,21 @@
     --prose-h4-font-size: 1.15rem;      /* Minor headings */
     
     /* Sidenote variables */
-    --sidenote-width-offset: 3rem;
-    --sidenote-min-width: 180px;
-    --sidenote-max-width: 320px;
-    --sidenote-margin-offset: 1rem;
+    --sidenote-width-offset: 1.5rem;
+    --sidenote-min-width: 100px;
+    --sidenote-max-width: 400px;
+    --sidenote-margin-offset: 0.75rem;
     --sidenote-font-size: 0.85rem;
     --sidenote-line-height: 1.4;
     --sidenote-padding: 0.5rem;
     --sidenote-margin-bottom: 0.5rem;
     --sidenote-scroll-margin: 2rem;
     --sidenote-min-space-between: 0.1rem; /* Minimal spacing between consecutive notes */
+    --sidenote-highlight-start-opacity: 0.25;
+    --sidenote-highlight-end-opacity: 0.05;
+    --sidenote-highlight-border-start-opacity: 0.5;
+    --sidenote-highlight-border-end-opacity: 0.1;
+    --sidenote-highlight-fade-duration: 3s;
     
     /* Mobile breakpoint and responsive values */
     --mobile-content-width: 78vw;

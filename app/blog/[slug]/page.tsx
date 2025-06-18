@@ -51,7 +51,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   return (
-    <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_20vw] gap-8 max-w-full px-2 tablet:px-4">
+    <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_18vw] gap-8 max-w-full px-2 tablet:px-4">
       <SidenoteSelection />
       {post.frontmatter.showtoc ? (
         <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
