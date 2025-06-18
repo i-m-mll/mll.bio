@@ -356,56 +356,95 @@
 }
 
 /* Text highlighting for when return links from sidenotes/footnotes are clicked */
-.text-highlight {
+.text-highlight,
+.text-highlight-dark {
   border-radius: 4px;
-  animation: fade-text-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out forwards !important;
+  animation-duration: var(--sidenote-highlight-fade-duration, 3s);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards !important;
+}
+
+.text-highlight {
+  animation-name: fade-highlight !important;
 }
 
 .text-highlight-dark {
+  animation-name: fade-highlight-dark !important;
+}
+
+/* Static (initial) highlight states */
+.static-highlight, 
+.static-highlight-dark {
   border-radius: 4px;
-  animation: fade-text-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out forwards !important;
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
 }
 
-@keyframes fade-text-highlight {
-  0% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
-  }
-  100% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
-  }
+/* Add padding and shrink-to-fit for block-level highlights in main text */
+p.static-highlight, p.static-highlight-dark,
+li.static-highlight, li.static-highlight-dark,
+div.static-highlight, div.static-highlight-dark,
+blockquote.static-highlight, blockquote.static-highlight-dark,
+p.text-highlight, p.text-highlight-dark,
+li.text-highlight, li.text-highlight-dark,
+div.text-highlight, div.text-highlight-dark,
+blockquote.text-highlight, blockquote.text-highlight-dark {
+  display: inline-block; /* Use inline-block to shrink-wrap the container to its content */
+  padding: 0.2em 0.4em;
 }
 
-@keyframes fade-text-highlight-dark {
-  0% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
-  }
-  100% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
-  }
+/* Add padding for highlighted footnote content */
+.footnote-content.static-highlight, 
+.footnote-content.static-highlight-dark,
+.footnote-content.highlight-replay,
+.footnote-content.highlight-replay-dark {
+  display: inline-block; /* Use inline-block to apply padding correctly */
+  padding: 0.1em 0.3em;
+  margin: -0.1em -0.3em;
+}
+
+/* New selection-style highlight for main text */
+.static-text-selection-highlight {
+  border-radius: 2px;
+  background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
+}
+
+.text-selection-highlight-animation {
+  animation: fade-bg-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
+}
+
+.text-selection-highlight-animation-dark {
+  animation: fade-bg-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
+}
+
+@keyframes fade-bg-highlight {
+  from { background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25)); }
+  to { background-color: transparent; }
+}
+
+@keyframes fade-bg-highlight-dark {
+  from { background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25)); }
+  to { background-color: transparent; }
 }
 
 @keyframes fade-highlight {
   0% { 
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
   }
   100% { 
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
   }
 }
 
 @keyframes fade-highlight-dark {
   0% { 
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
   }
   100% { 
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
   }
 } 

@@ -25,7 +25,7 @@ Margin notes are different from sidenotes in several ways: <MarginNote>Notice ho
 - **Margin notes**: Unnumbered, inserted inline without visible markers
 
 Both types of notes appear in the right margin[^5] and help maintain reading flow without disrupting
-the main text. 
+the main text. Reptoids are coming for me.
 
 ## Responsive Design
 

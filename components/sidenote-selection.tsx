@@ -233,27 +233,83 @@ export function SidenoteSelection() {
     // Listen for viewport size changes
     window.addEventListener('resize', updateSidenoteIds)
 
+    // Helper to watch for the end of a scroll event
+    const onScrollEnd = (callback: () => void) => {
+      let scrollTimeout: number
+      const scrollListener = () => {
+        window.clearTimeout(scrollTimeout)
+        scrollTimeout = window.setTimeout(() => {
+          window.removeEventListener('scroll', scrollListener)
+          callback()
+        }, 100) // 100ms of idle time = scroll ended
+      }
+      window.addEventListener('scroll', scrollListener)
+    }
+
     // Helper to minimally scroll element into view with configurable padding
-    const scrollElementIntoView = (el: HTMLElement) => {
-      if (!el) return
+    const scrollElementIntoView = (el: HTMLElement): boolean => {
+      if (!el) return false
+
       const padding = uiConfig.navigation.anchorScrollPaddingPx
       const viewportHeight = window.innerHeight
       const rect = el.getBoundingClientRect()
+      let didScroll = false
 
       // If element taller than viewport - 2*padding, align its top with padding
       if (rect.height + padding * 2 > viewportHeight) {
         const delta = rect.top - padding
         if (delta !== 0) {
           window.scrollBy({ top: delta, left: 0, behavior: 'smooth' })
+          didScroll = true
         }
-        return
-      }
-
-      if (rect.top < padding) {
+      } else if (rect.top < padding) {
         window.scrollBy({ top: rect.top - padding, left: 0, behavior: 'smooth' })
+        didScroll = true
       } else if (rect.bottom > viewportHeight - padding) {
         window.scrollBy({ top: rect.bottom - (viewportHeight - padding), left: 0, behavior: 'smooth' })
+        didScroll = true
       }
+
+      return didScroll
+    }
+
+    // Helper to apply selection-style highlight to a container's content
+    const applySelectionHighlight = (
+      containerEl: HTMLElement,
+      staticClass: string,
+      animationClass: string,
+      onEnd: (startFade: () => void) => void
+    ) => {
+      // Create a wrapper span for the content
+      const wrapper = document.createElement('span')
+      wrapper.className = staticClass
+
+      // Move all children of the container into the wrapper
+      while (containerEl.firstChild) {
+        wrapper.appendChild(containerEl.firstChild)
+      }
+      // Put the wrapper inside the container
+      containerEl.appendChild(wrapper)
+
+      const startFade = () => {
+        wrapper.classList.remove(staticClass)
+        wrapper.classList.add(animationClass)
+
+        const onAnimationEnd = () => {
+          // Animation finished, unwrap the content
+          const parent = wrapper.parentNode
+          if (parent) {
+            while (wrapper.firstChild) {
+              parent.insertBefore(wrapper.firstChild, wrapper)
+            }
+            parent.removeChild(wrapper)
+          }
+          wrapper.removeEventListener('animationend', onAnimationEnd)
+        }
+        wrapper.addEventListener('animationend', onAnimationEnd)
+      }
+
+      onEnd(startFade)
     }
 
     // Intercept clicks on superscript links for consistent animation behavior
@@ -272,27 +328,34 @@ export function SidenoteSelection() {
       // Prevent default automatic jump
       e.preventDefault()
 
-      // Minimal scroll to make sidenote fully visible
-      scrollElementIntoView(targetEl)
+      // If the target is a footnote, we want to highlight the content, not the whole item
+      let elementToHighlight = targetEl
+      if (targetEl.classList.contains('footnote-item')) {
+        const contentEl = targetEl.querySelector<HTMLElement>('.footnote-content')
+        if (contentEl) {
+          elementToHighlight = contentEl
+        }
+      }
+
+      // Minimal scroll to make sidenote fully visible (still scroll the container)
+      const didScroll = scrollElementIntoView(targetEl)
 
       // Update URL hash without additional scrolling
       history.replaceState(null, '', href)
 
-      // Highlight animation for sidenote
+      // Highlight main text
+      const textToHighlight = targetEl
       const isDark = document.documentElement.classList.contains('dark')
-      const animationClass = isDark ? 'highlight-replay-dark' : 'highlight-replay'
-      
-      // Remove any existing animation classes
-      targetEl.classList.remove(animationClass)
-      void targetEl.offsetWidth // force reflow
-      
-      // Add the animation class
-      targetEl.classList.add(animationClass)
-      
-      // Clean up after animation
-      targetEl.addEventListener('animationend', () => {
-        targetEl.classList.remove(animationClass)
-      }, { once: true })
+      const staticClass = 'static-text-selection-highlight'
+      const animationClass = isDark ? 'text-selection-highlight-animation-dark' : 'text-selection-highlight-animation'
+
+      applySelectionHighlight(textToHighlight, staticClass, animationClass, (startFade) => {
+        if (didScroll) {
+          onScrollEnd(startFade)
+        } else {
+          startFade()
+        }
+      })
     }
 
     document.addEventListener('click', handleAnchorClick)
@@ -315,7 +378,7 @@ export function SidenoteSelection() {
 
       // Scroll superscript (or its parent line) into view minimal
       const lineEl = targetEl.closest('p, div, li, blockquote') as HTMLElement || targetEl
-      scrollElementIntoView(lineEl)
+      const didScroll = scrollElementIntoView(lineEl)
 
       // Update URL hash
       history.replaceState(null, '', href)
@@ -323,14 +386,16 @@ export function SidenoteSelection() {
       // Highlight main text
       const textToHighlight = lineEl
       const isDark = document.documentElement.classList.contains('dark')
-      const animationClass = isDark ? 'text-highlight-dark' : 'text-highlight'
+      const staticClass = 'static-text-selection-highlight'
+      const animationClass = isDark ? 'text-selection-highlight-animation-dark' : 'text-selection-highlight-animation'
 
-      textToHighlight.classList.remove(animationClass)
-      void textToHighlight.offsetWidth
-      textToHighlight.classList.add(animationClass)
-      textToHighlight.addEventListener('animationend', () => {
-        textToHighlight.classList.remove(animationClass)
-      }, { once: true })
+      applySelectionHighlight(textToHighlight, staticClass, animationClass, (startFade) => {
+        if (didScroll) {
+          onScrollEnd(startFade)
+        } else {
+          startFade()
+        }
+      })
     }
 
     document.addEventListener('click', handleReturnLinkClick)

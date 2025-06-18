@@ -58,11 +58,11 @@ export const uiConfig = {
     collapseButtonText: 'less',
     
     // Highlighting when targeted by anchor links
-    highlightStartOpacity: 0.2, // Opacity at start of highlight (0-1)
+    highlightStartOpacity: 0.1, // Opacity at start of highlight (0-1)
     highlightEndOpacity: 0.0,   // Opacity after fade completes (0-1)
     highlightBorderStartOpacity: 0.5,
     highlightBorderEndOpacity: 0.01,
-    highlightFadeDuration: '1.5s', // How long the highlight takes to fade out
+    highlightFadeDuration: '1s', // How long the highlight takes to fade out
   },
 
   // Navigation / anchor scrolling
