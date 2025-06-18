@@ -3,15 +3,14 @@ title: Semantic hashing of Python *where*-functions
 published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
-abstract: 
+abstract: git adIn general, it is not possible to verify that two functions are equivalent in their semantics/behaviour. 
 ---
 
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional]() transformations, and the flexibility in structuring
+The basis of JAX's power is [functional]() transformations, and how flexibly we can structure
 computation graphs with `grad`, `vmap`, and `jit`.
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
-arguments, or the ability to
-to compute over arbitrary types of tree-structured inputs in a unified way.
+arguments, which allow us to compute over arbitrary types of tree-structured inputs in a unified way.
 To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX[^1] knows how to
 treat like any other tree because it's been told how to flatten and unflatten them".
 

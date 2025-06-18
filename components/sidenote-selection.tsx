@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 export function SidenoteSelection() {
   let isSelectingInNote = false
   let currentSelectingNote: HTMLElement | null = null
-  const lastClickedTargetRef = useRef<string | null>(null)
 
   useEffect(() => {
     // Handle mouse down events for note selection
@@ -233,7 +232,7 @@ export function SidenoteSelection() {
     // Listen for viewport size changes
     window.addEventListener('resize', updateSidenoteIds)
 
-    // Intercept clicks on superscript links on mobile/tablet to ensure smooth navigation
+    // Intercept clicks on superscript links for consistent animation behavior
     const handleAnchorClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement).closest('a.sidenote-number') as HTMLAnchorElement | null
       if (!anchor) return
@@ -247,46 +246,39 @@ export function SidenoteSelection() {
       if (!targetEl) return
 
       const isMobile = window.innerWidth <= DESKTOP_BREAKPOINT
-      const isRepeatClick = lastClickedTargetRef.current === targetId
 
-      // Update tracked target
-      lastClickedTargetRef.current = targetId
+      // Always prevent default and handle manually for consistent behavior
+      e.preventDefault()
 
       if (isMobile) {
-        e.preventDefault()
-        // Smooth scroll to target
+        // Smooth scroll to target on mobile
         document.documentElement.style.scrollBehavior = 'smooth'
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
         setTimeout(() => {
           document.documentElement.style.scrollBehavior = ''
         }, 600)
-        
-        // Always set hash for mobile to trigger animation
-        location.hash = href
       }
 
-      // Handle repeat clicks for animation restart
-      if (isRepeatClick) {
-        e.preventDefault()
-        // Force animation restart using CSS class approach
-        const isDark = document.documentElement.classList.contains('dark')
-        const animationClass = isDark ? 'highlight-replay-dark' : 'highlight-replay'
-        
-        // Remove class if it exists
+      // Always use manual animation approach for consistency
+      const isDark = document.documentElement.classList.contains('dark')
+      const animationClass = isDark ? 'highlight-replay-dark' : 'highlight-replay'
+      
+      // Remove any existing animation classes
+      targetEl.classList.remove(animationClass)
+      void targetEl.offsetWidth // force reflow
+      
+      // Add the animation class
+      targetEl.classList.add(animationClass)
+      
+      // Clean up after animation
+      targetEl.addEventListener('animationend', () => {
         targetEl.classList.remove(animationClass)
-        void targetEl.offsetWidth // force reflow
-        
-        // Add the class to trigger animation
-        targetEl.classList.add(animationClass)
-        
-        // Remove the class after animation completes
-        targetEl.addEventListener('animationend', () => {
-          targetEl.classList.remove(animationClass)
-        }, { once: true })
-      } else if (!isMobile) {
-        // First-time click on desktop: let default behavior work
+      }, { once: true })
+      
+      // Also set hash for proper URL behavior (after a small delay to avoid conflicts)
+      setTimeout(() => {
         location.hash = href
-      }
+      }, 50)
     }
 
     document.addEventListener('click', handleAnchorClick)

@@ -82,33 +82,12 @@
 /* Add visual feedback when sidenote is targeted by anchor link */
 .sidenote:target {
   border-radius: 4px;
-  animation: fade-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
+  /* Animation is now handled exclusively by JS for consistency */
 }
 
 .dark .sidenote:target {
-  animation: fade-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
-}
-
-@keyframes fade-highlight {
-  0% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
-  }
-  100% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
-  }
-}
-
-@keyframes fade-highlight-dark {
-  0% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
-  }
-  100% { 
-    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
-    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
-  }
+  /* Animation is now handled exclusively by JS for consistency */
+  border-radius: 4px;
 }
 
 /* Style margin notes - improved CSS-only positioning */
@@ -317,11 +296,12 @@
 /* Add highlighting for footnotes when targeted by anchor links */
 .footnote-item:target {
   border-radius: 4px;
-  animation: fade-highlight var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
+  /* Animation is now handled exclusively by JS for consistency */
 }
 
 .dark .footnote-item:target {
-  animation: fade-highlight-dark var(--sidenote-highlight-fade-duration, 3s) ease-out forwards;
+  /* Animation is now handled exclusively by JS for consistency */
+  border-radius: 4px;
 }
 
 /* Sidenote truncation and toggle functionality */
@@ -398,6 +378,28 @@
 }
 
 @keyframes fade-text-highlight-dark {
+  0% { 
+    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
+    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
+  }
+  100% { 
+    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
+    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
+  }
+}
+
+@keyframes fade-highlight {
+  0% { 
+    background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
+    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
+  }
+  100% { 
+    background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
+    border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
+  }
+}
+
+@keyframes fade-highlight-dark {
   0% { 
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-start-opacity, 0.25));
     border-color: rgba(59, 130, 246, var(--sidenote-highlight-border-start-opacity, 0.5));
