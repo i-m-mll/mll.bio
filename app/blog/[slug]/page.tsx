@@ -8,7 +8,7 @@ import { MobileToc } from "@/components/mobile-toc"
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
-import { renderInlineMarkdown, renderAbstractMarkdown } from "@/lib/utils"
+import { renderInlineMarkdown, stripMarkdown } from "@/lib/utils"
 
 export async function generateStaticParams() {
   // Only generate pages for published posts if blog is enabled
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: post.frontmatter.title,
+    title: stripMarkdown(post.frontmatter.title),
     description: post.frontmatter.description,
   }
 }
@@ -71,9 +71,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
           />
           {post.frontmatter.abstract && (
-            <div 
-              className="text-muted-foreground italic text-lg"
-              dangerouslySetInnerHTML={{ __html: renderAbstractMarkdown(post.frontmatter.abstract) }}
+            <div
+              className="p-4 rounded-md bg-stone-75 dark:bg-stone-925 mb-6"
+              dangerouslySetInnerHTML={{
+                __html: renderInlineMarkdown(post.frontmatter.abstract)
+              }}
             />
           )}
         </article>

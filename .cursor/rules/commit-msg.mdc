@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+With each significant edit or addition, add an entry to [COMMIT_MSG.txt](mdc:COMMIT_MSG.txt) describing very briefly what
+was done.
+
+For minor corrections to previous edits or additions, you do not need to add a new entry, but may
+edit an existing entry *if* it has become inaccurate due to the correction.
+
+The entry should be in point form, beginning with a hyphen. 
+
+It should be in present active voice; for example, "Refactor blorbos for consistency" or "Adjust
+spacing of ducks to reduce resource consumption". (Do not actually put these examples in the file!)

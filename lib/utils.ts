@@ -24,6 +24,24 @@ export function renderInlineMarkdown(text: string): string {
 }
 
 /**
+ * Strips all inline markdown formatting from a string.
+ * Used for generating clean titles for browser tabs, etc.
+ */
+export function stripMarkdown(text: string): string {
+  return text
+    // Remove bold: **text** or __text__
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/__(.*?)__/g, '$1')
+    // Remove italic: *text* or _text_
+    .replace(/(?<!\w)\*(.*?)\*(?!\w)/g, '$1')
+    .replace(/(?<!\w)_(.*?)_(?!\w)/g, '$1')
+    // Remove inline code: `text`
+    .replace(/`(.*?)`/g, '$1')
+    // Remove strikethrough: ~~text~~
+    .replace(/~~(.*?)~~/g, '$1')
+}
+
+/**
  * Specialized inline markdown renderer for abstracts.
  * The abstract itself is rendered in italic, so markdown *italic* becomes regular text (inverted).
  */

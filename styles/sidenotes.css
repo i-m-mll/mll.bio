@@ -124,7 +124,7 @@
 .marginnote {
   @apply max-desktop:block max-desktop:static max-desktop:italic max-desktop:text-gray-600;
   @apply max-desktop:float-none max-desktop:clear-none;
-  @apply max-desktop:my-5 max-desktop:ml-6 max-desktop:-mb-2 max-desktop:py-2 max-desktop:px-0;
+  @apply max-desktop:my-5 max-desktop:ml-6 max-desktop:-mb-6 max-desktop:py-4 max-desktop:px-0;
   @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
   /* Mobile width constraints for blockquote-like wrapping - wrap sooner than main text */
   @apply max-desktop:max-w-[calc(100%-4rem)] max-desktop:w-[calc(100%-4rem)];

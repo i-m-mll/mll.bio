@@ -39,6 +39,10 @@ const config = {
         'note': '1.4',
       },
       colors: {
+        stone: {
+          75: '#f8f8f7',
+          925: '#141210'
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -125,6 +129,7 @@ const config = {
             },
             code: {
               color: "var(--foreground)",
+              fontWeight: "400",
             },
             'code::before': {
               content: '""',

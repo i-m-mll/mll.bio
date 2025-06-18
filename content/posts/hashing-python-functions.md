@@ -16,9 +16,9 @@ abstract: |
 
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
 The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming) transformations like [`grad`](), [`vmap`](), and
-[`jit`](), and how flexibly we can structure computation graphs.
+[`jit`](), and how flexibly we can structure our computation graphs.
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
-arguments, or the ability to compute over arbitrary types of tree-structured inputs in a unified
+arguments, or the ability to transform over arbitrary types of tree-structured inputs in a unified
 way. <MarginNote>To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
 knows how to
 treat like any other tree because it's been told how to flatten and unflatten them".</MarginNote>
