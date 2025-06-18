@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from 'react'
+import { uiConfig } from '@/lib/config/ui'
 
 export function SidenoteSelection() {
   let isSelectingInNote = false
@@ -232,6 +233,29 @@ export function SidenoteSelection() {
     // Listen for viewport size changes
     window.addEventListener('resize', updateSidenoteIds)
 
+    // Helper to minimally scroll element into view with configurable padding
+    const scrollElementIntoView = (el: HTMLElement) => {
+      if (!el) return
+      const padding = uiConfig.navigation.anchorScrollPaddingPx
+      const viewportHeight = window.innerHeight
+      const rect = el.getBoundingClientRect()
+
+      // If element taller than viewport - 2*padding, align its top with padding
+      if (rect.height + padding * 2 > viewportHeight) {
+        const delta = rect.top - padding
+        if (delta !== 0) {
+          window.scrollBy({ top: delta, left: 0, behavior: 'smooth' })
+        }
+        return
+      }
+
+      if (rect.top < padding) {
+        window.scrollBy({ top: rect.top - padding, left: 0, behavior: 'smooth' })
+      } else if (rect.bottom > viewportHeight - padding) {
+        window.scrollBy({ top: rect.bottom - (viewportHeight - padding), left: 0, behavior: 'smooth' })
+      }
+    }
+
     // Intercept clicks on superscript links for consistent animation behavior
     const handleAnchorClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement).closest('a.sidenote-number') as HTMLAnchorElement | null
@@ -245,21 +269,16 @@ export function SidenoteSelection() {
       
       if (!targetEl) return
 
-      const isMobile = window.innerWidth <= DESKTOP_BREAKPOINT
-
-      // Always prevent default and handle manually for consistent behavior
+      // Prevent default automatic jump
       e.preventDefault()
 
-      if (isMobile) {
-        // Smooth scroll to target on mobile
-        document.documentElement.style.scrollBehavior = 'smooth'
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        setTimeout(() => {
-          document.documentElement.style.scrollBehavior = ''
-        }, 600)
-      }
+      // Minimal scroll to make sidenote fully visible
+      scrollElementIntoView(targetEl)
 
-      // Always use manual animation approach for consistency
+      // Update URL hash without additional scrolling
+      history.replaceState(null, '', href)
+
+      // Highlight animation for sidenote
       const isDark = document.documentElement.classList.contains('dark')
       const animationClass = isDark ? 'highlight-replay-dark' : 'highlight-replay'
       
@@ -274,11 +293,6 @@ export function SidenoteSelection() {
       targetEl.addEventListener('animationend', () => {
         targetEl.classList.remove(animationClass)
       }, { once: true })
-      
-      // Also set hash for proper URL behavior (after a small delay to avoid conflicts)
-      setTimeout(() => {
-        location.hash = href
-      }, 50)
     }
 
     document.addEventListener('click', handleAnchorClick)
@@ -291,35 +305,32 @@ export function SidenoteSelection() {
       const href = returnLink.getAttribute('href') || ''
       if (!href.startsWith('#')) return
 
-      // Don't prevent default - let normal navigation work
-      // e.preventDefault()
-      
+      // Prevent default navigation
+      e.preventDefault()
+
       const targetId = href.slice(1)
       const targetEl = document.getElementById(targetId)
       
       if (!targetEl) return
 
-      // Simple approach: just highlight the parent paragraph or wrapper containing the superscript
-      const textToHighlight = targetEl.closest('p, div, li, blockquote') as HTMLElement || targetEl.parentElement
-      if (!textToHighlight) return
+      // Scroll superscript (or its parent line) into view minimal
+      const lineEl = targetEl.closest('p, div, li, blockquote') as HTMLElement || targetEl
+      scrollElementIntoView(lineEl)
 
-      // Apply highlight animation with a delay to allow navigation to complete
-      setTimeout(() => {
-        const isDark = document.documentElement.classList.contains('dark')
-        const animationClass = isDark ? 'text-highlight-dark' : 'text-highlight'
-        
-        // Remove existing highlights
+      // Update URL hash
+      history.replaceState(null, '', href)
+
+      // Highlight main text
+      const textToHighlight = lineEl
+      const isDark = document.documentElement.classList.contains('dark')
+      const animationClass = isDark ? 'text-highlight-dark' : 'text-highlight'
+
+      textToHighlight.classList.remove(animationClass)
+      void textToHighlight.offsetWidth
+      textToHighlight.classList.add(animationClass)
+      textToHighlight.addEventListener('animationend', () => {
         textToHighlight.classList.remove(animationClass)
-        void textToHighlight.offsetWidth // force reflow
-        
-        // Add highlight
-        textToHighlight.classList.add(animationClass)
-        
-        // Clean up after animation
-        textToHighlight.addEventListener('animationend', () => {
-          textToHighlight.classList.remove(animationClass)
-        }, { once: true })
-      }, 100)
+      }, { once: true })
     }
 
     document.addEventListener('click', handleReturnLinkClick)
