@@ -1,34 +1,32 @@
 ---
-title: Semantic hashing of Python *where*-functions
+title: Working with Python *where*-functions
 published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
 abstract: |
-    It is impossible in general to verify that two functions are equivalent in their semantics/behaviour. 
-    On the other hand, tests for equivalence should not generally mean tests for *syntactic* equivalence...
-    at least, that's the assumption Python makes. 
-    Likewise, Python does not compute hashes of functions from their syntactic structure, but from their memory address.
-    So it doesn't make sense to (say) use functions as keys of a `dict` to represent a mapping
-    from subtree-accessors (i.e. *where*-functions), to subtree-specific data.
-    But what if I very wisely decide I want to do that anyway?
+    It is impossible in general to verify the equivalence of functions in terms of their input behaviour, or *semantics*. 
+    Many programming languages, such as Python, don't evaluate function equivalence in terms of *syntax*, either.
+    Likewise, Python does not compute hashes of functions based on their structure, but only their memory address.
+    So it doesn't make sense to (say) use functions as keys of a `dict` when we want to represent a mapping
+    from subtree-accessors (i.e. *where*-functions) to subtree-specific data.
+    But what if I very wisely decide I need to do that anyway?
+    However misguided, it turns out solving this problem helps us with a more practical issue:
+    serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
 ---
 
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional]() transformations, and how flexibly we can structure
-computation graphs with `grad`, `vmap`, and `jit`.
+The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming) transformations like [`grad`](), [`vmap`](), and
+[`jit`](), and how flexibly we can structure computation graphs.
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
-arguments, or the ability to compute over arbitrary types of tree-structured inputs in a unified way.
-To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX[^1] knows how to
-treat like any other tree because it's been told how to flatten and unflatten them".
+arguments, or the ability to compute over arbitrary types of tree-structured inputs in a unified
+way. <MarginNote>To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
+knows how to
+treat like any other tree because it's been told how to flatten and unflatten them".</MarginNote>
 
 ## *Where*-functions
 
-*Where*-functions are just functions which select one or more nodes from a PyTree. What
-are they used for? 
-
-### As specs for out-of-place updates
-
-They are often used to specify nodes whose values will be replaced: 
+*Where*-functions are just functions which select one or more nodes from a PyTree. 
+A *where*-function can specify tree nodes whose values will be replaced: 
 
 ```python
 import jax
@@ -59,25 +57,7 @@ updated_tree = eqx.tree_at(
 
 <MarginNote>An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
 
-### As training hyperparameters
-
-Another common use case for a *where*-function is to define the parts of a model which will be trained:
-<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our *where*-function assumes that our model possesses whichever nodes it refers to.</MarginNote>
-```python 
-where_train = lambda model: (  
-    model.layer1,  
-    model.layer3, 
-)
-```
-
-Notice that `where_train` has the flavour of a hyperparameter: on different training runs or phases,
-we might want to train different parts of the model. So we might want to encode `where_train` in our
-hyperparameter data, similarly to how we would encode the number of training iterations, or the
-learning rate. 
-
-However, there are issues with trying to encode functions as data.
-
-### For specifying model initializations
+Similarly, we can use *where*-functions to specify partial initializations of model states. 
 
 <MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
 Our models may be PyTrees of callable `Module`s. The arguments we pass to these modules may also be
@@ -131,22 +111,29 @@ init_state_mapping[lambda states: states.some_substate.part] = some_new_init_dat
 
 This actually adds a *new* entry to the mapping, rather than replacing the old one.
 
-What causes this strange behaviour?
+What causes this strange behaviour? That depends on how Python decides whether two `dict` keys are
+the same, which is decided by their hash.
 
 ## What's in a function?
 
-Any Python object that can be [hashed]()[^1] can be used as a key in a `dict`.
+Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^1] can be used as a key in a `dict`.
 While a Python function *is* hashable, its hash is based on its *object identity*, which in
-CPython (i.e. for almost all Python users) is just its memory address. Thus all of the following
-evaluate to `False`:
+CPython (i.e. for almost all Python users) is just its memory address. So all of the following
+expressions evaluate to `False`:
 
 ```python
-id(lambda x: x) == id(lambda x: x)
-hash(lambda x: x) == hash(lambda x: x)
+# Explicitly compare by object identity
+id(lambda x: x) == id(lambda x: x)  
+(lambda x: x) is (lambda x: x)
+
+# Implicitly compare by object identity
 (lambda x: x) == (lambda x: x)
+
+# Explicitly compare function hash
+hash(lambda x: x) == hash(lambda x: x)
 ```
 <MarginNote>This is why switching from `dict[Callable, Any]` to `Sequence[tuple[Callable, Any]]`
-doesn't help: we still can't run comparisons between the `Callable`s!</MarginNote>
+doesn't help: we still can't run comparisons between the `Callable`s </MarginNote>
 
 At first this might seem kind of weird. Not only is `lambda x: x` obviously identical to `lambda x:
 x` in how it's written (i.e. its syntax), but the two are also obviously identical in how we should expect
@@ -157,14 +144,16 @@ Semantics? That's easy. And by "easy", of course I mean *impossible*: it's a wel
 fact](https://en.wikipedia.org/wiki/Rice%27s_theorem) that there's *no* general method by which we can test
 whether any two functions will always behave the same way, for all inputs. So if language designers want
 tools like `hash` and `==` operators to be general-purpose, and useful for comparing *any* two functions their
-users might write in their language, then the behaviour of those tools can't be based on semantics.
+users might write, then the behaviour of those tools can't be based on semantics.
 
-Syntax is easier... but probably still not worth it. To see why, check out these different
-representations we could use for a syntactic comparison. 
+### Syntactic equivalence
 
-<!--! PROBABLY PUT THESE INTO SOME KIND OF TABBED ELEMENT, or else split them up so they mesh with the attempts I made -->
+TODO: I'm not sure exactly if this should be here... maybe some of it could move into a callout? Appendix? But
+it is kind of useful as context for stuff that comes later. 
 
-### Source code
+We could also try to evaluate equivalence in terms of *syntax*, which is the structure of the function's code.
+
+#### Source code
 
 That is, a string literal containing the code as it appears in the source file. This is the most
 direct comparison we can make. It's pretty cheap, since we just need to compare the strings
@@ -186,7 +175,7 @@ def func_without_spaces(x):
     return x+1
 ```
 
-### Abstract syntax tree
+#### Abstract syntax tree
 
 An [Abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)** (AST) is a data
 structure specifically intended to represent the syntax of a program. All of the functions in the
@@ -214,20 +203,428 @@ In any case, generating ASTs may be kind of expensive, especially if we don't kn
 the things we want to compare will be, as is the case when a language designer is implementing a
 general operator like `==`.
 
-### Bytecode
+## Using *where*-functions as `dict` keys
+
+So this is `False`:
+
+```python
+hash(lambda x: x) == hash(lambda x: x)
+```
+
+And this is also `False`, for exactly the same reason:
+
+```python
+hash(lambda model: model.some_layer) == hash(lambda model: model.some_layer)
+```
+
+But `hash` is how `dict` processes keys: `dict` cannot see our *where*-functions the way we see
+them. It only sees them as unique but otherwise meaningless reference labels. 
+
+Still, once upon a time I decided that I really wanted to be able to use *where*-functions as `dict` keys. Since
+*where*-functions do not directly hash in terms of the part(s) of a PyTree they access, I would
+need to make a custom type of `dict` that did not treat *where*-functions as keys directly, but
+instead converted them to an intermediate value which *would* hash in those terms.
+The simplest choice is a string representation of the attribute accesses: we want a function
+`where_func_to_str` for which at least the following are `True`:
+
+```python
+where_func_to_str(lambda state: state.layer2) == "layer2"
+where_func_to_str(lambda s: s.some_substate.layer1) == "some_substate.layer1"
+where_func_to_str(lambda state: (state.layer2, state.layer3)) == ("layer2", "layer3")
+```
+
+1. Notice that the name of the bound variable ("state", "s", whatever) does not matter here. What is important is that
+given some PyTree, whatever its name, we are accessing some part(s) of it, whose names *are* given.
+
+2. What about other kinds of access, e.g. `lambda state: state.layer2['foo']`?
+
+3. <MarginNote>Tuples are also hashable, so `("layer2", "layer3")` is fine as a dict key. However,
+assuming we do find a `where_func_to_str` that works like we want, we'll need to make sure our
+*where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
+
+On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`.
+
+
+### First attempt: bytecode to string
 
 Once Python has parsed the literal source code, it encodes the program as a sequence of lower-level
 instructions for the interpreter to run the program. Therefore, bytecode is language-dependent;
 bytecode in Python looks different than bytecode for a different interpreted language. Parsing does
-involve some semantic interpretation, and unlike an AST, bytecode is not intended as a
+involve some semantic interpretation, and unlike an AST, bytecode is not mainly intended as a
 representation of syntax. But we can imagine the syntax *of* the resulting bytecode as a practically
 abstracted form of the syntax of our source code. 
 
 So in some cases, it might make sense to compare the bytecode of two functions, to test for some
 kind of equivalence. 
 
+```python
+from collections.abc import Callable
+import dis
 
 
+def get_where_str(where_func: Callable) -> str:
+    """
+    Returns a string representation of the (nested) attributes accessed by a function.
+
+    Only works for functions that take a single argument, and return that argument,
+    or a single (nested) attribute accessed from the argument.
+    """
+    bytecode = dis.Bytecode(where_func)
+    return ".".join(
+        instr.argrepr for instr in bytecode 
+        if instr.opname == "LOAD_ATTR"
+    )
+```
+
+But this is inefficient, inflexible, and really not best practice in Python. 
+
+It only works for a single attribute access. To make it work for arbitrarily complex subtrees would
+be annoying.
 
 
-[^1]: That is, any object for which the builtin `hash()` can take as an input, returning a unique string.
+### Second attempt: 
+
+My second attempt used the PyTree facilities from JAX+Equinox to use the where-function to modify the respective nodes of the PyTree, then figure out what their paths are, and return those. The paths are certainly one-to-one with their string representations. 
+
+While this method is in some ways more flexible than using bytecode, it was even slower. Also it
+required access to the tree we will be using the where-function on (or more technically, one that
+shares at least all the same node paths accessed by the where-function).
+
+```python
+from collections.abc import Callable
+
+import equinox as eqx
+import jax.tree as jt
+import jax.tree_utils as jtu
+from jaxtyping import PyTree
+
+
+class _NodeWrapper:
+    def __init__(self, value):
+        self.value = value
+
+
+class _NodePath:
+    def __init__(self, path):
+        self.path = path
+
+    def __iter__(self):
+        return iter(self.path)
+
+
+def where_func_to_paths(where: Callable, tree: PyTree):
+    """
+    Similar to `get_where_str`, but:
+
+    - returns node paths, not strings;
+    - works for `where` functions that return arbitrary PyTrees of nodes;
+    - works for arbitrary node access (e.g. dict keys, seq. indices)
+      and not just attribute access.
+
+    Limitations:
+
+    - requires a PyTree argument;
+    - assumes the same object does not appear as multiple nodes in the tree;
+    - if `where` specifies a node that is a subtree, it cannot also specify a node
+      within that subtree.
+
+    See [this issue](https://github.com/i-m-mll/feedbax/issues/14).
+    """
+    tree = eqx.tree_at(where, tree, replace_fn=lambda x: _NodeWrapper(x))
+    id_tree = jt.map(id, tree, is_leaf=lambda x: isinstance(x, _NodeWrapper))
+    node_ids = where(id_tree)
+
+    paths_by_id = {node_id: path for path, node_id in jtu.tree_leaves_with_path(
+        jt.map(
+            lambda x: x if x in jt.leaves(node_ids) else None,
+            id_tree,
+        )
+    )}
+
+    paths = jt.map(lambda node_id: _NodePath(paths_by_id[node_id]), node_ids)
+
+    return paths
+```
+
+### Third (and final) attempt
+
+The third solution, and the best one I've found so far, is based on passing an instance of special class to the where-function. 
+
+By defining the attribute-access and item-access behaviour for this class, we can easily construct a
+tree-of-strings representation of the structure of the where-function's return value. This is the most flexible method, and also by
+far the fastest.
+
+```python
+from collections.abc import Callable
+
+import jax.tree as jt
+from jaxtyping import PyTree
+
+
+class _WhereStrConstructor:
+
+    def __init__(self, label: str = ""):
+        self.label = label
+
+    def __getitem__(self, key: Any):
+        if isinstance(key, str):
+            key = f"'{key}'"
+        elif isinstance(key, type):
+            key = key.__name__
+        return _WhereStrConstructor("".join([self.label, f"[{key}]"]))
+
+    def __getattr__(self, name: str):
+        sep = "." if self.label else ""
+        return _WhereStrConstructor(sep.join([self.label, name]))
+
+
+def _get_where_str_constructor_label(x: _WhereStrConstructor) -> str:
+    return x.label
+
+
+def where_func_to_attr_str_tree(where: Callable) -> PyTree[str]:
+    """Similar to `get_where_str` and `where_func_to_paths`, but:
+
+    - Avoids complicated logic of parsing bytecode, or traversing pytrees;
+    - Works for `where` functions that return arbitrary PyTrees of node references;
+    - Runs significantly (10+ times) faster than the other solutions.
+    """
+
+    try:
+        return jt.map(_get_where_str_constructor_label, where(_WhereStrConstructor()))
+    except TypeError:
+        raise TypeError("`where` must return a PyTree of node references")
+```
+
+Now it's still not super efficient -- about 10 us per call, for the data I'm working with -- but I
+only need to do a small number of these operations every training iteration, so for my purposes it's
+just fine.
+
+Now that we have a decent `where_func_to_str`, we can construct the custom `dict` that effectively
+uses *where*-functions as keys. I'll leave the 
+
+## Serialisation of *where*-functions
+
+Another common use case for a *where*-function is to define the parts of a model which will be trained:
+<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our *where*-function assumes that our model possesses whichever nodes it refers to.</MarginNote>
+```python 
+where_train = lambda model: (  
+    model.layer1,  
+    model.layer3, 
+)
+```
+
+Notice that `where_train` has the flavour of a hyperparameter: on different training runs or phases,
+we might want to train different parts of the model. So we might want to encode `where_train` in our
+hyperparameter data, similarly to how we would encode the number of training iterations, or the
+learning rate. 
+
+Of course, it can be kind of inefficient to try to encode functions as data (e.g. an AST). And if we
+want our encoding to reflect the *effect* (i.e. semantics) of the function rather than simply the
+way it was coded, there is no general solution. But since we're working with *where*-functions in
+particular, we can just use `where_func_to_str` to convert them to an equivalent representation
+which is easily serialisable:
+
+```python
+where_func_to_str(where_train)
+>> ('layer1', 'layer3')
+```
+
+Of course, we'll probably want to deserialise this representation and convert it back into a
+*where*-function, like when loading hyperparameters from disk to start a training run. But the
+reverse transformation is not too difficult:
+
+```python
+from collections.abc import Callable
+from operator import attrgetter
+
+from jaxtyping import PyTree
+
+
+def attr_str_tree_to_where_func(tree: PyTree[str, 'T']) -> Callable[[[PyTree], PyTree[Any, 'T']]:
+    """Reverse transformation to `where_func_to_attr_str_tree`.
+
+    Takes a PyTree of strings describing attribute accesses, and returns a function
+    that returns a PyTree of attributes.
+    """
+    getters = jt.map(lambda s: attrgetter(s), tree)
+
+    def where_func(obj):
+        return jt.map(lambda g: g(obj), getters)
+
+    return where_func
+```
+
+NOTE: Though this is still missing the reverse __getitem__ logic, mainly because I've only ever serialised functions that make attribute accesses.
+
+## Conclusion
+
+I found this pretty interesting, and I learned a lot. 
+
+I am not a computer scientist, nor super knowledgeable about algorithms, so if you've read this far and you think I'm
+missing something obvious or that I've taken the wrong approach, I trust you to mention
+it!
+
+## Appendix: a `dict` that uses *where*-functions as keys
+
+We'll start by defining the general case of a `dict` that which transforms its keys before trying to hash them. 
+
+```python
+from abc import abstractmethod
+from collections import OrderedDict
+from collections.abc import MutableMapping
+from typing import Generic, TypeVar, overload
+
+
+T = TypeVar("T")
+KT1 = TypeVar("KT1")
+KT2 = TypeVar("KT2")
+VT = TypeVar("VT")
+
+class AbstractTransformedOrderedDict(MutableMapping[KT2, VT], Generic[KT1, KT2, VT]):
+    """Base for `OrderedDict`s which transform keys when getting and setting items.
+
+    It stores the original keys, and otherwise behaves (e.g. when iterating)
+    as though they are the true keys.
+
+    This is useful when we want to use a certain type of object as a key, but
+    it would not be hashed properly by `OrderedDict`, so we need to transform
+    it into something else. 
+
+    Based on https://stackoverflow.com/a/3387975
+    """
+    store: OrderedDict[KT1, tuple[KT2, VT]]
+
+    def __init__(self, *args, **kwargs):
+        self.store = OrderedDict()
+        self.update(OrderedDict(*args, **kwargs))
+
+    def __getitem__(self, key: KT1 | KT2) -> VT:
+        k = self._key_transform(key)
+        return self.store[k][1]
+
+    @overload
+    def get(self, key: KT1 | KT2) -> VT | None: ...
+    
+    @overload
+    def get(self, key: KT1 | KT2, default: T) -> VT | T: ...
+    
+    def get(self, key, default=None):
+        k = self._key_transform(key)
+        if k in self.store:
+            return self.store[k][1]
+        else:
+            return default
+
+    def __setitem__(self, key: KT2, value: VT):
+        self.store[self._key_transform(key)] = (key, value)
+
+    def __delitem__(self, key: KT2):
+        del self.store[self._key_transform(key)]
+
+    def __iter__(self):
+        for key in self.store:
+            yield self.store[key][0]
+
+    def __len__(self) -> int:
+        return len(self.store)
+
+    def tree_flatten(self):
+        """The same flatten function used by JAX for `dict`"""
+        return tuple(self.values()), tuple(self.keys())
+
+    @classmethod
+    def tree_unflatten(cls, keys, values):
+        return cls(zip(keys, values))
+
+    @abstractmethod
+    def _key_transform(self, key: KT1 | KT2) -> KT1:
+        # TODO: Subclass and implement the desired transformation.
+        ...
+```
+
+Finally, here is the dict that can use where-function lambdas as keys:
+
+```python
+from collections.abc import Callable
+from typing import TypeVar
+
+import equinox as eqx
+import jax.tree as jt
+from jax.tree_util import register_pytree_node_class
+from jaxtyping import Array, PyTree
+
+
+T = TypeVar('T')
+
+
+def _where_to_str(where: Callable) -> str:
+    """Return a single string representing a where-function."""
+    terms = where_func_to_attr_str_tree(where)
+    if isinstance(terms, str):
+        where_str = terms
+    else:
+        where_str = ", ".join(jt.leaves(terms))
+    return where_str
+
+@register_pytree_node_class
+class WhereDict(AbstractTransformedOrderedDict[str, Callable[[PyTree], Any], T]):
+    """An `OrderedDict` that allows use of where-functions as keys.
+
+    In particular, keys can be callables (functions/lambdas) that take a single argument,
+    and return a PyTree of leaves, as visited by attribute/item accesses.
+
+    Functions are parsed to strings, which can be used interchangeably as keys. 
+    For example, the following return the same value when `init_spec` is a `WhereDict`:
+
+    > init_spec[lambda state: state.mechanics.effector]
+    > init_spec['mechanics.effector']  
+
+    Finally, a `tuple[Callable, str]` may also be provided as a key, for cases where
+    different unique entries must be included for the same callable. For example,
+    the following are equivalent:
+
+    > init_spec[(lambda state: state.mechanics.effector, "first")]
+    > init_spec['mechanics.effector#first']
+
+    Note that the hash symbol `#` is used as a delimiter in the string representation.
+
+    ??? Note "Performance"
+        For typical initialization mappings (1-10 items) construction is on the order
+        of 50x slower than `OrderedDict`. Access is about 2-20x slower, depending
+        whether indexed by string or by callable.
+
+        However, we only need to do a single construction and a single access of
+        init_spec per batch/evaluation, so performance shouldn't matter too much in
+        practice: the added overhead is <50 us/batch, and a batch normally takes
+        at least 20,000 us to train.
+    """
+
+    def _key_transform(self, key: str | Callable | tuple[Callable, str]) -> str:
+        return self.key_transform(key)
+
+    @staticmethod
+    def key_transform(key: str | Callable | tuple[Callable, str]) -> str:
+
+        if isinstance(key, str):
+            pass
+        elif isinstance(key, Callable):
+            where_str = _where_to_str(key)
+            return where_str
+        elif isinstance(key, tuple):
+            if not isinstance(key[0], Callable) or not isinstance(key[1], str):
+                raise ValueError("Each `WhereDict` key should be supplied as a string, "
+                                 "a callable, or a tuple of a callable and a string")
+            where_str = _where_to_str(key[0])
+            return '#'.join([where_str, key[1]])
+        else:
+            raise ValueError("Each `WhereDict` key should be supplied as a string, "
+                             "a callable, or a tuple of a callable and a string")
+        return key
+
+    def __repr__(self):
+        return eqx.tree_pformat(self)
+```
+
+[^1]: That is, any object the builtin function `hash` can take as an input, [returning a unique
+    string](https://en.wikipedia.org/wiki/Hash_function).
