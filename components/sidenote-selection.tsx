@@ -196,44 +196,9 @@ export function SidenoteSelection() {
   }, [])
 
   useEffect(() => {
-    // Ensure in-text superscript links navigate to footnotes on mobile/tablet.
-    // Problem: both the hidden .sidenote span and the footnote <li> share the same id (e.g., "sidenote-1").
-    // Browsers jump to the *first* element with the id, which is the hidden sidenote span, so scrolling appears broken.
-    // Solution: When the viewport is <= 1050px (our `desktop` breakpoint), temporarily remove the id attribute from the hidden sidenote spans.
-    // When the viewport is > 1050px, restore the ids so links jump to the visible sidenotes again.
-
-    const DESKTOP_BREAKPOINT = 1050 // keep in sync with Tailwind `desktop` screen
-
-    const updateSidenoteIds = () => {
-      const isMobile = window.innerWidth <= DESKTOP_BREAKPOINT
-      const sidenoteEls = document.querySelectorAll<HTMLElement>('.sidenote, .marginnote')
-      sidenoteEls.forEach((el) => {
-        const currentId = el.getAttribute('id')
-        const storedOriginal = el.getAttribute('data-orig-id')
-
-        if (isMobile) {
-          // If id exists, stash it and remove it to avoid duplicate ids
-          if (currentId) {
-            el.setAttribute('data-orig-id', currentId)
-            el.removeAttribute('id')
-          }
-        } else {
-          // On desktop, ensure the element *has* its original id
-          const idToRestore = storedOriginal || currentId
-          if (idToRestore && !el.getAttribute('id')) {
-            el.setAttribute('id', idToRestore)
-          }
-        }
-      })
-    }
-
-    // Initial run
-    updateSidenoteIds()
-
-    // Listen for viewport size changes
-    window.addEventListener('resize', updateSidenoteIds)
-
-    // Helper to watch for the end of a scroll event
+    // Helper to watch for the end of a scroll event – extracted so it can be
+    // reused without relying on viewport-resize hacks that are no longer
+    // necessary now that sidenote/footnote IDs are unique.
     const onScrollEnd = (callback: () => void) => {
       let scrollTimeout: number
       const scrollListener = () => {
@@ -241,7 +206,7 @@ export function SidenoteSelection() {
         scrollTimeout = window.setTimeout(() => {
           window.removeEventListener('scroll', scrollListener)
           callback()
-        }, 100) // 100ms of idle time = scroll ended
+        }, 100) // 100 ms of idle time = scroll ended
       }
       window.addEventListener('scroll', scrollListener)
     }
@@ -406,21 +371,26 @@ export function SidenoteSelection() {
       for (const m of mutations) {
         m.addedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
-            if (node.classList.contains('sidenote') || node.classList.contains('marginnote') || node.querySelector('.sidenote, .marginnote')) {
+            if (
+              node.classList.contains('sidenote') ||
+              node.classList.contains('marginnote') ||
+              node.querySelector('.sidenote, .marginnote')
+            ) {
               shouldUpdate = true
             }
           }
         })
       }
       if (shouldUpdate) {
-        updateSidenoteIds()
+        // No id juggling needed any more – mutation observer kept for future
+        // enhancements but left empty.
       }
     })
 
     observer.observe(document.body, { childList: true, subtree: true })
 
+    // Clean-up
     return () => {
-      window.removeEventListener('resize', updateSidenoteIds)
       document.removeEventListener('click', handleAnchorClick)
       document.removeEventListener('click', handleReturnLinkClick)
       observer.disconnect()

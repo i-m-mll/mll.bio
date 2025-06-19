@@ -125,8 +125,27 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   // Return the structure that the CSS expects - wrap in sidenote-wrapper
   return (
     <span className="sidenote-wrapper">
+      {/*
+       * Provide two anchors so each layout (desktop vs mobile) can jump to a
+       * visible target without any runtime JavaScript. Only one anchor is
+       * shown at a time via Tailwind breakpoints.
+       */}
       <label htmlFor={`sidenote-toggle-${id}`} className="margin-toggle sidenote-number">
-        <a href={`#sidenote-${id}`} id={`sidenote-ref-${id}`} className="sidenote-number">
+        {/* Desktop / ≥1051 px – jump to the margin-sidenote */}
+        <a
+          href={`#sidenote-${id}`}
+          id={`sidenote-ref-${id}`}
+          className="sidenote-number desktop:inline max-desktop:hidden"
+        >
+          {numberValue}
+        </a>
+
+        {/* Mobile / <1051 px – jump to the footnote list item */}
+        <a
+          href={`#footnote-${id}`}
+          id={`footnote-ref-${id}`}
+          className="sidenote-number max-desktop:inline desktop:hidden"
+        >
           {numberValue}
         </a>
       </label>

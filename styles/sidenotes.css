@@ -228,17 +228,12 @@
   @apply relative inline;
 }
 
-/* Enable selection when sidenote is being selected - more specific and with !important */
+/* Enable selection when sidenote is being selected */
 .sidenote.selecting,
 .sidenote.selecting * {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   user-select: text !important;
-  
-  /* Create a selection boundary */
-  contain: style layout !important;
-  isolation: isolate !important;
-  position: relative !important;
 }
 
 /* Enable selection when margin note is being selected */
@@ -247,11 +242,6 @@
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   user-select: text !important;
-  
-  /* Create a selection boundary */
-  contain: style layout !important;
-  isolation: isolate !important;
-  position: relative !important;
 }
 
 /* Enhanced positioned sidenotes and margin notes - keep for potential future use */

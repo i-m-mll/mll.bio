@@ -7,7 +7,7 @@ abstract: |
     It is impossible in general to verify the equivalence of functions in terms of their behaviour, or semantics. 
     Many programming languages, including Python, don't evaluate function equivalence in terms of syntax, either.
     Nor does Python compute hashes of functions based on their structure, but merely their memory address.
-    So it doesn't make sense to represent a mapping from tree node-accessors to node-respective data,
+    So it doesn't make sense to represent a mapping from tree node-accessors to respective node data,
     with a `dict` that takes the node-accessors (that is, *where*-functions) as keys.
     But what if I very wisely insist I must build such a `dict` anyway?
     However misguided, it turns out solving this problem helps us with a more practical one:

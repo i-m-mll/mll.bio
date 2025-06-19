@@ -104,13 +104,6 @@ export function applySidenoteConfig() {
     root.style.setProperty('--sidenote-highlight-border-start-opacity', sidenotes.highlightBorderStartOpacity.toString())
     root.style.setProperty('--sidenote-highlight-border-end-opacity', sidenotes.highlightBorderEndOpacity.toString())
     root.style.setProperty('--sidenote-highlight-fade-duration', sidenotes.highlightFadeDuration)
-    
-    console.log('Applied sidenote config:', {
-      minSpaceBetween: sidenotes.minSpaceBetweenNotes,
-      highlightStartOpacity: sidenotes.highlightStartOpacity,
-      highlightEndOpacity: sidenotes.highlightEndOpacity,
-      highlightFadeDuration: sidenotes.highlightFadeDuration
-    })
   }
 }
 
@@ -123,10 +116,6 @@ export function applyCodeBlockConfig() {
     // Set code block overflow behavior
     root.style.setProperty('--code-block-overflow', codeBlocks.overflowBehavior === 'wrap' ? 'wrap' : 'auto')
     root.style.setProperty('--code-block-white-space', codeBlocks.overflowBehavior === 'wrap' ? 'pre-wrap' : 'pre')
-    
-    console.log('Applied code block config:', {
-      overflowBehavior: codeBlocks.overflowBehavior,
-    })
   }
 }
 

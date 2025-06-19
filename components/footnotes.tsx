@@ -106,9 +106,9 @@ export function Footnotes({ content }: FootnotesProps) {
     <div className="footnotes-section">
       <ol className="footnotes-list">
         {footnotes.map((footnote) => (
-          <li key={footnote.id} className="footnote-item" id={`sidenote-${footnote.id}`}>
+          <li key={footnote.id} className="footnote-item" id={`footnote-${footnote.id}`}>
             <a 
-              href={`#sidenote-ref-${footnote.id}`} 
+              href={`#footnote-ref-${footnote.id}`} 
               className="footnote-number-link"
               title="Return to text"
             >
