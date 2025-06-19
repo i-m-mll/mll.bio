@@ -79,6 +79,44 @@
   @apply max-desktop:hidden;
 }
 
+/* Positioned notes on mobile */
+.note-anchor-wrapper {
+  @apply max-desktop:block;
+}
+
+.marginnote-positioned {
+  @apply max-desktop:static max-desktop:block max-desktop:italic max-desktop:text-gray-600 
+    max-desktop:float-none max-desktop:clear-none 
+    max-desktop:ml-6 max-desktop:py-4 max-desktop:px-0 
+    max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none 
+    max-desktop:select-text;
+
+  /* 
+   * Ensure positioned notes match width and indentation of regular inline notes.
+   * The !important flags are necessary to override more specific selectors.
+   */
+  @apply max-desktop:!w-[calc(100%-4rem)] max-desktop:!max-w-[calc(100%-4rem)] max-desktop:!ml-6 max-desktop:!static;
+
+  @media not all and (min-width: 1051px) {
+    margin-top: var(--inline-note-margin-top) !important;
+    margin-bottom: var(--inline-note-margin-bottom) !important;
+  }
+}
+
+.dark .marginnote-positioned {
+  @apply max-desktop:text-gray-400;
+}
+
+/*
+ * This reduces the top margin of a positioned note when it follows a code
+ * block, compensating for the larger bottom margin of the `pre` element.
+ * You can adjust the `max-desktop:!-mt-1` value to fine-tune the spacing.
+ */
+.note-anchor-wrapper.ends-with-pre > .marginnote-positioned {
+  @apply max-desktop:!-mt-8;
+  @apply max-desktop:!-mb-2;
+}
+
 /* Add visual feedback when sidenote is targeted by anchor link */
 .sidenote:target {
   border-radius: 4px;
@@ -124,16 +162,31 @@
 .marginnote {
   @apply max-desktop:block max-desktop:static max-desktop:italic max-desktop:text-gray-600;
   @apply max-desktop:float-none max-desktop:clear-none;
-  @apply max-desktop:my-5 max-desktop:ml-6 max-desktop:-mb-6 max-desktop:py-4 max-desktop:px-0;
+  @apply max-desktop:ml-6 max-desktop:py-4 max-desktop:px-0;
   @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
   /* Mobile width constraints for blockquote-like wrapping - wrap sooner than main text */
   @apply max-desktop:max-w-[calc(100%-4rem)] max-desktop:w-[calc(100%-4rem)];
   /* Re-enable selection on mobile for margin notes */
   @apply max-desktop:select-text;
+
+  @media not all and (min-width: 1051px) {
+    margin-top: var(--inline-note-margin-top) !important;
+    margin-bottom: var(--inline-note-margin-bottom) !important;
+  }
 }
 
 .dark .marginnote {
   @apply max-desktop:text-gray-400;
+  /* 
+   * Ensure positioned notes match width and indentation of regular inline notes.
+   * The !important flags are necessary to override more specific selectors.
+   */
+  @apply max-desktop:!w-[calc(100%-4rem)] max-desktop:!max-w-[calc(100%-4rem)] max-desktop:!ml-6 max-desktop:!static;
+
+  @media not all and (min-width: 1051px) {
+    margin-top: var(--inline-note-margin-top) !important;
+    margin-bottom: var(--inline-note-margin-bottom) !important;
+  }
 }
 
 /* Special handling for the first note in each section to reduce initial gap */
@@ -201,18 +254,13 @@
   position: relative !important;
 }
 
-
-
 /* Enhanced positioned sidenotes and margin notes - keep for potential future use */
 .sidenote-positioned,
 .marginnote-positioned {
-  @apply bg-background border border-transparent rounded shadow-sm;
   /* Override float positioning for positioned notes */
   float: none !important;
   clear: none !important;
-  margin-right: 0 !important;
   /* Enhanced styling for positioned notes */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   z-index: 10;
   /* Ensure consistent sizing */
   width: calc(var(--sidenote-area-width) - var(--sidenote-width-offset));

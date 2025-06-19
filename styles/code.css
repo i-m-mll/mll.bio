@@ -1,0 +1,66 @@
+@import './code-themes/default-light.css';
+@import './code-themes/default-dark.css';
+
+:root {
+  --code-bg: theme('colors.stone.75');
+  --code-border-color: theme('colors.stone.200');
+  
+  --prose-pre-bg: var(--code-bg);
+}
+
+.dark {
+  --code-bg: theme('colors.stone.925');
+  --code-border-color: theme('colors.stone.800');
+
+  --prose-invert-pre-bg: var(--code-bg);
+}
+
+/* Base code block styling */
+.prose pre {
+  background-color: var(--code-bg);
+  border: 1px solid hsl(var(--border));
+  padding: theme('spacing.4');
+  border-radius: theme('borderRadius.md');
+  overflow-x: var(--code-block-overflow, auto);
+  white-space: var(--code-block-white-space, pre);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: theme('lineHeight.code');
+}
+
+/* Base inline code styling */
+/* This applies to all `code` elements within .prose */
+.prose code {
+    font-size: theme('fontSize.code');
+    font-weight: 400;
+}
+
+/* 
+ * Specific styling for inline code, i.e., `code` elements NOT inside a `pre` 
+ * block. The :not(:where([class~="hljs"] *)) part is a bit of a hack to
+ * exclude code blocks that have been processed by highlight.js, as those
+ * will have a `hljs` class on them.
+ */
+.prose :where(code):not(pre *) {
+  @apply bg-muted px-1 py-0.5 rounded;
+  font-size: 0.8em;
+}
+
+/* Code inside a pre block should have a transparent background */
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  color: hsl(var(--foreground));
+}
+
+/* 
+ * The .hljs class is added by highlight.js to the `code` element. 
+ * We need to make sure its background is transparent so that the `pre`
+ * element's background is visible.
+ * The `!important` is to override any background color that might be
+ * set by a highlight.js theme.
+ */
+.prose pre .hljs {
+  background-color: transparent !important;
+  color: hsl(var(--foreground));
+} 

@@ -43,8 +43,34 @@ show or hide the note content. <MarginNote>This margin note demonstrates **markd
 
 > **Note**: Margin notes now use `<MarginNote>content</MarginNote>` MDX components. The content supports full markdown including **bold**, *italic*, `code`, and [links](url)!
 
+### Positioned Margin Notes
+
+<NoteAnchor>
+<MarginNote top="0.5rem">This is a **positioned** margin note, anchored to the following code block. Its position is set using `top="0.5rem"`.</MarginNote>
+```python
+# This is a demonstration
+def hello_world():
+  print("Hello from a positioned note!")
+```
+</NoteAnchor>
+
+You can also align a margin note to a specific line of code.
+
+<NoteAnchor>
+<MarginNote line={5}>This note is aligned with line 5 of the code block.</MarginNote>
+```python
+# line 1
+# line 2
+# line 3
+# line 4
+def a_very_important_function(): # line 5
+  # This function is very important.
+  pass # line 7
+```
+</NoteAnchor>
+
 [^1]: This is your first sidenote! It appears in the right margin with a number that corresponds to the superscript in the text.
 [^2]: Here's the second numbered sidenote, showing how they maintain sequential numbering.
 [^3]: Edward Tufte is known for his work on information design and data visualization. His books demonstrate elegant typography and layout principles.
 [^4]: Tufte CSS is a set of stylesheets inspired by the handouts of Edward Tufte, available at https://edwardtufte.github.io/tufte-css/
-[^5]: The right margin provides space for both types of notes, with appropriate spacing between them. 
+[^5]: The right margin provides space for both types of notes, with appropriate spacing between them.

@@ -10,4 +10,5 @@
 @import '../styles/navigation.css';
 @import '../styles/sidenotes.css';
 @import '../styles/math.css';
-@import '../styles/components.css'; 
+@import '../styles/components.css';
+@import '../styles/code.css'; 

@@ -32,11 +32,25 @@ const config = {
         sans: ['et-book', 'serif'],
       },
 
+      fontWeight: {
+        thin: '100',
+        extralight: '200',
+        light: '300',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+        extrabold: '800',
+        black: '900',
+      },
+
       fontSize: {
         'note': '0.85rem',
+        'code': '0.8em',
       },
       lineHeight: {
         'note': '1.4',
+        'code': '1.7',
       },
       colors: {
         stone: {
@@ -82,78 +96,125 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      typography: {
+      typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {
           css: {
-            maxWidth: "100%",
-            color: "var(--foreground)",
+            '--prose-body': 'hsl(var(--foreground))',
+            '--prose-headings': 'hsl(var(--foreground))',
+            '--prose-lead': 'hsl(var(--foreground))',
+            '--prose-links': 'hsl(var(--primary))',
+            '--prose-bold': 'hsl(var(--foreground))',
+            '--prose-counters': 'hsl(var(--muted-foreground))',
+            '--prose-bullets': 'hsl(var(--muted-foreground))',
+            '--prose-hr': 'hsl(var(--border))',
+            '--prose-quotes': 'hsl(var(--foreground))',
+            '--prose-quote-borders': 'hsl(var(--border))',
+            '--prose-captions': 'hsl(var(--muted-foreground))',
+            '--prose-code': 'hsl(var(--foreground))',
+            '--prose-pre-code': 'hsl(var(--foreground))',
+            '--prose-pre-bg': 'transparent',
+            '--prose-th-borders': 'hsl(var(--border))',
+            '--prose-td-borders': 'hsl(var(--border))',
+            '--prose-invert-body': 'hsl(var(--background))',
+            '--prose-invert-headings': 'hsl(var(--background))',
+            '--prose-invert-lead': 'hsl(var(--background))',
+            '--prose-invert-links': 'hsl(var(--primary))',
+            '--prose-invert-bold': 'hsl(var(--background))',
+            '--prose-invert-counters': 'hsl(var(--muted-foreground))',
+            '--prose-invert-bullets': 'hsl(var(--muted-foreground))',
+            '--prose-invert-hr': 'hsl(var(--border))',
+            '--prose-invert-quotes': 'hsl(var(--background))',
+            '--prose-invert-quote-borders': 'hsl(var(--border))',
+            '--prose-invert-captions': 'hsl(var(--muted-foreground))',
+            '--prose-invert-code': 'hsl(var(--background))',
+            '--prose-invert-pre-code': 'hsl(var(--background))',
+            '--prose-invert-pre-bg': 'transparent',
+            '--prose-invert-th-borders': 'hsl(var(--border))',
+            '--prose-invert-td-borders': 'hsl(var(--border))',
+            
+            // Base styles
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+
+            // Heading margin multipliers
+            '--heading-margin-top-factor': '0.6',
+            '--heading-margin-bottom-factor': '0.6',
+
+            // Headings
+            h1: { 
+              fontSize: '1.9em', 
+              scrollMargin: 'var(--spacing-20, 5rem)',
+              marginTop: `calc(0em * var(--heading-margin-top-factor))`,
+              marginBottom: `calc(1em * var(--heading-margin-bottom-factor))`,
+            },
+            h2: { 
+              fontSize: '1.4em', 
+              scrollMargin: 'var(--spacing-20, 5rem)',
+              marginTop: `calc(1.8em * var(--heading-margin-top-factor))`,
+              marginBottom: `calc(0.9em * var(--heading-margin-bottom-factor))`,
+            },
+            h3: { 
+              fontSize: '1.2em', 
+              scrollMargin: 'var(--spacing-20, 5rem)',
+              marginTop: `calc(1.6em * var(--heading-margin-top-factor))`,
+              marginBottom: `calc(0.8em * var(--heading-margin-bottom-factor))`,
+            },
+            h4: { 
+              fontSize: '1.1em', 
+              scrollMargin: 'var(--spacing-20, 5rem)',
+              marginTop: `calc(1.5em * var(--heading-margin-top-factor))`,
+              marginBottom: `calc(0.7em * var(--heading-margin-bottom-factor))`,
+            },
+
+            // Paragraphs
+            p: {
+              fontWeight: theme('fontWeight.medium'),
+              marginTop: '0.6em',
+              marginBottom: `0.6em`,
+            },
+
+            // Links
             a: {
-              color: "var(--primary)",
-              "&:hover": {
-                color: "var(--primary)",
-              },
+              fontWeight: theme('fontWeight.medium'),
+              textDecoration: 'underline',
+              textUnderlineOffset: '4px',
             },
-            '[class~="lead"]': {
-              color: "var(--foreground)",
-            },
-            strong: {
-              color: "var(--foreground)",
-            },
-            "ol > li::marker": {
-              color: "var(--foreground)",
-            },
-            "ul > li::marker": {
-              color: "var(--foreground)",
-            },
-            hr: {
-              borderColor: "var(--border)",
-            },
+
+            // Blockquotes
             blockquote: {
-              color: "var(--foreground)",
-              borderLeftColor: "var(--border)",
+              borderLeftWidth: '4px',
+              paddingLeft: theme('spacing.4'),
+              fontStyle: 'italic',
             },
-            h1: {
-              color: "var(--foreground)",
+            
+            // Images
+            img: {
+              borderRadius: theme('borderRadius.md'),
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              textAlign: 'left',
             },
-            h2: {
-              color: "var(--foreground)",
-            },
-            h3: {
-              color: "var(--foreground)",
-            },
-            h4: {
-              color: "var(--foreground)",
-            },
-            "figure figcaption": {
-              color: "var(--muted-foreground)",
-            },
-            code: {
-              color: "var(--foreground)",
-              fontWeight: "400",
-            },
-            'code::before': {
-              content: '""',
-            },
-            'code::after': {
-              content: '""',
-            },
-            "a code": {
-              color: "var(--foreground)",
-            },
-            pre: {
-              color: "var(--foreground)",
-              backgroundColor: "var(--muted)",
+            
+            // Tables
+            table: {
+              width: '100%',
+              borderCollapse: 'collapse',
             },
             thead: {
-              color: "var(--foreground)",
-              borderBottomColor: "var(--border)",
+              backgroundColor: 'var(--muted)',
             },
-            "tbody tr": {
-              borderBottomColor: "var(--border)",
+            'th, td': {
+              border: `1px solid ${'var(--border)'}`,
+              padding: theme('spacing.2'),
+              textAlign: 'left',
             },
+            
+            // Remove default before/after content for code blocks
+            'code::before': { content: '""' },
+            'code::after': { content: '""' },
           },
         },
-      },
+      }),
     },
   },
   plugins: [

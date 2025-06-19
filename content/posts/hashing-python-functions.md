@@ -4,30 +4,39 @@ published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
 abstract: |
-    It is impossible in general to verify the equivalence of functions in terms of their input behaviour, or *semantics*. 
-    Many programming languages, such as Python, don't evaluate function equivalence in terms of *syntax*, either.
-    Likewise, Python does not compute hashes of functions based on their structure, but only their memory address.
-    So it doesn't make sense to (say) use functions as keys of a `dict` when we want to represent a mapping
-    from subtree-accessors (i.e. *where*-functions) to subtree-specific data.
-    But what if I very wisely decide I need to do that anyway?
-    However misguided, it turns out solving this problem helps us with a more practical issue:
+    It is impossible in general to verify the equivalence of functions in terms of their behaviour, or semantics. 
+    Many programming languages, including Python, don't evaluate function equivalence in terms of syntax, either.
+    Nor does Python compute hashes of functions based on their structure, but merely their memory address.
+    So it doesn't make sense to represent a mapping from tree node-accessors to node-respective data,
+    with a `dict` that takes the node-accessors (that is, *where*-functions) as keys.
+    But what if I very wisely insist I must build such a `dict` anyway?
+    However misguided, it turns out solving this problem helps us with a more practical one:
     serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
 ---
 
+<NoteAnchor>
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
 The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming) transformations like [`grad`](), [`vmap`](), and
 [`jit`](), and how flexibly we can structure our computation graphs.
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
 arguments, or the ability to transform over arbitrary types of tree-structured inputs in a unified
-way. <MarginNote>To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
+way. 
+<MarginNote top="50%">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
 knows how to
-treat like any other tree because it's been told how to flatten and unflatten them".</MarginNote>
+treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
+</NoteAnchor>
 
 ## *Where*-functions
 
-*Where*-functions are just functions which select one or more nodes from a PyTree. 
-A *where*-function can specify tree nodes whose values will be replaced: 
+*Where*-functions are just functions which access one or more nodes of an input PyTree; that is,
+they return a different PyTree composed of one or more nodes from the input.
 
+One use case is to specify nodes whose values will be replaced: 
+
+<NoteAnchor>
+<MarginNote line={5}>An Equinox `Module` is a type of Python
+[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
+PyTree.</MarginNote>
 ```python
 import jax
 import equinox as eqx
@@ -52,14 +61,16 @@ updated_tree = eqx.tree_at(
     where_nodes_to_update,
     tree,
     (5, (6.28, 1.618)),
-) # == Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
-```
+) 
 
-<MarginNote>An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
+updated_tree 
+>> Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
+```
+</NoteAnchor>
 
 Similarly, we can use *where*-functions to specify partial initializations of model states. 
-
 <MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
+
 Our models may be PyTrees of callable `Module`s. The arguments we pass to these modules may also be
 PyTrees of data, or states. 
 
@@ -131,7 +142,7 @@ id(lambda x: x) == id(lambda x: x)
 
 # Explicitly compare function hash
 hash(lambda x: x) == hash(lambda x: x)
-```
+``` 
 <MarginNote>This is why switching from `dict[Callable, Any]` to `Sequence[tuple[Callable, Any]]`
 doesn't help: we still can't run comparisons between the `Callable`s </MarginNote>
 
@@ -161,7 +172,7 @@ character-by-character until there is a single mismatch. However, it's pretty na
 useful. Note that *none* of the following functions will test as equivalent if we compare them
 literally, though their syntactic differences are trivial:
 
-```
+```python
 def func(x):
     return x + 1
 
@@ -177,12 +188,12 @@ def func_without_spaces(x):
 
 #### Abstract syntax tree
 
-An [Abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)** (AST) is a data
-structure specifically intended to represent the syntax of a program. All of the functions in the
-previous example would test as having equivalent ASTs. However, most AST implementations represent
+An [**Abstract syntax tree**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST) is a data
+structure specifically intended to represent the syntax of a program. Python's
+[`ast`](https://docs.python.org/3/library/ast.html) implementation would say that all of the functions in the
+previous example have equivalent ASTs. However it, like most AST implementations includes
 the naming of [bound variable](https://en.wikipedia.org/wiki/Free_variables_and_bound_variables) as
-part of the syntax. So for example, Python's [`ast`](https://docs.python.org/3/library/ast.html)
-considers `lambda x: x` and `lambda y: y` to have different ASTs:
+part of the syntax. So for example:
 
 ```python
 def compare_ast(*code: str):
@@ -190,7 +201,7 @@ def compare_ast(*code: str):
     return len(set(tree_dumps)) == 1
 
 compare_ast("lambda x: x", "lambda x: (x)")  # True
-compare_ast("lambda x: x", "lambda y: y")  # False
+compare_ast("lambda x: x", "lambda y: y")  # False; the only difference is a bound variable name
 ```
 
 There are good reasons why we'd want to preserve bound variable names in ASTs, but when testing
@@ -245,7 +256,7 @@ assuming we do find a `where_func_to_str` that works like we want, we'll need to
 On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`.
 
 
-### First attempt: bytecode to string
+### First attempt: from bytecode 
 
 Once Python has parsed the literal source code, it encodes the program as a sequence of lower-level
 instructions for the interpreter to run the program. Therefore, bytecode is language-dependent;
@@ -282,7 +293,7 @@ It only works for a single attribute access. To make it work for arbitrarily com
 be annoying.
 
 
-### Second attempt: 
+### Second attempt: from node paths via `jax.tree`
 
 My second attempt used the PyTree facilities from JAX+Equinox to use the where-function to modify the respective nodes of the PyTree, then figure out what their paths are, and return those. The paths are certainly one-to-one with their string representations. 
 
@@ -295,7 +306,6 @@ from collections.abc import Callable
 
 import equinox as eqx
 import jax.tree as jt
-import jax.tree_utils as jtu
 from jaxtyping import PyTree
 
 
@@ -334,7 +344,7 @@ def where_func_to_paths(where: Callable, tree: PyTree):
     id_tree = jt.map(id, tree, is_leaf=lambda x: isinstance(x, _NodeWrapper))
     node_ids = where(id_tree)
 
-    paths_by_id = {node_id: path for path, node_id in jtu.tree_leaves_with_path(
+    paths_by_id = {node_id: path for path, node_id in jt.leaves_with_path(
         jt.map(
             lambda x: x if x in jt.leaves(node_ids) else None,
             id_tree,
@@ -346,7 +356,7 @@ def where_func_to_paths(where: Callable, tree: PyTree):
     return paths
 ```
 
-### Third (and final) attempt
+### Third attempt: representation tracer object
 
 The third solution, and the best one I've found so far, is based on passing an instance of special class to the where-function. 
 

@@ -44,11 +44,10 @@
     
     /* Layout variables */
     --toc-width: 250px;
-    --sidenote-area-width: 22vw;
     --layout-gap: 2rem;
     --layout-padding: 1rem;
-    --content-top-padding: 2rem;
-    --content-top-padding-mobile: 2rem;
+    --content-width: 48rem;
+    --sidebar-width: 16rem;
     
     /* TOC variables */
     --toc-sticky-top: 4rem;
@@ -59,29 +58,19 @@
     --mobile-toc-width-percent: 70%;
     --mobile-toc-left-padding: 2rem;
     
-    /* Typography variables */
-    --prose-body-font-size: 1.1rem;        /* Paragraph text */
-    --prose-h1-font-size: 2.1rem;      /* Main headings */
-    --prose-h2-font-size: 1.5rem;     /* Section headings */
-    --prose-h3-font-size: 1.25rem;       /* Subsection headings */
-    --prose-h4-font-size: 1.15rem;      /* Minor headings */
-    
     /* Sidenote variables */
-    --sidenote-width-offset: 1.5rem;
-    --sidenote-min-width: 100px;
-    --sidenote-max-width: 400px;
-    --sidenote-margin-offset: 0.75rem;
-    --sidenote-font-size: 0.85rem;
+    --sidenote-font-size: 0.8rem;
     --sidenote-line-height: 1.4;
+    --sidenote-min-space-between: 0.5rem;
+    --sidenote-area-width: 22vw; /* Use viewport width for responsive resizing */
+    --sidenote-width-offset: 1.5rem; /* Provides padding from the edge */
+    --sidenote-margin-offset: 0.75rem; /* Gap between text and note */
+    --sidenote-min-width: 100px;
+    --sidenote-max-width: 400px; /* Allow notes to grow wider */
     --sidenote-padding: 0.5rem;
-    --sidenote-margin-bottom: 0.5rem;
-    --sidenote-scroll-margin: 2rem;
-    --sidenote-min-space-between: 0.1rem; /* Minimal spacing between consecutive notes */
-    --sidenote-highlight-start-opacity: 0.25;
-    --sidenote-highlight-end-opacity: 0.05;
-    --sidenote-highlight-border-start-opacity: 0.5;
-    --sidenote-highlight-border-end-opacity: 0.1;
-    --sidenote-highlight-fade-duration: 3s;
+    --sidenote-margin-bottom: 1rem;
+    --sidenote-scroll-margin: 5rem;
+    --code-block-overflow: auto;
     
     /* Mobile breakpoint and responsive values */
     --mobile-content-width: 78vw;
@@ -89,6 +78,14 @@
     
     /* Footer variables */
     --footer-height: 2.5rem;
+
+    /* Spacing controls for inline notes on mobile */
+    --inline-note-margin-top: 1.25rem; /* Default: 1.25rem (my-5) */
+    --inline-note-margin-bottom: -1.25rem; /* Default: -1.5rem (-mb-6) */
+
+    /* New code block variables */
+    --code-block-overflow: auto;
+    --code-block-white-space: pre;
   }
 
   .dark {

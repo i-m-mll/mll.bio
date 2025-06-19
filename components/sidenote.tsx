@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
 interface SidenoteProps {
   id: string
@@ -15,6 +16,9 @@ interface SidenoteProps {
 interface MarginNoteProps {
   id?: string
   children: React.ReactNode
+  top?: string | number
+  y?: string | number
+  line?: number
 }
 
 export function Sidenote({ id, number, type = 'sidenote', children, content }: SidenoteProps) {
@@ -145,11 +149,13 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   )
 }
 
-export function MarginNote({ id, children }: MarginNoteProps) {
+export function MarginNote({ id, children, top, y, line }: MarginNoteProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
+  const isPositioned = top !== undefined || y !== undefined || line !== undefined
+  const isDesktop = useMediaQuery('(min-width: 1051px)')
 
   // Generate ID on client side to avoid hydration mismatch
   useEffect(() => {
@@ -245,14 +251,36 @@ export function MarginNote({ id, children }: MarginNoteProps) {
     }
   }
 
+  if (isPositioned) {
+    const style: React.CSSProperties = isDesktop ? {
+      position: 'absolute',
+      top: y || top,
+      left: '100%',
+      marginLeft: 'var(--sidenote-margin-offset)',
+    } : {}
+
+    const className = `marginnote marginnote-positioned${shouldTruncate ? ' sidenote-truncatable' : ''}${isExpanded ? ' sidenote-expanded' : ''}`
+
+    return (
+      <span
+        ref={contentRef}
+        className={className}
+        id={`marginnote-content-${marginNoteId}`}
+        style={style}
+      >
+        {renderContent()}
+      </span>
+    )
+  }
+
   const className = `marginnote${shouldTruncate ? ' sidenote-truncatable' : ''}${isExpanded ? ' sidenote-expanded' : ''}`
 
   return (
     <span className="marginnote-wrapper">
       <input type="checkbox" id={`marginnote-${marginNoteId}`} className="margin-toggle-input" />
-      <span 
+      <span
         ref={contentRef}
-        className={className} 
+        className={className}
         id={`marginnote-content-${marginNoteId}`}
       >
         {renderContent()}

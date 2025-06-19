@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/build-themes.mjs",
     "build": "next build",
+    "prebuild": "node scripts/build-themes.mjs",
     "start": "next start",
     "lint": "next lint",
     "serve": "npm run build && npx serve out -p 3000",

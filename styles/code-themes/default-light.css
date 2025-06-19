@@ -1,0 +1,36 @@
+/* Default Light theme for Highlight.js */
+.hljs-comment,
+.hljs-quote {
+  @apply text-gray-500;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  @apply text-blue-600;
+}
+
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-attribute {
+  @apply text-purple-600;
+}
+
+.hljs-string,
+.hljs-regexp {
+  @apply text-green-600;
+}
+
+.hljs-name,
+.hljs-tag {
+  @apply text-red-600;
+}
+
+.hljs-title {
+  @apply text-blue-700;
+}
+
+.hljs-number {
+  @apply text-orange-600;
+} 

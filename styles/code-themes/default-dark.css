@@ -1,0 +1,36 @@
+/* Default Dark theme for Highlight.js */
+.dark .hljs-comment,
+.dark .hljs-quote {
+  @apply text-gray-400;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-type {
+  @apply text-blue-400;
+}
+
+.dark .hljs-literal,
+.dark .hljs-symbol,
+.dark .hljs-bullet,
+.dark .hljs-attribute {
+  @apply text-purple-400;
+}
+
+.dark .hljs-string,
+.dark .hljs-regexp {
+  @apply text-green-400;
+}
+
+.dark .hljs-name,
+.dark .hljs-tag {
+  @apply text-red-400;
+}
+
+.dark .hljs-title {
+  @apply text-blue-300;
+}
+
+.dark .hljs-number {
+  @apply text-orange-400;
+} 

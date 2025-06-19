@@ -6,6 +6,7 @@ import * as runtime from "react/jsx-runtime"
 import * as devRuntime from "react/jsx-dev-runtime"
 import { Callout } from "@/components/callout"
 import { Sidenote, MarginNote } from "@/components/sidenote"
+import { NoteAnchor } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
 import { SidenoteProvider, useSidenoteNumber } from "@/components/sidenote-context"
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
@@ -19,6 +20,7 @@ const components = {
   Callout,
   Sidenote,
   MarginNote,
+  NoteAnchor,
   TableOfContents,
 }
 
@@ -43,7 +45,13 @@ function MDXRenderer({ children }: { children: string }) {
           ],
           rehypePlugins: [
             rehypeHeadingIds,
-            [rehypeHighlight, { ignoreMissing: true }],
+            [rehypeHighlight, { 
+              theme: {
+                light: 'github-light',
+                dark: 'github-dark',
+              },
+              ignoreMissing: true 
+            }],
             rehypeKatex
           ],
         })

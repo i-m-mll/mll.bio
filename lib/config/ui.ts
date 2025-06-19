@@ -31,6 +31,13 @@ export const uiConfig = {
     defaultMode: 'auto',
     // Enable theme persistence (remember user preference)
     persistMode: true,
+    // 'wrap': Text wraps within container, better for mobile
+    // 'scroll': Horizontal scrollbar appears when needed, preserves formatting
+    overflowBehavior: 'wrap' as 'wrap' | 'scroll',
+    // Set theme names by filename (without .css extension)
+    // from the styles/code-themes/ directory. Themes will be auto-downloaded.
+    lightTheme: 'github',
+    darkTheme: 'atom-one-dark',
   },
   
   // Code blocks configuration
@@ -38,7 +45,6 @@ export const uiConfig = {
     // Overflow behavior for code blocks ('wrap' | 'scroll')
     // 'wrap': Text wraps within container, better for mobile
     // 'scroll': Horizontal scrollbar appears when needed, preserves formatting
-    //! TODO: Fix 'scroll'
     overflowBehavior: 'wrap' as 'wrap' | 'scroll',
   },
   
