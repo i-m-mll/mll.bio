@@ -132,6 +132,9 @@ const config = {
             '--prose-invert-th-borders': 'hsl(var(--border))',
             '--prose-invert-td-borders': 'hsl(var(--border))',
             
+            // Set the max-width for the prose container
+            maxWidth: '48rem',
+
             // Base styles
             fontSize: '1.1rem',
             lineHeight: '1.6',

@@ -59,10 +59,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <StickyTitle title={post.frontmatter.title} />
       )}
       <div className="container pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
-        <article 
-          className="prose dark:prose-invert mx-auto relative mb-8"
-          style={{ maxWidth: 'var(--content-width)' }}
-        >
+        <article className="prose dark:prose-invert mx-auto relative mb-8">
           <div className="text-muted-foreground text-sm mb-6">
             <div>Published: {post.frontmatter.published}</div>
             {post.frontmatter.updated && (
@@ -87,10 +84,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <MobileToc content={post.content} />
         )}
         
-        <article 
-          className="prose dark:prose-invert mx-auto relative"
-          style={{ maxWidth: 'var(--content-width)' }}
-        >
+        <article className="prose dark:prose-invert mx-auto relative">
           <MDXContent>{post.content}</MDXContent>
           <Footnotes content={post.content} />
         </article>
