@@ -86,6 +86,12 @@
     /* New code block variables */
     --code-block-overflow: auto;
     --code-block-white-space: pre;
+    --code-block-padding: 1rem;
+    --code-block-border-width: 1px;
+    --code-block-offset: calc(var(--code-block-padding) + var(--code-block-border-width));
+
+    --prose-line-height: 1.6;
+    --code-line-height: 1.7;
   }
 
   .dark {

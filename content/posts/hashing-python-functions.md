@@ -14,17 +14,17 @@ abstract: |
     serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
 ---
 
-<NoteAnchor>
+<NoteScope>
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
 The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming) transformations like [`grad`](), [`vmap`](), and
 [`jit`](), and how flexibly we can structure our computation graphs.
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
 arguments, or the ability to transform over arbitrary types of tree-structured inputs in a unified
 way. 
-<MarginNote top="50%">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
+<MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
 knows how to
 treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
-</NoteAnchor>
+</NoteScope>
 
 ## *Where*-functions
 
@@ -33,10 +33,7 @@ they return a different PyTree composed of one or more nodes from the input.
 
 One use case is to specify nodes whose values will be replaced: 
 
-<NoteAnchor>
-<MarginNote line={5}>An Equinox `Module` is a type of Python
-[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
-PyTree.</MarginNote>
+<NoteScope>
 ```python
 import jax
 import equinox as eqx
@@ -66,7 +63,10 @@ updated_tree = eqx.tree_at(
 updated_tree 
 >> Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
 ```
-</NoteAnchor>
+<MarginNote target="eqx.Module">An Equinox `Module` is a type of Python
+[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
+PyTree.</MarginNote>
+</NoteScope>
 
 Similarly, we can use *where*-functions to specify partial initializations of model states. 
 <MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useMediaQuery } from "../hooks/use-media-query"
 
 interface SidenoteProps {
   id: string
@@ -19,6 +19,9 @@ interface MarginNoteProps {
   top?: string | number
   y?: string | number
   line?: number
+  dataTargetPosition?: string
+  dataPositioned?: string
+  dataInCode?: string
 }
 
 export function Sidenote({ id, number, type = 'sidenote', children, content }: SidenoteProps) {
@@ -168,12 +171,13 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   )
 }
 
-export function MarginNote({ id, children, top, y, line }: MarginNoteProps) {
+export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode }: MarginNoteProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
-  const isPositioned = top !== undefined || y !== undefined || line !== undefined
+  const isCodeBlock = dataInCode === 'true'
+  const isPositioned = top !== undefined || y !== undefined || line !== undefined || dataTargetPosition !== undefined || dataPositioned === 'true'
   const isDesktop = useMediaQuery('(min-width: 1051px)')
 
   // Generate ID on client side to avoid hydration mismatch
@@ -271,9 +275,21 @@ export function MarginNote({ id, children, top, y, line }: MarginNoteProps) {
   }
 
   if (isPositioned) {
+    let computedTop = y || top;
+    
+    // If target position is provided from remark plugin, use it (converted to CSS units)
+    if (dataTargetPosition !== undefined) {
+      const linePosition = parseInt(dataTargetPosition, 10);
+      if (isCodeBlock) {
+        computedTop = `calc(var(--code-block-offset, 1rem) + ${linePosition} * var(--code-line-height, 1.7) * 1em)`;
+      } else {
+        computedTop = `calc(${linePosition} * var(--prose-line-height, 1.6) * 1em)`;
+      }
+    }
+    
     const style: React.CSSProperties = isDesktop ? {
       position: 'absolute',
-      top: y || top,
+      top: computedTop,
       left: '100%',
       marginLeft: 'var(--sidenote-margin-offset)',
     } : {}

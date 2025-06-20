@@ -45,7 +45,7 @@ export const uiConfig = {
     // Overflow behavior for code blocks ('wrap' | 'scroll')
     // 'wrap': Text wraps within container, better for mobile
     // 'scroll': Horizontal scrollbar appears when needed, preserves formatting
-    overflowBehavior: 'wrap' as 'wrap' | 'scroll',
+    overflowBehavior: 'scroll' as 'wrap' | 'scroll',
   },
   
   // Sidenotes configuration
