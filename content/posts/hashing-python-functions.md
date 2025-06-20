@@ -16,8 +16,9 @@ abstract: |
 
 <NoteScope>
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming) transformations like [`grad`](), [`vmap`](), and
-[`jit`](), and how flexibly we can structure our computation graphs.
+The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming)
+transformations like [`grad`](), [`vmap`](), and [`jit`](), and how flexibly we can structure our
+computation graphs.[^3]
 But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
 arguments, or the ability to transform over arbitrary types of tree-structured inputs in a unified
 way. 
@@ -638,3 +639,5 @@ class WhereDict(AbstractTransformedOrderedDict[str, Callable[[PyTree], Any], T])
 
 [^1]: That is, any object the builtin function `hash` can take as an input, [returning a unique
     string](https://en.wikipedia.org/wiki/Hash_function).
+[^3]: Lorem ipsum dolor sit amet. Consectitur something something something. Albuquerque is okay
+    this time of year.

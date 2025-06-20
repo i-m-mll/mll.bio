@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
+import tailwindConfig from "../tailwind.config"
 
 interface SidenoteProps {
   id: string
@@ -22,6 +23,8 @@ interface MarginNoteProps {
   dataTargetPosition?: string
   dataPositioned?: string
   dataInCode?: string
+  dataMobileVersion?: string
+  dataFollowsCode?: string
 }
 
 export function Sidenote({ id, number, type = 'sidenote', children, content }: SidenoteProps) {
@@ -171,14 +174,15 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   )
 }
 
-export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode }: MarginNoteProps) {
+export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode, dataMobileVersion, dataFollowsCode }: MarginNoteProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const isCodeBlock = dataInCode === 'true'
   const isPositioned = top !== undefined || y !== undefined || line !== undefined || dataTargetPosition !== undefined || dataPositioned === 'true'
-  const isDesktop = useMediaQuery('(min-width: 1051px)')
+  const isMobileVersion = dataMobileVersion === 'true'
+  const isDesktop = useMediaQuery(`(min-width: ${tailwindConfig.theme.screens.desktop})`)
 
   // Generate ID on client side to avoid hydration mismatch
   useEffect(() => {
@@ -274,25 +278,44 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
     }
   }
 
-  if (isPositioned) {
+  if (isPositioned && !isMobileVersion) {
     let computedTop = y || top;
     
     // If target position is provided from remark plugin, use it (converted to CSS units)
     if (dataTargetPosition !== undefined) {
       const linePosition = parseInt(dataTargetPosition, 10);
       if (isCodeBlock) {
-        computedTop = `calc(var(--code-block-offset, 1rem) + ${linePosition} * var(--code-line-height, 1.7) * 1em)`;
+        /*
+         * Account for three sources of vertical space before the first line
+         * inside a fenced code block:
+         *   1. The <pre> padding-top  (var(--code-block-padding))
+         *   2. The <code> padding-top (same value in most highlight themes)
+         *   3. The <pre> top border      (var(--code-block-border-width))
+         *
+         * `--code-block-offset` already equals
+         *   pre-padding + pre-border-width.
+         * We add an extra var(--code-block-padding) here to include the
+         * <code> element's padding and achieve pixel-perfect alignment.
+         */
+        computedTop = `calc(var(--code-block-offset, 1rem) + var(--code-block-padding, 1rem) + ${linePosition} * var(--code-line-height, 1.7) * 1em)`;
       } else {
-        computedTop = `calc(${linePosition} * var(--prose-line-height, 1.6) * 1em)`;
+        // Inline prose positioning: rely on relative wrapper; align to start of text
+        computedTop = 0;
       }
     }
     
-    const style: React.CSSProperties = isDesktop ? {
-      position: 'absolute',
-      top: computedTop,
-      left: '100%',
-      marginLeft: 'var(--sidenote-margin-offset)',
-    } : {}
+    const style: React.CSSProperties = isDesktop
+      ? isCodeBlock
+        ? {
+            position: 'absolute',
+            top: computedTop,
+            left: '100%',
+            marginLeft: 'var(--sidenote-margin-offset)',
+          }
+        : {
+            marginTop: computedTop,
+          }
+      : {}
 
     const className = `marginnote marginnote-positioned${shouldTruncate ? ' sidenote-truncatable' : ''}${isExpanded ? ' sidenote-expanded' : ''}`
 
@@ -302,6 +325,23 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
         className={className}
         id={`marginnote-content-${marginNoteId}`}
         style={style}
+      >
+        {renderContent()}
+      </span>
+    )
+  }
+
+  // Handle mobile version of positioned notes
+  if (isMobileVersion) {
+    const className = `marginnote marginnote-mobile${shouldTruncate ? ' sidenote-truncatable' : ''}${isExpanded ? ' sidenote-expanded' : ''}`
+    const followsCode = dataFollowsCode === 'true'
+
+    return (
+      <span
+        ref={contentRef}
+        className={className}
+        id={`marginnote-content-${marginNoteId}`}
+        data-follows-code={followsCode ? 'true' : undefined}
       >
         {renderContent()}
       </span>

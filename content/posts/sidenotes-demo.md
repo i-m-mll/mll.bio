@@ -11,8 +11,6 @@ This post demonstrates how to use both Tufte-style sidenotes[^1] and margin note
 Sidenotes use standard footnote syntax and are numbered sequentially[^2], while margin notes use a
 different syntax and appear without numbers. <MarginNote>They're perfect for brief clarifications that don't need explicit referencing. You can even include **bold text**, *italic text*, `inline code`, and [markdown links](https://example.com) within them!</MarginNote>
 
-## fifi sisi fl ti 
-
 ## About Tufte-Style Sidenotes
 
 Edward Tufte's approach to sidenotes[^3] prioritizes keeping supplementary information close to the relevant text, rather than forcing readers to jump to the bottom of the page.
@@ -48,7 +46,7 @@ show or hide the note content. <MarginNote>This margin note demonstrates **markd
 ### Positioned Margin Notes
 
 <NoteScope>
-<MarginNote top="0.5rem">This is a **positioned** margin note, anchored to the following code block. Its position is set using `top="0.5rem"`.</MarginNote>
+<MarginNote top="1.5rem">This is a **positioned** margin note, anchored to the following code block. Its position is set using `top="0.5rem"`.</MarginNote>
 ```python
 # This is a demonstration
 def hello_world():
@@ -59,7 +57,7 @@ def hello_world():
 You can also align a margin note to a specific line of code.
 
 <NoteScope>
-<MarginNote line={5}>This note is aligned with line 5 of the code block.</MarginNote>
+<MarginNote>This note is aligned with line 5 of the code block.</MarginNote>
 ```python
 # line 1
 # line 2

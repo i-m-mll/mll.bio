@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { UiConfigProvider } from "@/components/ui-config-provider"
 import { CodeThemeLoader } from "@/components/code-theme-loader"
 import { siteConfig } from "@/lib/config/site"
+import { inter, roboto_mono, source_serif } from "@/lib/fonts"
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html 
+      lang="en" 
+      suppressHydrationWarning
+      className={`${inter.variable} ${roboto_mono.variable} ${source_serif.variable}`}
+    >
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
         <ThemeProvider>
           <UiConfigProvider />

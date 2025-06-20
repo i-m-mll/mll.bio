@@ -141,45 +141,16 @@ function markMarginNoteAsPositioned(marginNoteNode: any) {
 function processNoteScopeTargets(noteScopeNode: any) {
   const scopeTextContent = extractAllTextFromNode(noteScopeNode)
   
-    // Find all MarginNote elements within this scope (check both text and flow elements)
+  // Collect all MarginNote elements that need processing first
+  const notesToProcess: Array<{node: any, index: number, parent: any, type: 'text' | 'flow'}> = []
+  
+  // Find all MarginNote elements within this scope (check both text and flow elements)
   visit(noteScopeNode, 'mdxJsxTextElement', (marginNoteNode: any, index: number | undefined, parent: any) => {
     if (marginNoteNode.name === 'MarginNote') {
       const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
       
-      if (targetAttr && targetAttr.value) {
-        const targetText = targetAttr.value
-        const position = findTextPosition(scopeTextContent, targetText, noteScopeNode)
-        
-        if (position === null) {
-          throw new Error(`Target text "${targetText}" not found in NoteScope. Build failed to ensure content accuracy.`)
-        }
-        
-        // Add positioning data attributes to the MarginNote
-        marginNoteNode.attributes = marginNoteNode.attributes || []
-        marginNoteNode.attributes.push({
-          type: 'mdxJsxAttribute',
-          name: 'dataTargetPosition',
-          value: position.toString()
-        })
-
-        if (targetInCodeBlock(noteScopeNode, targetText)) {
-          marginNoteNode.attributes.push({
-            type: 'mdxJsxAttribute',
-            name: 'dataInCode',
-            value: 'true'
-          })
-        }
-        
-        // Inject the MarginNote inline at the target text location (for non-code targets)
-        if (!targetInCodeBlock(noteScopeNode, targetText)) {
-          injectMarginNoteAtTarget(noteScopeNode, marginNoteNode, targetText)
-          if (parent && index !== undefined) {
-            parent.children.splice(index, 1)
-          }
-        }
-        
-        // Remove the target attribute since we've processed it
-        marginNoteNode.attributes = marginNoteNode.attributes.filter((attr: any) => attr.name !== 'target')
+      if (targetAttr && targetAttr.value && parent && index !== undefined) {
+        notesToProcess.push({node: marginNoteNode, index, parent, type: 'text'})
       }
     }
   })
@@ -189,41 +160,128 @@ function processNoteScopeTargets(noteScopeNode: any) {
     if (marginNoteNode.name === 'MarginNote') {
       const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
       
-      if (targetAttr && targetAttr.value) {
-        const targetText = targetAttr.value
-        const position = findTextPosition(scopeTextContent, targetText, noteScopeNode)
-        
-        if (position === null) {
-          throw new Error(`Target text "${targetText}" not found in NoteScope. Build failed to ensure content accuracy.`)
-        }
-        
-        // Add positioning data attributes to the MarginNote
-        marginNoteNode.attributes = marginNoteNode.attributes || []
-        marginNoteNode.attributes.push({
-          type: 'mdxJsxAttribute',
-          name: 'dataTargetPosition',
-          value: position.toString()
-        })
-
-        if (targetInCodeBlock(noteScopeNode, targetText)) {
-          marginNoteNode.attributes.push({
-            type: 'mdxJsxAttribute',
-            name: 'dataInCode',
-            value: 'true'
-          })
-        }
-        
-        // Inject the MarginNote inline at the target text location (for non-code targets)
-        if (!targetInCodeBlock(noteScopeNode, targetText)) {
-          injectMarginNoteAtTarget(noteScopeNode, marginNoteNode, targetText)
-          if (parent && index !== undefined) {
-            parent.children.splice(index, 1)
-          }
-        }
-        
-        // Remove the target attribute since we've processed it
-        marginNoteNode.attributes = marginNoteNode.attributes.filter((attr: any) => attr.name !== 'target')
+      if (targetAttr && targetAttr.value && parent && index !== undefined) {
+        notesToProcess.push({node: marginNoteNode, index, parent, type: 'flow'})
       }
+    }
+  })
+  
+  // Process notes in reverse order to maintain correct indices when removing
+  notesToProcess.reverse().forEach(({node: marginNoteNode, index, parent, type}) => {
+    const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
+    const targetText = targetAttr.value
+    const position = findTextPosition(scopeTextContent, targetText, noteScopeNode)
+    
+    if (position === null) {
+      throw new Error(`Target text "${targetText}" not found in NoteScope. Build failed to ensure content accuracy.`)
+    }
+    
+    // Add positioning data attributes to the MarginNote
+    marginNoteNode.attributes = marginNoteNode.attributes || []
+    marginNoteNode.attributes.push({
+      type: 'mdxJsxAttribute',
+      name: 'dataTargetPosition',
+      value: position.toString()
+    })
+
+    if (targetInCodeBlock(noteScopeNode, targetText)) {
+      marginNoteNode.attributes.push({
+        type: 'mdxJsxAttribute',
+        name: 'dataInCode',
+        value: 'true'
+      })
+    }
+    
+    // For positioned notes, create a duplicate for mobile display
+    const mobileMarginNote = createMobileMarginNote(marginNoteNode, targetInCodeBlock(noteScopeNode, targetText))
+    
+    // Remove the original note from its current position FIRST
+    parent.children.splice(index, 1)
+    
+    // Create a clean desktop version (without mobile attributes)
+    const desktopMarginNote = JSON.parse(JSON.stringify(marginNoteNode)) // Clone for desktop
+    desktopMarginNote.attributes = desktopMarginNote.attributes?.filter((attr: any) => attr.name !== 'dataMobileVersion') || []
+    
+    // Inject the desktop version inline at the target text location (for non-code targets)
+    if (!targetInCodeBlock(noteScopeNode, targetText)) {
+      injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
+      // Insert mobile version after the containing paragraph
+      insertMobileMarginNoteAfterParagraph(noteScopeNode, mobileMarginNote, targetText)
+    } else {
+      // For code blocks, insert mobile version after the code block
+      insertMobileMarginNoteAfterCodeBlock(noteScopeNode, mobileMarginNote)
+      // Inject desktop version at the target location within the code block
+      injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
+    }
+    
+    // Remove the target attribute since we've processed it
+    marginNoteNode.attributes = marginNoteNode.attributes.filter((attr: any) => attr.name !== 'target')
+  })
+}
+
+// Create a mobile version of a margin note with unique ID
+function createMobileMarginNote(marginNoteNode: any, followsCodeBlock: boolean = false) {
+  const mobileNote = JSON.parse(JSON.stringify(marginNoteNode)) // Deep clone
+  
+  // Add mobile-specific attributes
+  mobileNote.attributes = mobileNote.attributes || []
+  
+  // Add attribute to mark this as mobile version
+  mobileNote.attributes.push({
+    type: 'mdxJsxAttribute',
+    name: 'dataMobileVersion',
+    value: 'true'
+  })
+  
+  // Add attribute to indicate if this follows a code block
+  if (followsCodeBlock) {
+    mobileNote.attributes.push({
+      type: 'mdxJsxAttribute',
+      name: 'dataFollowsCode',
+      value: 'true'
+    })
+  }
+  
+  // If there's an ID, modify it to prevent conflicts
+  const idAttr = mobileNote.attributes.find((attr: any) => attr.name === 'id')
+  if (idAttr) {
+    idAttr.value = `${idAttr.value}-mobile`
+  }
+  
+  return mobileNote
+}
+
+// Insert mobile margin note after the paragraph containing the target text
+function insertMobileMarginNoteAfterParagraph(noteScopeNode: any, mobileMarginNote: any, targetText: string) {
+  let inserted = false
+  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
+    if (inserted || !parent || index === undefined) return
+    
+    // Check if this is a paragraph that contains our target text
+    if (node.type === 'paragraph') {
+      const paragraphText = extractAllTextFromNode(node).toLowerCase()
+      if (paragraphText.includes(targetText.toLowerCase())) {
+        // Insert the mobile note after this paragraph
+        parent.children.splice(index + 1, 0, mobileMarginNote)
+        inserted = true
+        return SKIP // Stop traversing once we've found and inserted
+      }
+    }
+  })
+}
+
+// Insert mobile margin note after the code block
+function insertMobileMarginNoteAfterCodeBlock(noteScopeNode: any, mobileMarginNote: any) {
+  let inserted = false
+  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
+    if (inserted || !parent || index === undefined) return
+    
+    // Check if this is a code block
+    if (node.type === 'code') {
+      // Insert the mobile note after this code block
+      parent.children.splice(index + 1, 0, mobileMarginNote)
+      inserted = true
+      return SKIP // Stop traversing once we've found and inserted
     }
   })
 }
@@ -377,6 +435,67 @@ function targetInCodeBlock(noteScopeNode: any, targetText: string): boolean {
 function injectMarginNoteAtTarget(noteScopeNode: any, marginNoteNode: any, targetText: string) {
   let injected = false
 
+  // First, specifically look for the target text inside inline links (<a href="…">text</a>)
+  // so we can wrap the link node itself together with the MarginNote. This ensures
+  // the note does not become part of the anchor element.
+  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
+    if (injected || !parent || index === undefined) return
+
+    const isLinkNode =
+      node.type === 'link' ||
+      ((node.type === 'mdxJsxTextElement' || node.type === 'mdxJsxFlowElement') && node.name === 'a')
+
+    if (isLinkNode) {
+      const linkText = extractAllTextFromNode(node).toLowerCase()
+      if (linkText.includes(targetText.toLowerCase())) {
+        // Build a wrapper span that contains the whole link and the note
+        const wrapper = {
+          type: 'mdxJsxTextElement',
+          name: 'span',
+          attributes: [
+            { type: 'mdxJsxAttribute', name: 'className', value: 'note-anchor-wrapper' },
+          ],
+          children: [node, marginNoteNode],
+        }
+
+        // Replace the link node with the wrapper (note that `node` will now live inside wrapper)
+        parent.children.splice(index, 1, wrapper)
+
+        injected = true
+        return SKIP
+      }
+    }
+  })
+
+  // Second, look for target text within code blocks
+  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
+    if (injected || !parent || index === undefined) return
+
+    if (node.type === 'code') {
+      const codeText = node.value.toLowerCase()
+      const searchLower = targetText.toLowerCase()
+      
+      if (codeText.includes(searchLower)) {
+        // For code blocks, we wrap the entire code block with the note
+        const wrapper = {
+          type: 'mdxJsxTextElement',
+          name: 'span',
+          attributes: [
+            { type: 'mdxJsxAttribute', name: 'className', value: 'note-anchor-wrapper ends-with-pre' },
+          ],
+          children: [node, marginNoteNode],
+        }
+
+        // Replace the code block with the wrapper
+        parent.children.splice(index, 1, wrapper)
+
+        injected = true
+        return SKIP
+      }
+    }
+  })
+
+  // Third, look for target text in regular text nodes
   visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
     if (injected || !parent || index === undefined) return
 

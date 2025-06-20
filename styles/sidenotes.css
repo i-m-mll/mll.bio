@@ -81,26 +81,31 @@
 
 /* Positioned notes on mobile */
 .note-anchor-wrapper {
-  @apply max-desktop:block;
+  position: relative; /* allows absolute-positioned note to anchor to text */
+  @apply inline;
+  /* Ensure it stays inline on mobile to prevent unwanted line breaks */
+  @apply max-desktop:inline;
 }
 
+/* Ensure positioned notes within wrappers are hidden on mobile */
+.note-anchor-wrapper .marginnote-positioned {
+  @apply max-desktop:!hidden max-desktop:!invisible max-desktop:!opacity-0;
+}
+
+/* Positioned margin notes inherit the same horizontal float behaviour */
 .marginnote-positioned {
-  @apply max-desktop:static max-desktop:block max-desktop:italic max-desktop:text-gray-600 
-    max-desktop:float-none max-desktop:clear-none 
-    max-desktop:ml-6 max-desktop:py-4 max-desktop:px-0 
-    max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none 
-    max-desktop:select-text;
-
-  /* 
-   * Ensure positioned notes match width and indentation of regular inline notes.
-   * The !important flags are necessary to override more specific selectors.
-   */
-  @apply max-desktop:!w-[calc(100%-4rem)] max-desktop:!max-w-[calc(100%-4rem)] max-desktop:!ml-6 max-desktop:!static;
-
-  @media not all and (min-width: 1051px) {
-    margin-top: var(--inline-note-margin-top) !important;
-    margin-bottom: var(--inline-note-margin-bottom) !important;
-  }
+  float: right !important;
+  clear: right !important;
+  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  
+  /* Show on desktop only - mobile versions handled by .marginnote-mobile */
+  @apply desktop:block;
+  
+  /* Force hide on mobile with !important */
+  display: block !important;
+  
+  /* Hide on mobile using Tailwind desktop breakpoint */
+  @apply max-desktop:!hidden max-desktop:!invisible max-desktop:!opacity-0;
 }
 
 .dark .marginnote-positioned {
@@ -169,10 +174,7 @@
   /* Re-enable selection on mobile for margin notes */
   @apply max-desktop:select-text;
 
-  @media not all and (min-width: 1051px) {
-    margin-top: var(--inline-note-margin-top) !important;
-    margin-bottom: var(--inline-note-margin-bottom) !important;
-  }
+  @apply max-desktop:!mt-[var(--inline-note-margin-top)] max-desktop:!mb-[var(--inline-note-margin-bottom)];
 }
 
 .dark .marginnote {
@@ -183,10 +185,7 @@
    */
   @apply max-desktop:!w-[calc(100%-4rem)] max-desktop:!max-w-[calc(100%-4rem)] max-desktop:!ml-6 max-desktop:!static;
 
-  @media not all and (min-width: 1051px) {
-    margin-top: var(--inline-note-margin-top) !important;
-    margin-bottom: var(--inline-note-margin-bottom) !important;
-  }
+  @apply max-desktop:!mt-[var(--inline-note-margin-top)] max-desktop:!mb-[var(--inline-note-margin-bottom)];
 }
 
 /* Special handling for the first note in each section to reduce initial gap */
@@ -245,8 +244,7 @@
 }
 
 /* Enhanced positioned sidenotes and margin notes - keep for potential future use */
-.sidenote-positioned,
-.marginnote-positioned {
+.sidenote-positioned {
   /* Override float positioning for positioned notes */
   float: none !important;
   clear: none !important;
@@ -258,8 +256,7 @@
   max-width: var(--sidenote-max-width);
 }
 
-.dark .sidenote-positioned,
-.dark .marginnote-positioned {
+.dark .sidenote-positioned {
   @apply bg-background;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -485,4 +482,40 @@ blockquote.text-highlight, blockquote.text-highlight-dark {
     background-color: rgba(59, 130, 246, var(--sidenote-highlight-end-opacity, 0.05));
     box-shadow: 0 0 0 1px rgba(59, 130, 246, var(--sidenote-highlight-border-end-opacity, 0.1));
   }
+}
+
+/* Mobile version of positioned margin notes */
+.marginnote-mobile {
+  /* Hidden on desktop, shown on mobile as block element */
+  @apply hidden max-desktop:block;
+  @apply max-desktop:italic max-desktop:text-gray-600;
+  @apply max-desktop:ml-6 max-desktop:px-0;
+  @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
+  @apply max-desktop:max-w-[calc(100%-4rem)] max-desktop:w-[calc(100%-4rem)];
+  @apply max-desktop:select-text;
+
+  /* Force display as block on mobile even though it's a span */
+  @apply max-desktop:!block;
+
+  /* Remove margin-top to avoid double spacing with prose elements */
+  @apply max-desktop:!mt-0;
+  /* Add prose paragraph margin-bottom to our margin-bottom to maintain proper spacing */
+  @apply max-desktop:!mb-[calc(var(--inline-note-margin-bottom)+0.6em)];
+}
+
+/* Special handling for mobile margin notes that follow code blocks */
+.marginnote-mobile[data-follows-code="true"] {
+  /* Code blocks typically have larger margin-bottom (around 1.5em in most prose configs) */
+  @apply max-desktop:!mb-[calc(var(--inline-note-margin-bottom)+1.5em)];
+}
+
+/* Remove margin-bottom from prose elements that precede mobile margin notes to prevent double spacing */
+.prose p:has(+ .marginnote-mobile),
+.prose pre:has(+ .marginnote-mobile),
+.prose .note-anchor-wrapper pre {
+  @apply max-desktop:!mb-0;
+}
+
+.dark .marginnote-mobile {
+  @apply max-desktop:text-gray-400;
 } 

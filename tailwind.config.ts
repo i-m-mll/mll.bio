@@ -29,7 +29,9 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['et-book', 'serif'],
+        sans: ['et-book', 'var(--font-inter)', 'sans-serif'],
+        mono: ['var(--font-roboto-mono)', 'monospace'],
+        serif: ['var(--font-source-serif)', 'serif'],
       },
 
       fontWeight: {
@@ -138,6 +140,8 @@ const config = {
             // Base styles
             fontSize: '1.1rem',
             lineHeight: '1.6',
+            fontFeatureSettings: '"liga" 1, "kern" 1',
+            fontVariantLigatures: 'common-ligatures',
 
             // Heading margin multipliers
             '--heading-margin-top-factor': '0.6',

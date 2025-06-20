@@ -21,6 +21,17 @@ export const uiConfig = {
   typography: {
     // Global font scale multiplier (1 = normal, 1.1 = 10% larger, 0.9 = 10% smaller)
     globalFontScale: 1,
+    // Font configuration
+    fonts: {
+      // Define available fonts. The key will be used in the UI, and the value
+      // should match the CSS variable defined in `lib/fonts.ts`.
+      sans: 'et-book',
+      'sans-alt': 'var(--font-inter)',
+      mono: 'var(--font-roboto-mono)',
+      serif: 'var(--font-source-serif)',
+    },
+    // Default font to use
+    defaultFont: 'sans' as 'sans' | 'sans-alt' | 'mono' | 'serif',
   },
   
   // Theme settings
