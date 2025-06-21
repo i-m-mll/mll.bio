@@ -3,13 +3,23 @@ description:
 globs: 
 alwaysApply: true
 ---
-With each significant edit or addition, add an entry to [COMMIT_MSG.txt](mdc:COMMIT_MSG.txt) describing very briefly what
-was done.
-
-For minor corrections to previous edits or additions, you do not need to add a new entry, but may
-edit an existing entry *if* it has become inaccurate due to the correction.
+With each significant change to the codebase, add an entry to [COMMIT_MSG.txt](mdc:COMMIT_MSG.txt) describing very
+briefly what was done.
 
 The entry should be in point form, beginning with a hyphen. 
 
 It should be in present active voice; for example, "Refactor blorbos for consistency" or "Adjust
 spacing of ducks to reduce resource consumption". (Do not actually put these examples in the file!)
+
+Entries should describe high-level goals/features that were achieved; do not add entries related to  
+intermediate steps or debugging (e.g. "fix hydration error" or "edit properties in some file so that
+we can continue implementing feature X"). You may add entries for debugging if it is clear that the
+entire purpose/context is about a major debugging episode, e.g. "the user said that today we are
+doing an overhaul of feature X and getting rid of problems" is a good reason to create an entry, but
+"the user asked me to fix a problem that arose in the middle of implementing a feature" is not. 
+
+For corrections to previous edits or additions (e.g. "I misinterpreted what feature the user was
+asking for" or "the high-level description of the feature changed as we worked through its
+implementation") you should not add a new entry, but may edit an existing entry *if it has become
+inaccurate* due to the change.
+
