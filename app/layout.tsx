@@ -34,6 +34,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${roboto_mono.variable} ${source_serif.variable}`}
     >
+      <head>
+        <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />
+      </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
         <ThemeProvider>
           <UiConfigProvider />

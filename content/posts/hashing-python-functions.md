@@ -4,24 +4,23 @@ published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
 abstract: |
-    It is impossible in general to verify the equivalence of functions in terms of their behaviour, or semantics. 
-    Many programming languages, including Python, don't evaluate function equivalence in terms of syntax, either.
+    It is impossible in general to verify the equivalence of functions in terms of their input-output behaviour, or *semantics*. 
+    Many programming languages, including Python, don't evaluate functions' equivalence in terms of their *syntactic structure*, either.
     Nor does Python compute hashes of functions based on their structure, but merely their memory address.
-    So it doesn't make sense to represent a mapping from tree node-accessors to respective node data,
-    with a `dict` that takes the node-accessors (that is, *where*-functions) as keys.
+    So it doesn't make sense to represent a mapping from some tree node-accessors to some respective node data,
+    with a `dict` where the node-accessors (that is, *where*-functions) are keys.
     But what if I very wisely insist I must build such a `dict` anyway?
     However misguided, it turns out solving this problem helps us with a more practical one:
     serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
 ---
 
 <NoteScope>
-For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox](). 
-The basis of JAX's power is [functional](https://en.wikipedia.org/wiki/Functional_programming)
-transformations like [`grad`](), [`vmap`](), and [`jit`](), and how flexibly we can structure our
-computation graphs.[^3]
-But the *substance* of its power is [PyTree](https://jax.readthedocs.io/en/latest/pytrees.html)
-arguments, or the ability to transform over arbitrary types of tree-structured inputs in a unified
-way. 
+For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox]().
+The basis of JAX's power is how flexibly we can compose our computation graphs by writing in a
+[functional](https://en.wikipedia.org/wiki/Functional_programming) paradigm, using transformations
+like [`grad`](), [`vmap`](), and [`jit`](). But the *substance* of its power is
+[PyTrees](https://jax.readthedocs.io/en/latest/pytrees.html), or the ability to transform
+over arbitrary types of tree-structured inputs in a unified way. 
 <MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
 knows how to
 treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
@@ -29,8 +28,8 @@ treat like any other tree because it's been told how to flatten and unflatten th
 
 ## *Where*-functions
 
-*Where*-functions are just functions which access one or more nodes of an input PyTree; that is,
-they return a different PyTree composed of one or more nodes from the input.
+*Where*-functions are just functions which access one or more nodes from an input PyTree:
+they return a different PyTree, composed of one or more nodes from the input.
 
 One use case is to specify nodes whose values will be replaced: 
 
@@ -38,8 +37,9 @@ One use case is to specify nodes whose values will be replaced:
 ```python
 import jax
 import equinox as eqx
+from equinox import Module
 
-class Foo(eqx.Module):
+class Foo(Module):
     bar: dict[str, int]
     baz: tuple[float, float]
 
@@ -64,7 +64,7 @@ updated_tree = eqx.tree_at(
 updated_tree 
 >> Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
 ```
-<MarginNote target="eqx.Module">An Equinox `Module` is a type of Python
+<MarginNote target="(Module)">An Equinox `Module` is a type of Python
 [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
 PyTree.</MarginNote>
 </NoteScope>
@@ -114,17 +114,18 @@ init_state_mapping[lambda states: states.some_substate.part]
 
 This doesn't return `some_part_init_data`, but actually raises a `KeyError`.
 
-Likewise, if we wanted to update `init_state_mapping` to use some different data to initialize part
-of the state,
+Likewise, if we want to update `init_state_mapping` to use some different data to initialize part
+of the state, we might try this:
 
 ```python
 init_state_mapping[lambda states: states.some_substate.part] = some_new_init_data
 ```
 
-This actually adds a *new* entry to the mapping, rather than replacing the old one.
+But this actually adds a *new* entry to the mapping, rather than replacing the old one.
 
-What causes this strange behaviour? That depends on how Python decides whether two `dict` keys are
-the same, which is decided by their hash.
+What is responsible for this weirdness? It's that Python accesses and assigns entries to `dict`s
+depending on the *hash* of the given key... and this doesn't work like you might think, or like I
+once naively hoped, if the key happens to be a function.
 
 ## What's in a function?
 

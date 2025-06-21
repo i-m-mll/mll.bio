@@ -63,4 +63,5 @@
 .prose pre .hljs {
   background-color: transparent !important;
   color: hsl(var(--foreground));
+  /* padding: var(--code-block-padding); */
 } 

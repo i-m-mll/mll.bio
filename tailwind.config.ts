@@ -30,7 +30,7 @@ const config = {
     extend: {
       fontFamily: {
         sans: ['et-book', 'var(--font-inter)', 'sans-serif'],
-        mono: ['var(--font-roboto-mono)', 'monospace'],
+        mono: ['Iosevka Web', 'var(--font-roboto-mono)', 'monospace'],
         serif: ['var(--font-source-serif)', 'serif'],
       },
 
@@ -48,7 +48,7 @@ const config = {
 
       fontSize: {
         'note': '0.85rem',
-        'code': '0.8em',
+        'code': '0.85em',
       },
       lineHeight: {
         'note': '1.4',

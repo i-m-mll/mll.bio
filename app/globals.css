@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import 'typeface-et-book/et-book/et-book.css';
+@import '../styles/et-book-complete.css';
 @import 'katex/dist/katex.min.css';
 
 @config '../tailwind.config.ts';
