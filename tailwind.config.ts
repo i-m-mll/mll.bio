@@ -49,6 +49,9 @@ const config = {
       fontSize: {
         'note': '0.85rem',
         'code': '0.85em',
+        'title': '1.25rem',
+        // 'nav': ['0.875rem', { lineHeight: '1.25rem' }],
+        'nav': '1rem',
       },
       lineHeight: {
         'note': '1.4',

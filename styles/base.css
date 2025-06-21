@@ -88,6 +88,7 @@
     --code-block-white-space: pre;
     --code-block-padding: 1rem;
     --code-block-border-width: 1px;
+    --code-first-line-leading: calc((var(--code-line-height) - 1) * 0.5em);
     --code-block-offset: calc(var(--code-block-padding) + var(--code-block-border-width));
 
     --prose-line-height: 1.6;

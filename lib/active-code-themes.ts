@@ -2,7 +2,7 @@
 export const lightThemeCss = `pre code.hljs {
   display: block;
   overflow-x: auto;
-  padding: 1em
+  padding: 0
 }
 code.hljs {
   padding: 3px 5px
@@ -120,7 +120,7 @@ code.hljs {
 export const darkThemeCss = `pre code.hljs {
   display: block;
   overflow-x: auto;
-  padding: 1em
+  padding: 0
 }
 code.hljs {
   padding: 3px 5px

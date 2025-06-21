@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "serve": "npm run build && npx serve out -p 3000",
-    "serve-only": "npx serve out -p 3000"
+    "serve-only": "npx serve out -p 3000",
+    "dev-fonts": "node scripts/gen-font-variants.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.0",

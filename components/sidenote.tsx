@@ -286,18 +286,13 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
       const linePosition = parseInt(dataTargetPosition, 10);
       if (isCodeBlock) {
         /*
-         * Account for three sources of vertical space before the first line
-         * inside a fenced code block:
-         *   1. The <pre> padding-top  (var(--code-block-padding))
-         *   2. The <code> padding-top (same value in most highlight themes)
-         *   3. The <pre> top border      (var(--code-block-border-width))
-         *
-         * `--code-block-offset` already equals
-         *   pre-padding + pre-border-width.
-         * We add an extra var(--code-block-padding) here to include the
-         * <code> element's padding and achieve pixel-perfect alignment.
+         * The baseline of the first code line isn't flush with the top of
+         * the line-box; there's half of the extra leading that CSS inserts
+         * for the declared line-height.  With `line-height = 1.7`, that
+         * amounts to `(1.7 - 1) / 2 = 0.35` em.  We expose that as
+         * --code-first-line-leading so both CSS and JS can stay in sync.
          */
-        computedTop = `calc(var(--code-block-offset, 1rem) + var(--code-block-padding, 1rem) + ${linePosition} * var(--code-line-height, 1.7) * 1em)`;
+        computedTop = `calc(var(--code-block-offset, 1rem) + var(--code-first-line-leading) + ${linePosition} * var(--code-line-height, 1.7) * 1em)`;
       } else {
         // Inline prose positioning: rely on relative wrapper; align to start of text
         computedTop = 0;

@@ -8,6 +8,8 @@ import { UiConfigProvider } from "@/components/ui-config-provider"
 import { CodeThemeLoader } from "@/components/code-theme-loader"
 import { siteConfig } from "@/lib/config/site"
 import { inter, roboto_mono, source_serif } from "@/lib/fonts"
+import DevFontSwitcher from "@/components/DevFontSwitcher"
+import { uiConfig } from "@/lib/config/ui"
 
 export const metadata: Metadata = {
   title: {
@@ -45,6 +47,7 @@ export default function RootLayout({
             <SiteHeader />
             <main className="flex-1">{children}</main>
             <SiteFooter />
+            {process.env.NODE_ENV !== 'production' && uiConfig.devTools.fontSwitcher && <DevFontSwitcher />}
           </div>
         </ThemeProvider>
       </body>

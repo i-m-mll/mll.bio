@@ -20,14 +20,14 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center">
         <div className="mr-8">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl">{siteConfig.name}</span>
+            <span className="font-bold leading-none text-title" style={{ fontFamily: 'var(--dev-title-font, et-book)' }}>{siteConfig.name}</span>
           </Link>
         </div>
-        <nav className="flex items-center space-x-6 text-sm font-medium flex-1">
+        <nav className="flex items-center space-x-6 text-nav font-medium flex-1">
           <Link
             href="/"
             className={cn(
-              "transition-colors hover:text-foreground/80",
+              "site-nav-link transition-colors hover:text-foreground/80",
               pathname === "/" ? "text-foreground" : "text-foreground/60",
             )}
           >
@@ -38,7 +38,7 @@ export function SiteHeader() {
             <Link
               href="/blog"
               className={cn(
-                "transition-colors hover:text-foreground/80",
+                "site-nav-link transition-colors hover:text-foreground/80",
                 pathname?.startsWith("/blog") ? "text-foreground" : "text-foreground/60",
               )}
             >
@@ -50,7 +50,7 @@ export function SiteHeader() {
             <Link
               href="/about"
               className={cn(
-                "transition-colors hover:text-foreground/80",
+                "site-nav-link transition-colors hover:text-foreground/80",
                 pathname === "/about" ? "text-foreground" : "text-foreground/60",
               )}
             >

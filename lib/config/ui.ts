@@ -5,6 +5,7 @@ export const uiConfig = {
     scrollThreshold: 2,
     // Animation duration for hide/show transitions
     transitionDuration: 300, // milliseconds
+    themeToggleSizeRem: 2.25, // size of the theme toggle icon/button in rem
   },
   
   // Mobile Table of Contents
@@ -88,6 +89,12 @@ export const uiConfig = {
     anchorScrollPaddingPx: 80,
   },
 
+  // Dev tools toggles
+  devTools: {
+    // Enable or disable the in-browser font switcher overlay (dev only)
+    fontSwitcher: true,
+  },
+
   // Future UI configurations can be added here
   // animations: {
   //   defaultDuration: 200,
@@ -130,10 +137,20 @@ export function applyCodeBlockConfig() {
   }
 }
 
+// Utility function to apply header configuration to CSS custom properties
 // Combined function to apply all UI configurations
 export function applyUIConfig() {
   applySidenoteConfig()
   applyCodeBlockConfig()
+  if (typeof window !== 'undefined') {
+    const root = document.documentElement
+    const { header } = uiConfig
+    
+    // Set header icon size
+    if (header.themeToggleSizeRem !== undefined) {
+      root.style.setProperty('--header-icon-size', `${header.themeToggleSizeRem}rem`)
+    }
+  }
 }
 
 // Apply configuration on module load and DOM ready
