@@ -22,8 +22,7 @@ like [`grad`](), [`vmap`](), and [`jit`](). But the *substance* of its power is
 [PyTrees](https://jax.readthedocs.io/en/latest/pytrees.html), or the ability to transform
 over arbitrary types of tree-structured inputs in a unified way. 
 <MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
-knows how to
-treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
+knows how to treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
 </NoteScope>
 
 ## *Where*-functions
@@ -34,6 +33,7 @@ they return a different PyTree, composed of one or more nodes from the input.
 One use case is to specify nodes whose values will be replaced: 
 
 <NoteScope>
+
 ```python
 import jax
 import equinox as eqx
@@ -44,7 +44,8 @@ class Foo(Module):
     baz: tuple[float, float]
 
     def __call__(self, x: jax.Array):
-        # If `Foo` were part of a model, we could transform `x` here, using `bar` and `baz` as parameters.
+        # If `Foo` were part of a model, we could transform `x` here, 
+        # using `self.bar` and `self.baz` as parameters.
         ...
 
 tree = Foo(
@@ -70,10 +71,16 @@ PyTree.</MarginNote>
 </NoteScope>
 
 Similarly, we can use *where*-functions to specify partial initializations of model states. 
-<MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
+
+Typically I'll compose a model as a tree of Equinox `Module` objects. 
+Each module node may have leaves which are its parameters; it may also be callable, and specify a transformation of the model state. 
+But to keep the model purely functional, state cannot live inside the modules themselves.
+We can't do this: (Maybe put this in a callout)
 
 Our models may be PyTrees of callable `Module`s. The arguments we pass to these modules may also be
 PyTrees of data, or states. 
+
+<MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
 
 States typically have default initializations, but the user may want to provide custom
 initializations for some part(s) of the state, without needing to construct the entire PyTree
