@@ -5,10 +5,10 @@ updated: 2025-06-16
 description: Hashing the unhashable
 abstract: |
     It is impossible in general to verify the equivalence of functions in terms of their input-output behaviour, or *semantics*. 
-    Many programming languages, including Python, don't evaluate functions' equivalence in terms of their *syntactic structure*, either.
+    Many programming languages, including Python, don't evaluate functions' equivalence in terms of their code structure, or *syntax*, either.
     Nor does Python compute hashes of functions based on their structure, but merely their memory address.
     So it doesn't make sense to represent a mapping from some tree node-accessors to some respective node data,
-    with a `dict` where the node-accessors (that is, *where*-functions) are keys.
+    using a `dict` where the node-accessors (that is, *where*-functions) are keys.
     But what if I very wisely insist I must build such a `dict` anyway?
     However misguided, it turns out solving this problem helps us with a more practical one:
     serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
@@ -30,7 +30,7 @@ knows how to treat like any other tree because it's been told how to flatten and
 *Where*-functions are just functions which access one or more nodes from an input PyTree:
 they return a different PyTree, composed of one or more nodes from the input.
 
-One use case is to specify nodes whose values will be replaced: 
+One use case is to edit the nodes of a PyTree out-of-place. Suppose we have an instance of some data type:
 
 <NoteScope>
 
@@ -52,7 +52,15 @@ tree = Foo(
     dict(a=1, b=2),
     (3.14, 2.718)
 )
+```
+<MarginNote target="(Module)">An Equinox `Module` is a type of Python
+[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
+PyTree.</MarginNote>
+</NoteScope>
 
+A *where*-function lets us specify the nodes whose values will be replaced:
+
+```python
 where_nodes_to_update = lambda tree: (tree.bar['a'], tree.baz)
 
 # Update some parts of the tree
@@ -65,52 +73,59 @@ updated_tree = eqx.tree_at(
 updated_tree 
 >> Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
 ```
-<MarginNote target="(Module)">An Equinox `Module` is a type of Python
-[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
-PyTree.</MarginNote>
-</NoteScope>
 
-Similarly, we can use *where*-functions to specify partial initializations of model states. 
-
-Typically I'll compose a model as a tree of Equinox `Module` objects. 
-Each module node may have leaves which are its parameters; it may also be callable, and specify a transformation of the model state. 
-But to keep the model purely functional, state cannot live inside the modules themselves.
-We can't do this: (Maybe put this in a callout)
-
-Our models may be PyTrees of callable `Module`s. The arguments we pass to these modules may also be
-PyTrees of data, or states. 
-
-<MarginNote> This is the approach I used when designing [Feedbax]() </MarginNote>
-
-States typically have default initializations, but the user may want to provide custom
-initializations for some part(s) of the state, without needing to construct the entire PyTree
-themselves. 
-We might provide the custom intitializations as a mapping from one or more *where*-functions, which
-specify the part(s) of the state to initialize, to the respective data to initialize with:
+Similarly, suppose we are given a PyTree of default model states (i.e. arrays), and we'd like to
+initialize some its leaves using custom arrays. For each leaf we want to initialize, we could pair its
+*where*-function with an appropriate array value. But maybe we don't know beforehand exactly which
+leaves we'll want to initialize, so we'd like a general tool that can perform the initialization for
+us in any case:
 
 ```python
 from collections.abc import Callable
 from jaxtyping import Array, PyTree
 
+def replace_nodes(tree: PyTree, spec: Sequence[tuple[Callable, Any]]):
+    for where_func, node_value in spec:
+        tree = eqx.tree_at(where_func, tree, node_value)
+    return tree
+```
+
+This works, so long as the structure of the node
+values matches the structure of their respective *where*-function's return value. However, of course
+some of our *where*-functions might pick out trees containing redundant leaves from `tree`, and in
+that case we'll end up pointlessly replacing the same leaf more than once. Perhaps it is better to assume in
+this case that our *where*-functions will specify individual, unique leaves (or at least, trees of
+non-intersecting subsets of leaves). So, suppose instead we use the function:
+
+```python
+def replace_leaves(tree: PyTree, spec: Sequence[dict[Callable, Any]]):
+    for where_func, leaf_value in spec.items():
+        tree = eqx.tree_at(where_func, tree, leaf_value)
+    return tree
+```
+
+Now we can specify a mapping between *where*-functions that pick out unique leaves, and the arrays
+we should replace those leaves with:
+
+```python
 # Assume these have already been assigned
 default_state: PyTree[Array]  
 some_part_init_data: Array
 some_other_init_data: Array
 
 # Construct the mapping from parts of the state PyTree, to the data to initialize them with
-init_state_mapping: dict[Callable, Array] = {
-    (lambda states: states.some_substate.part): some_part_init_data,
-    (lambda states: states.some_other_substate.other_part): some_other_init_data,
+init_state_spec: dict[Callable, Array] = {
+    (lambda state: state.some_substate.part): some_part_init_data,
+    (lambda state: state.some_other_substate.other_part): some_other_init_data,
 } 
 
 # Update the default state with the custom init states
-state = default_state
-for where_func, init_substate in init_state_mapping.items():
-    state = eqx.tree_at(where_func, state, init_substate)
+initial_state = replace_nodes(default_state, init_state_spec)
 ```
 
-This does work, but we'll encounter some strange behaviour if we try to treat `init_state_mapping`
-as a mapping from parts-of-state to state-data. 
+This does work, but all is not what it seems. We'll encounter some strange behaviour if we assume
+that `init_state_spec` treats its *where*-function leaves as unique, *because they pick out unique
+leaves*.
 
 For example, if in some other context we want to determine which data will be used to initialize
 `states.some_substate.part`, we might try to access it like so:
@@ -119,10 +134,10 @@ For example, if in some other context we want to determine which data will be us
 init_state_mapping[lambda states: states.some_substate.part]
 ```
 
-This doesn't return `some_part_init_data`, but actually raises a `KeyError`.
+But this doesn't return `some_part_init_data`! It actually raises a `KeyError`.
 
-Likewise, if we want to update `init_state_mapping` to use some different data to initialize part
-of the state, we might try this:
+Likewise, if we already have some `init_state_spec` and want to update it to use some different data
+for part of the state, we might try this:
 
 ```python
 init_state_mapping[lambda states: states.some_substate.part] = some_new_init_data
@@ -130,15 +145,15 @@ init_state_mapping[lambda states: states.some_substate.part] = some_new_init_dat
 
 But this actually adds a *new* entry to the mapping, rather than replacing the old one.
 
-What is responsible for this weirdness? It's that Python accesses and assigns entries to `dict`s
-depending on the *hash* of the given key... and this doesn't work like you might think, or like I
-once naively hoped, if the key happens to be a function.
+What is responsible for this weirdness? Well, Python accesses and assigns `dict` entries based on
+the uniqueness of a key's *hash*... and this doesn't work like you might think, or like I
+once naively hoped, when the key happens to be a function.
 
 ## What's in a function?
 
 Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^1] can be used as a key in a `dict`.
 While a Python function *is* hashable, its hash is based on its *object identity*, which in
-CPython (i.e. for almost all Python users) is just its memory address. So all of the following
+CPython (i.e. for almost all Python users) is just its memory address. So **all** of the following
 expressions evaluate to `False`:
 
 ```python
@@ -149,22 +164,32 @@ id(lambda x: x) == id(lambda x: x)
 # Implicitly compare by object identity
 (lambda x: x) == (lambda x: x)
 
-# Explicitly compare function hash
+# Explicitly compare by hash
 hash(lambda x: x) == hash(lambda x: x)
 ``` 
-<MarginNote>This is why switching from `dict[Callable, Any]` to `Sequence[tuple[Callable, Any]]`
-doesn't help: we still can't run comparisons between the `Callable`s </MarginNote>
 
 At first this might seem kind of weird. Not only is `lambda x: x` obviously identical to `lambda x:
-x` in how it's written (i.e. its syntax), but the two are also obviously identical in how we should expect
+x` in how it's written (i.e. its structure, or syntax), but the two are also obviously identical in how we should expect
 them to behave (i.e. their meaning, or semantics). Why wouldn't Python test for equivalence in terms
-of either semantics or syntax?
+of either syntax or semantics?
 
 Semantics? That's easy. And by "easy", of course I mean *impossible*: it's a well-known [mathematical
 fact](https://en.wikipedia.org/wiki/Rice%27s_theorem) that there's *no* general method by which we can test
-whether any two functions will always behave the same way, for all inputs. So if language designers want
+whether any two functions will always behave the same way, for all inputs. So if programming language designers want
 tools like `hash` and `==` operators to be general-purpose, and useful for comparing *any* two functions their
 users might write, then the behaviour of those tools can't be based on semantics.
+
+TODO: Syntax? ...
+
+For the same reason none of this works for `lambda x: x`, it also doesn't work for any
+*where*-function:
+
+```python
+hash(lambda model: model.some_layer) == hash(lambda model: model.some_layer)
+```
+
+Since `dict` uses `hash` to determine the uniqueness of keys, and the `hash` of a *where*-function
+is not determined by what it picks out, `dict` cannot see our *where*-functions the way we see them. 
 
 ### Syntactic equivalence
 
@@ -225,27 +250,12 @@ general operator like `==`.
 
 ## Using *where*-functions as `dict` keys
 
-So this is `False`:
-
-```python
-hash(lambda x: x) == hash(lambda x: x)
-```
-
-And this is also `False`, for exactly the same reason:
-
-```python
-hash(lambda model: model.some_layer) == hash(lambda model: model.some_layer)
-```
-
-But `hash` is how `dict` processes keys: `dict` cannot see our *where*-functions the way we see
-them. It only sees them as unique but otherwise meaningless reference labels. 
-
-Still, once upon a time I decided that I really wanted to be able to use *where*-functions as `dict` keys. Since
-*where*-functions do not directly hash in terms of the part(s) of a PyTree they access, I would
-need to make a custom type of `dict` that did not treat *where*-functions as keys directly, but
+Once upon a time I decided that I really wanted to be able to use *where*-functions as `dict` keys.
+I realized that
+*where*-functions do not directly hash in terms of the part(s) of a PyTree they access, and decided to make a custom type of `dict` that did not treat *where*-functions as keys directly, but
 instead converted them to an intermediate value which *would* hash in those terms.
-The simplest choice is a string representation of the attribute accesses: we want a function
-`where_func_to_str` for which at least the following are `True`:
+The simplest choice? A string representation of the attribute accesses. So I searched for a function
+`where_func_to_str` for which at least all of the following are `True`:
 
 ```python
 where_func_to_str(lambda state: state.layer2) == "layer2"
@@ -263,7 +273,6 @@ assuming we do find a `where_func_to_str` that works like we want, we'll need to
 *where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
 
 On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`.
-
 
 ### First attempt: from bytecode 
 
