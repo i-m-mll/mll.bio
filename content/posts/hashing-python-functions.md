@@ -153,7 +153,7 @@ once naively hoped, when the key happens to be a function.
 
 Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^1] can be used as a key in a `dict`.
 While a Python function *is* hashable, its hash is based on its *object identity*, which in
-CPython (i.e. for almost all Python users) is just its memory address. So **all** of the following
+CPython (i.e. for almost all Python users) is just its memory address. For example, **all** of the following
 expressions evaluate to `False`:
 
 ```python
@@ -168,37 +168,95 @@ id(lambda x: x) == id(lambda x: x)
 hash(lambda x: x) == hash(lambda x: x)
 ``` 
 
-At first this might seem kind of weird. Not only is `lambda x: x` obviously identical to `lambda x:
-x` in how it's written (i.e. its structure, or syntax), but the two are also obviously identical in how we should expect
-them to behave (i.e. their meaning, or semantics). Why wouldn't Python test for equivalence in terms
-of either syntax or semantics?
-
-Semantics? That's easy. And by "easy", of course I mean *impossible*: it's a well-known [mathematical
-fact](https://en.wikipedia.org/wiki/Rice%27s_theorem) that there's *no* general method by which we can test
-whether any two functions will always behave the same way, for all inputs. So if programming language designers want
-tools like `hash` and `==` operators to be general-purpose, and useful for comparing *any* two functions their
-users might write, then the behaviour of those tools can't be based on semantics.
-
-TODO: Syntax? ...
-
-For the same reason none of this works for `lambda x: x`, it also doesn't work for any
-*where*-function:
+Since these will evaluate `False` for any function, and since *where*-functions are of course "any
+function", this example is also `False`:
 
 ```python
 hash(lambda model: model.some_layer) == hash(lambda model: model.some_layer)
 ```
 
+At first this might seem kind of weird. Not only is `lambda model: model.some_layer` obviously identical to `lambda model:
+model.some_layer` in how it's written (i.e. its structure, or syntax), but the two are also obviously identical in how we should expect
+them to behave (i.e. their meaning, or semantics).
+Actually, in the case of a *where*-function, syntax and semantics are pretty closely aligned in general:
+once we know its syntax then we can be pretty certain about what it is going to return, and vice
+versa, since it's just performing some simple accesses of parts of a data structure. 
+
+If functions were hashed in terms of either syntax or semantics, then our *where*-functions'
+uniqueness would be determined in the way we want. Seems pretty useful!
+So why wouldn't Python evaluate hashes or equivalence, in terms of either syntax or semantics?
+
+Semantics? That's easy. And by "easy", of course I mean *impossible*: it's a well-known [mathematical
+fact](https://en.wikipedia.org/wiki/Rice%27s_theorem) that there's *no* general method by which we can test
+whether any two functions will always behave the same way, for all inputs. So if programming language designers want
+tools like `hash` and `==` operators to be general-purpose, and useful for comparing *any* two functions their
+users might write, then those tools can't be based on semantics.
+
+We could also try to evaluate equivalence in terms of *syntax*, which is the structure of the
+function's code. This is at least possible, when we have access to the code. But it could be kind of
+expensive (ref?). Maybe it's enough most of the time to know that two functions aren't literally
+identical in memory. Anyway, that's what Python assumes!
+
 Since `dict` uses `hash` to determine the uniqueness of keys, and the `hash` of a *where*-function
 is not determined by what it picks out, `dict` cannot see our *where*-functions the way we see them. 
 
-### Syntactic equivalence
+## Using *where*-functions as `dict` keys
 
-TODO: I'm not sure exactly if this should be here... maybe some of it could move into a callout? Appendix? But
-it is kind of useful as context for stuff that comes later. 
+Once upon a time I decided that I really wanted to be able to use *where*-functions as `dict` keys.
+I realized that
+*where*-functions do not hash in terms of the part(s) of a PyTree they access, and decided
+to make a custom type of `dict` that did not directly treat *where*-functions as keys, but
+instead converted them to an intermediate value which *would* hash on my terms.
+And for that, I needed a function that takes a *where*-function as input, and returns a hashable
+representation of the *where*-function's syntax as output.
 
-We could also try to evaluate equivalence in terms of *syntax*, which is the structure of the function's code.
+Essentially, we want a function that 
+So I searched for a function `where_func_to_str` that would convert a *where*-function to a string.
+I expected it to behave like so:
 
-#### Source code
+```python
+where_func_to_str(lambda state: state.layer2)
+>> "layer2"
+
+where_func_to_str(lambda s: s.some_substate.layer1)
+>> "some_substate.layer1"
+```
+
+And maybe I could also get it to work for slightly more complex cases:
+
+```python
+where_func_to_str(lambda state: (state.layer2, state.layer3))
+>> ("layer2", "layer3")
+```
+
+I hadn't yet imagined how I would handle all possible *where*-functions. For example, this would be
+no good:
+
+```python
+where_func_to_str(lambda state: [state.layer2, state.layer3]) 
+>> ["layer2", "layer3"]
+```
+
+That's because lists, including `["layer2", "layer3"]`, *aren't hashable*. They can't be used as
+keys! Nor can `dict`s or `set`s 
+
+- But why not just "[layer2, layer3]" inside a single string?
+
+1. Notice that the name of the bound variable ("state", "s", whatever) does not matter here. What is important is that
+given some PyTree, whatever its name, we are accessing some part(s) of it, whose names *are* given.
+
+2. What about other kinds of access, e.g. `lambda state: state.layer2['foo']`?
+
+3. What about *where*-functions that return non-hashable types? For example, `lambda state: [state.layer2]`?
+
+<MarginNote>Tuples are also hashable, so `("layer2", "layer3")` is fine as a dict key. However,
+assuming we do find a `where_func_to_str` that works like we want, we'll need to make sure our
+*where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
+
+On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`. But
+let's start with an example that will not work.
+
+#### Won't work: literal source code
 
 That is, a string literal containing the code as it appears in the source file. This is the most
 direct comparison we can make. It's pretty cheap, since we just need to compare the strings
@@ -220,7 +278,7 @@ def func_without_spaces(x):
     return x+1
 ```
 
-#### Abstract syntax tree
+#### Maybe works, but I didn't think to try it: abstract syntax tree
 
 An [**Abstract syntax tree**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST) is a data
 structure specifically intended to represent the syntax of a program. Python's
@@ -239,7 +297,7 @@ compare_ast("lambda x: x", "lambda y: y")  # False; the only difference is a bou
 ```
 
 There are good reasons why we'd want to preserve bound variable names in ASTs, but when testing
-for the syntactic equivalence of functions, we generally admit [alpha
+for the syntactic equivalence of functions, or when trying to evaluate the hash of a  we generally admit [alpha
 equivalence](https://en.wikipedia.org/wiki/Lambda_calculus#Alpha_equivalence), and normalizing our
 ASTs to an alpha-equivalent form can require a little work when dealing with arbitrarily complex
 functions with nested scopes of bound variables.   
@@ -248,33 +306,7 @@ In any case, generating ASTs may be kind of expensive, especially if we don't kn
 the things we want to compare will be, as is the case when a language designer is implementing a
 general operator like `==`.
 
-## Using *where*-functions as `dict` keys
-
-Once upon a time I decided that I really wanted to be able to use *where*-functions as `dict` keys.
-I realized that
-*where*-functions do not directly hash in terms of the part(s) of a PyTree they access, and decided to make a custom type of `dict` that did not treat *where*-functions as keys directly, but
-instead converted them to an intermediate value which *would* hash in those terms.
-The simplest choice? A string representation of the attribute accesses. So I searched for a function
-`where_func_to_str` for which at least all of the following are `True`:
-
-```python
-where_func_to_str(lambda state: state.layer2) == "layer2"
-where_func_to_str(lambda s: s.some_substate.layer1) == "some_substate.layer1"
-where_func_to_str(lambda state: (state.layer2, state.layer3)) == ("layer2", "layer3")
-```
-
-1. Notice that the name of the bound variable ("state", "s", whatever) does not matter here. What is important is that
-given some PyTree, whatever its name, we are accessing some part(s) of it, whose names *are* given.
-
-2. What about other kinds of access, e.g. `lambda state: state.layer2['foo']`?
-
-3. <MarginNote>Tuples are also hashable, so `("layer2", "layer3")` is fine as a dict key. However,
-assuming we do find a `where_func_to_str` that works like we want, we'll need to make sure our
-*where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
-
-On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`.
-
-### First attempt: from bytecode 
+### First actual attempt: from bytecode 
 
 Once Python has parsed the literal source code, it encodes the program as a sequence of lower-level
 instructions for the interpreter to run the program. Therefore, bytecode is language-dependent;
@@ -424,12 +456,13 @@ def where_func_to_attr_str_tree(where: Callable) -> PyTree[str]:
         raise TypeError("`where` must return a PyTree of node references")
 ```
 
-Now it's still not super efficient -- about 10 us per call, for the data I'm working with -- but I
-only need to do a small number of these operations every training iteration, so for my purposes it's
-just fine.
+This still isn't super efficient -- about 10 µs per call, for the data I'm working with -- but I
+only need to do a small number of these operations every training iteration, so for my purposes it 
+was okay.
 
 Now that we have a decent `where_func_to_str`, we can construct the custom `dict` that effectively
-uses *where*-functions as keys. I'll leave the 
+uses *where*-functions as keys. This is interesting, but since it no longer has much to do with
+the *where*-functions themselves, I've 
 
 ## Serialisation of *where*-functions
 
@@ -656,5 +689,4 @@ class WhereDict(AbstractTransformedOrderedDict[str, Callable[[PyTree], Any], T])
 
 [^1]: That is, any object the builtin function `hash` can take as an input, [returning a unique
     string](https://en.wikipedia.org/wiki/Hash_function).
-[^3]: Lorem ipsum dolor sit amet. Consectitur something something something. Albuquerque is okay
-    this time of year.
+[^2]: 
