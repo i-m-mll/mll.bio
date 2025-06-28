@@ -16,7 +16,7 @@
 }
 
 .toc-header {
-  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary font-heading;
 }
 
 .toc-nav {
@@ -24,7 +24,7 @@
 }
 
 .toc-link {
-  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline transition-colors duration-200 leading-snug hover:text-foreground;
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline transition-colors duration-200 leading-snug hover:text-foreground font-heading;
 }
 
 .toc-link.active {
@@ -61,7 +61,7 @@
 }
 
 .mobile-toc-header {
-  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary;
+  @apply flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary font-heading;
 }
 
 .mobile-toc-nav {
@@ -73,7 +73,7 @@
 }
 
 .mobile-toc-link {
-  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline leading-snug transition-colors duration-200 hover:text-foreground;
+  @apply block w-full text-left py-1 border-none bg-transparent text-muted-foreground cursor-pointer no-underline leading-snug transition-colors duration-200 hover:text-foreground font-heading;
 }
 
 .mobile-toc-link.active {

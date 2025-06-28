@@ -12,7 +12,7 @@ export function PostList({ posts }: { posts: Post[] }) {
               {post.frontmatter.published}
             </time>
             <h2 
-              className="text-2xl font-bold tracking-tight hover:underline"
+              className="text-xl font-bold tracking-tight hover:underline font-heading"
               dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
             />
             <p className="text-muted-foreground">{post.frontmatter.description}</p>

@@ -10,7 +10,7 @@ export function TocHeader({ isCollapsed, onToggle, onClose, showCloseButton = fa
     // Mobile floating version with close button
     return (
       <div className="flex justify-between items-center mb-1">
-        <h3 className="font-semibold">Contents</h3>
+        <h3 className="font-semibold font-heading">Contents</h3>
         <button
           onClick={onClose}
           className="text-muted-foreground hover:text-foreground"
@@ -30,7 +30,7 @@ export function TocHeader({ isCollapsed, onToggle, onClose, showCloseButton = fa
       <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
         ▸
       </span>
-      <span className="font-semibold text-foreground">Contents</span>
+      <span className="font-semibold text-foreground font-heading">Contents</span>
     </button>
   )
 } 

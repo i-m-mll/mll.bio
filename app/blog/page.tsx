@@ -18,7 +18,7 @@ export default async function BlogPage() {
 
   return (
     <div className="container max-w-4xl py-10">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Posts</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-6 font-heading">Posts</h1>
       {posts.length > 0 ? <PostList posts={posts} /> : <p className="text-muted-foreground">No posts published yet.</p>}
     </div>
   )

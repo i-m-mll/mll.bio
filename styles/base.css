@@ -42,6 +42,10 @@
     --giscus-background: var(--background);
     --giscus-text: var(--foreground);
     
+    /* Font family variables - centralized font control */
+    --font-heading: var(--font-roboto), var(--font-inter), serif;
+    --font-body: et-book, var(--font-inter), serif;
+    
     /* Layout variables */
     --toc-width: 250px;
     --layout-gap: 2rem;

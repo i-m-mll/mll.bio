@@ -18,7 +18,7 @@ export default async function AboutPage() {
 
   return (
     <div className="container max-w-4xl py-10">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">{frontmatter.title}</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-6 font-heading">{frontmatter.title}</h1>
       <article className="prose dark:prose-invert mx-auto">
         <MDXContent>{content}</MDXContent>
       </article>

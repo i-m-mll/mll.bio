@@ -110,7 +110,7 @@ export default function DevFontSwitcher() {
   }, [family, weight, italic, size])
 
   const meta = FONT_META[family as string]
-  const weights = meta && meta.weights.length > 1 ? meta.weights : ['100','200','300','400','500','600','700','800','900']
+  const weights = meta?.weights?.length ? meta.weights : ['400']
   const italics = meta?.italics ?? false
 
   return (

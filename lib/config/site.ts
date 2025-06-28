@@ -12,14 +12,14 @@ export const siteConfig = {
 
   // Social links
   social: {
+    email: "mll@mll.bio",
     discord: "https://discord.gg/robustenough",
     github: "https://github.com/i-m-mll",
     manifold: "https://manifold.markets/MLL",
-    twitter: "https://twitter.com/robustenough",
+    X: "https://twitter.com/robustenough",
     bluesky: "https://bsky.app/profile/robustenough",
     mastodon: "https://mastodon.social/@robustenough",
     linkedin: "https://linkedin.com/in/mll",
-    email: "mll@mll.bio",
   },
 
   // Comments configuration

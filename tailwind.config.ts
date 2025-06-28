@@ -27,10 +27,17 @@ const config = {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      body: ['et-book', 'var(--font-inter)', 'serif'],
+      heading: ['et-book', 'var(--font-roboto)', 'var(--font-inter)', 'serif'],
+    },
     extend: {
       fontFamily: {
-        sans: ['et-book', 'var(--font-inter)', 'sans-serif'],
+        // Alternative sans-serif font
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        // Monospace for code
         mono: ['Iosevka Web', 'var(--font-roboto-mono)', 'monospace'],
+        // Serif alternative
         serif: ['var(--font-source-serif)', 'serif'],
       },
 
@@ -49,9 +56,10 @@ const config = {
       fontSize: {
         'note': '0.85rem',
         'code': '0.85em',
-        'title': '1.25rem',
+        'title': '2rem',
         // 'nav': ['0.875rem', { lineHeight: '1.25rem' }],
-        'nav': '1rem',
+        'nav': '1.1rem',
+        'social-icon': '2.25rem',
       },
       lineHeight: {
         'note': '1.4',
@@ -101,130 +109,139 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      typography: ({ theme }: { theme: any }) => ({
-        DEFAULT: {
-          css: {
-            '--prose-body': 'hsl(var(--foreground))',
-            '--prose-headings': 'hsl(var(--foreground))',
-            '--prose-lead': 'hsl(var(--foreground))',
-            '--prose-links': 'hsl(var(--primary))',
-            '--prose-bold': 'hsl(var(--foreground))',
-            '--prose-counters': 'hsl(var(--muted-foreground))',
-            '--prose-bullets': 'hsl(var(--muted-foreground))',
-            '--prose-hr': 'hsl(var(--border))',
-            '--prose-quotes': 'hsl(var(--foreground))',
-            '--prose-quote-borders': 'hsl(var(--border))',
-            '--prose-captions': 'hsl(var(--muted-foreground))',
-            '--prose-code': 'hsl(var(--foreground))',
-            '--prose-pre-code': 'hsl(var(--foreground))',
-            '--prose-pre-bg': 'transparent',
-            '--prose-th-borders': 'hsl(var(--border))',
-            '--prose-td-borders': 'hsl(var(--border))',
-            '--prose-invert-body': 'hsl(var(--background))',
-            '--prose-invert-headings': 'hsl(var(--background))',
-            '--prose-invert-lead': 'hsl(var(--background))',
-            '--prose-invert-links': 'hsl(var(--primary))',
-            '--prose-invert-bold': 'hsl(var(--background))',
-            '--prose-invert-counters': 'hsl(var(--muted-foreground))',
-            '--prose-invert-bullets': 'hsl(var(--muted-foreground))',
-            '--prose-invert-hr': 'hsl(var(--border))',
-            '--prose-invert-quotes': 'hsl(var(--background))',
-            '--prose-invert-quote-borders': 'hsl(var(--border))',
-            '--prose-invert-captions': 'hsl(var(--muted-foreground))',
-            '--prose-invert-code': 'hsl(var(--background))',
-            '--prose-invert-pre-code': 'hsl(var(--background))',
-            '--prose-invert-pre-bg': 'transparent',
-            '--prose-invert-th-borders': 'hsl(var(--border))',
-            '--prose-invert-td-borders': 'hsl(var(--border))',
-            
-            // Set the max-width for the prose container
-            maxWidth: '48rem',
+      typography: ({ theme }: { theme: any }) => {
+        const headingFont = Array.isArray(theme('fontFamily.heading'))
+          ? theme('fontFamily.heading').join(', ')
+          : theme('fontFamily.heading')
+        return ({
+          DEFAULT: {
+            css: {
+              '--prose-body': 'hsl(var(--foreground))',
+              '--prose-headings': 'hsl(var(--foreground))',
+              '--prose-lead': 'hsl(var(--foreground))',
+              '--prose-links': 'hsl(var(--primary))',
+              '--prose-bold': 'hsl(var(--foreground))',
+              '--prose-counters': 'hsl(var(--muted-foreground))',
+              '--prose-bullets': 'hsl(var(--muted-foreground))',
+              '--prose-hr': 'hsl(var(--border))',
+              '--prose-quotes': 'hsl(var(--foreground))',
+              '--prose-quote-borders': 'hsl(var(--border))',
+              '--prose-captions': 'hsl(var(--muted-foreground))',
+              '--prose-code': 'hsl(var(--foreground))',
+              '--prose-pre-code': 'hsl(var(--foreground))',
+              '--prose-pre-bg': 'transparent',
+              '--prose-th-borders': 'hsl(var(--border))',
+              '--prose-td-borders': 'hsl(var(--border))',
+              '--prose-invert-body': 'hsl(var(--background))',
+              '--prose-invert-headings': 'hsl(var(--background))',
+              '--prose-invert-lead': 'hsl(var(--background))',
+              '--prose-invert-links': 'hsl(var(--primary))',
+              '--prose-invert-bold': 'hsl(var(--background))',
+              '--prose-invert-counters': 'hsl(var(--muted-foreground))',
+              '--prose-invert-bullets': 'hsl(var(--muted-foreground))',
+              '--prose-invert-hr': 'hsl(var(--border))',
+              '--prose-invert-quotes': 'hsl(var(--background))',
+              '--prose-invert-quote-borders': 'hsl(var(--border))',
+              '--prose-invert-captions': 'hsl(var(--muted-foreground))',
+              '--prose-invert-code': 'hsl(var(--background))',
+              '--prose-invert-pre-code': 'hsl(var(--background))',
+              '--prose-invert-pre-bg': 'transparent',
+              '--prose-invert-th-borders': 'hsl(var(--border))',
+              '--prose-invert-td-borders': 'hsl(var(--border))',
+              
+              // Set the max-width for the prose container
+              maxWidth: '48rem',
 
-            // Base styles
-            fontSize: '1.1rem',
-            lineHeight: '1.6',
-            fontFeatureSettings: '"liga" 1, "kern" 1',
-            fontVariantLigatures: 'common-ligatures',
+              // Base styles
+              fontSize: '1.1rem',
+              lineHeight: '1.6',
+              fontFeatureSettings: '"liga" 1, "kern" 1',
+              fontVariantLigatures: 'common-ligatures',
 
-            // Heading margin multipliers
-            '--heading-margin-top-factor': '0.6',
-            '--heading-margin-bottom-factor': '0.6',
+              // Heading margin multipliers
+              '--heading-margin-top-factor': '0.6',
+              '--heading-margin-bottom-factor': '0.6',
 
-            // Headings
-            h1: { 
-              fontSize: '1.9em', 
-              scrollMargin: 'var(--spacing-20, 5rem)',
-              marginTop: `calc(0em * var(--heading-margin-top-factor))`,
-              marginBottom: `calc(1em * var(--heading-margin-bottom-factor))`,
-            },
-            h2: { 
-              fontSize: '1.4em', 
-              scrollMargin: 'var(--spacing-20, 5rem)',
-              marginTop: `calc(1.8em * var(--heading-margin-top-factor))`,
-              marginBottom: `calc(0.9em * var(--heading-margin-bottom-factor))`,
-            },
-            h3: { 
-              fontSize: '1.2em', 
-              scrollMargin: 'var(--spacing-20, 5rem)',
-              marginTop: `calc(1.6em * var(--heading-margin-top-factor))`,
-              marginBottom: `calc(0.8em * var(--heading-margin-bottom-factor))`,
-            },
-            h4: { 
-              fontSize: '1.1em', 
-              scrollMargin: 'var(--spacing-20, 5rem)',
-              marginTop: `calc(1.5em * var(--heading-margin-top-factor))`,
-              marginBottom: `calc(0.7em * var(--heading-margin-bottom-factor))`,
-            },
+              // Headings
+              h1: { 
+                fontSize: '1.9em',
+                fontFamily: headingFont,
+                scrollMargin: 'var(--spacing-20, 5rem)',
+                marginTop: `calc(0em * var(--heading-margin-top-factor))`,
+                marginBottom: `calc(1em * var(--heading-margin-bottom-factor))`,
+              },
+              h2: { 
+                fontSize: '1.4em',
+                fontFamily: headingFont,
+                scrollMargin: 'var(--spacing-20, 5rem)',
+                marginTop: `calc(1.8em * var(--heading-margin-top-factor))`,
+                marginBottom: `calc(0.9em * var(--heading-margin-bottom-factor))`,
+              },
+              h3: { 
+                fontSize: '1.2em',
+                fontFamily: headingFont,
+                scrollMargin: 'var(--spacing-20, 5rem)',
+                marginTop: `calc(1.6em * var(--heading-margin-top-factor))`,
+                marginBottom: `calc(0.8em * var(--heading-margin-bottom-factor))`,
+              },
+              h4: { 
+                fontSize: '1.1em',
+                fontFamily: headingFont,
+                scrollMargin: 'var(--spacing-20, 5rem)',
+                marginTop: `calc(1.5em * var(--heading-margin-top-factor))`,
+                marginBottom: `calc(0.7em * var(--heading-margin-bottom-factor))`,
+              },
 
-            // Paragraphs
-            p: {
-              fontWeight: theme('fontWeight.medium'),
-              marginTop: '0.6em',
-              marginBottom: `0.6em`,
-            },
+              // Paragraphs
+              p: {
+                fontWeight: theme('fontWeight.medium'),
+                marginTop: '0.6em',
+                marginBottom: `0.6em`,
+              },
 
-            // Links
-            a: {
-              fontWeight: theme('fontWeight.medium'),
-              textDecoration: 'underline',
-              textUnderlineOffset: '4px',
-            },
+              // Links
+              a: {
+                fontWeight: theme('fontWeight.medium'),
+                textDecoration: 'underline',
+                textUnderlineOffset: '4px',
+              },
 
-            // Blockquotes
-            blockquote: {
-              borderLeftWidth: '4px',
-              paddingLeft: theme('spacing.4'),
-              fontStyle: 'italic',
+              // Blockquotes
+              blockquote: {
+                borderLeftWidth: '4px',
+                paddingLeft: theme('spacing.4'),
+                fontStyle: 'italic',
+              },
+              
+              // Images
+              img: {
+                borderRadius: theme('borderRadius.md'),
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                textAlign: 'left',
+              },
+              
+              // Tables
+              table: {
+                width: '100%',
+                borderCollapse: 'collapse',
+              },
+              thead: {
+                backgroundColor: 'var(--muted)',
+              },
+              'th, td': {
+                border: `1px solid ${'var(--border)'}`,
+                padding: theme('spacing.2'),
+                textAlign: 'left',
+              },
+              
+              // Remove default before/after content for code blocks
+              'code::before': { content: '""' },
+              'code::after': { content: '""' },
             },
-            
-            // Images
-            img: {
-              borderRadius: theme('borderRadius.md'),
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              textAlign: 'left',
-            },
-            
-            // Tables
-            table: {
-              width: '100%',
-              borderCollapse: 'collapse',
-            },
-            thead: {
-              backgroundColor: 'var(--muted)',
-            },
-            'th, td': {
-              border: `1px solid ${'var(--border)'}`,
-              padding: theme('spacing.2'),
-              textAlign: 'left',
-            },
-            
-            // Remove default before/after content for code blocks
-            'code::before': { content: '""' },
-            'code::after': { content: '""' },
           },
-        },
-      }),
+        })
+      },
     },
   },
   plugins: [
@@ -258,6 +275,7 @@ const config = {
          '.no-decoration:visited': {
            'text-decoration': 'none !important',
          },
+         // Font-family utilities no longer needed; generated automatically from theme.fontFamily
        };
        addUtilities(newUtilities);
     },

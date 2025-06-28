@@ -67,7 +67,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             )}
           </div>
           <h1 
-            className="mb-2"
+            className="mb-2 font-heading"
             dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
           />
           {post.frontmatter.abstract && (

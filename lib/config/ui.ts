@@ -89,10 +89,24 @@ export const uiConfig = {
     anchorScrollPaddingPx: 80,
   },
 
+  // Social links configuration
+  socialLinks: {
+    // Icon size in rem (1.5 = 24px base size, 2.25 = 36px for 50% increase)
+    iconSizeRem: 1.5,
+    // Gap between social link cards in rem
+    gapRem: 1.5,
+    // Text size for labels
+    labelTextSize: 'text-sm',
+    // Icon opacity when not hovered (0.0 to 1.0)
+    iconOpacityDefault: 0.6,
+    // Icon opacity when hovered (0.0 to 1.0)
+    iconOpacityHover: 0.95,
+  },
+
   // Dev tools toggles
   devTools: {
     // Enable or disable the in-browser font switcher overlay (dev only)
-    fontSwitcher: true,
+    fontSwitcher: false,
   },
 
   // Future UI configurations can be added here

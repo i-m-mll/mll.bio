@@ -36,4 +36,16 @@ export const DEV_GOOGLE_FONTS = [
   'Port Lligat Slab',
   'Buda',
   'Aref Ruqaa',
+  'Fira Sans',
+  'Roboto',
+  'Mukta',
+  'Cabin',
+  'Lilita One',
+  'Signika',
+  'Signika Negative',
+  'Krub',
+  'Lalezar',
+  'Secular One',
+  'Cantora One',
+  
 ] 

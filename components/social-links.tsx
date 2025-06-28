@@ -1,68 +1,62 @@
+"use client"
+
 import { siteConfig } from "@/lib/config/site"
+import { uiConfig } from "@/lib/config/ui"
 import Link from "next/link"
 
 export function SocialLinks() {
-  const socialIcons: Record<string, { src?: string, alt: string, svg?: JSX.Element }> = {
+  const iconSize = `${uiConfig.socialLinks.iconSizeRem}rem`
+  const defaultOpacity = uiConfig.socialLinks.iconOpacityDefault
+  const hoverOpacity = uiConfig.socialLinks.iconOpacityHover
+  
+  // Calculate default grayscale color for labels based on default icon opacity
+  const getDefaultLabelColor = () => {
+    const grayValue = Math.round(170 * (1 - defaultOpacity))
+    return `rgb(${grayValue}, ${grayValue}, ${grayValue})`
+  }
+
+  const socialIcons: Record<string, { src?: string, label: string, svg?: JSX.Element }> = {
     github: {
       src: "https://cdn.simpleicons.org/github/000000",
-      alt: "GitHub"
+      label: "GitHub"
     },
     manifold: {
-      alt: "Manifold Markets",
-      svg: (
-        <svg
-          width="25"
-          height="25"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          strokeWidth="1.2"
-          stroke="#000000"
-          className="opacity-70 hover:opacity-100"
-          aria-hidden="true"
-        >
-          <path
-            d="M5.24854 17.0952L18.7175 6.80301L14.3444 20M5.24854 17.0952L9.79649 18.5476M5.24854 17.0952L4.27398 6.52755M14.3444 20L9.79649 18.5476M14.3444 20L22 12.638L16.3935 13.8147M9.79649 18.5476L12.3953 15.0668M4.27398 6.52755L10.0714 13.389M4.27398 6.52755L2 9.0818L4.47389 8.85643M12.9451 11.1603L10.971 5L8.65369 11.6611"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )
+      label: "Manifold",
+      src: "/manifold.svg"
     },
-    twitter: {
+    X: {
       src: "https://cdn.simpleicons.org/x/000000",
-      alt: "X (Twitter)"
+      label: "X"
     },
     bluesky: {
       src: "https://cdn.simpleicons.org/bluesky/000000",
-      alt: "Bluesky"
+      label: "Bluesky"
     },
     mastodon: {
       src: "https://cdn.simpleicons.org/mastodon/000000",
-      alt: "Mastodon"
+      label: "Mastodon"
     },
     linkedin: {
       src: "/InBug-Black.png",
-      alt: "LinkedIn"
+      label: "LinkedIn"
     },
     discord: {
       src: "https://cdn.simpleicons.org/discord/000000",
-      alt: "Discord"
+      label: "Discord"
     },
     email: {
-      alt: "Email",
+      label: "Email",
       svg: (
         <svg
-          width="20"
-          height="20"
+          width={iconSize}
+          height={iconSize}
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          stroke="#000000"
+          stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="opacity-70 hover:opacity-100"
         >
           <rect width="20" height="16" x="2" y="4" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -72,7 +66,7 @@ export function SocialLinks() {
   }
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex justify-center flex-wrap gap-6">
       {Object.entries(siteConfig.social).map(([key, url]) => {
         if (!url) return null
         
@@ -83,25 +77,80 @@ export function SocialLinks() {
         const href = isEmail ? `mailto:${url}` : url
         const needsTargetBlank = !isEmail
 
+        const handleMouseEnter = (e: React.MouseEvent) => {
+          const iconContainer = e.currentTarget.querySelector('[data-icon]') as HTMLElement
+          const textLabel = e.currentTarget.querySelector('span') as HTMLElement
+          
+          if (iconContainer) {
+            iconContainer.style.opacity = hoverOpacity.toString()
+          }
+          
+          if (textLabel) {
+            textLabel.style.color = '#000000'
+          }
+        }
+
+        const handleMouseLeave = (e: React.MouseEvent) => {
+          const iconContainer = e.currentTarget.querySelector('[data-icon]') as HTMLElement
+          const textLabel = e.currentTarget.querySelector('span') as HTMLElement
+          
+          if (iconContainer) {
+            resetIconOpacity(iconContainer)
+            if (iconConfig.svg) {
+              iconContainer.style.color = '#000000'
+            }
+          }
+          
+          if (textLabel) {
+            textLabel.style.color = getDefaultLabelColor()
+          }
+        }
+
+        // Helper to reset icon opacity to default
+        const resetIconOpacity = (iconEl: HTMLElement) => {
+          iconEl.style.opacity = defaultOpacity.toString()
+        }
+
         return (
           <Link
             key={key}
             href={href}
             {...(needsTargetBlank && { target: "_blank", rel: "noopener noreferrer" })}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-all duration-200 group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            {iconConfig.svg ? (
-              iconConfig.svg
-            ) : (
-              <img
-                src={iconConfig.src}
-                alt={iconConfig.alt}
-                width="20"
-                height="20"
-                className="opacity-70 hover:opacity-100"
-              />
-            )}
-            <span className="sr-only">{iconConfig.alt}</span>
+            <div className="transition-all duration-200">
+              {iconConfig.svg ? (
+                <div
+                  data-icon
+                  className="transition-all duration-200"
+                  style={{ opacity: defaultOpacity }}
+                >
+                  {iconConfig.svg}
+                </div>
+              ) : (
+                <img
+                  data-icon
+                  src={iconConfig.src}
+                  alt={iconConfig.label}
+                  style={{ 
+                    width: iconSize, 
+                    height: iconSize,
+                    opacity: defaultOpacity,
+                    transform: key === 'manifold' ? 'scale(1.33)' : undefined,
+                    transformOrigin: 'center',
+                    transition: 'all 200ms'
+                  }}
+                />
+              )}
+            </div>
+            <span 
+              className={`${uiConfig.socialLinks.labelTextSize} transition-colors font-medium`}
+              style={{ color: getDefaultLabelColor() }}
+            >
+              {iconConfig.label}
+            </span>
           </Link>
         )
       })}

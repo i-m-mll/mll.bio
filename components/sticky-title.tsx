@@ -35,7 +35,7 @@ export function StickyTitle({ title }: StickyTitleProps) {
     <div className="hidden tablet:block toc-sidebar">
       <div className="sticky-title">
         <h2 
-          className="text-lg font-semibold text-foreground mb-4 line-clamp-2"
+          className="text-lg font-semibold text-foreground mb-4 line-clamp-2 font-heading"
           dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(title) }}
         />
       </div>

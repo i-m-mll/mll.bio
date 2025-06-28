@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { UiConfigProvider } from "@/components/ui-config-provider"
 import { CodeThemeLoader } from "@/components/code-theme-loader"
 import { siteConfig } from "@/lib/config/site"
-import { inter, roboto_mono, source_serif } from "@/lib/fonts"
+import { inter, roboto, roboto_mono, source_serif } from "@/lib/fonts"
 import DevFontSwitcher from "@/components/DevFontSwitcher"
 import { uiConfig } from "@/lib/config/ui"
 
@@ -34,12 +34,12 @@ export default function RootLayout({
     <html 
       lang="en" 
       suppressHydrationWarning
-      className={`${inter.variable} ${roboto_mono.variable} ${source_serif.variable}`}
+      className={`${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable}`}
     >
       <head>
         <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased font-sans">
+      <body className="min-h-screen bg-background text-foreground antialiased font-body">
         <ThemeProvider>
           <UiConfigProvider />
           <CodeThemeLoader />

@@ -269,5 +269,109 @@
       "700"
     ],
     "italics": false
+  },
+  "Fira Sans": {
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "italics": true
+  },
+  "Roboto": {
+    "weights": [
+      "100",
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800",
+      "900"
+    ],
+    "italics": true
+  },
+  "Mukta": {
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700",
+      "800"
+    ],
+    "italics": false
+  },
+  "Cabin": {
+    "weights": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "italics": true
+  },
+  "Lilita One": {
+    "weights": [
+      "400"
+    ],
+    "italics": false
+  },
+  "Signika": {
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "italics": false
+  },
+  "Signika Negative": {
+    "weights": [
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "italics": false
+  },
+  "Krub": {
+    "weights": [
+      "200",
+      "300",
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "italics": true
+  },
+  "Lalezar": {
+    "weights": [
+      "400"
+    ],
+    "italics": false
+  },
+  "Secular One": {
+    "weights": [
+      "400"
+    ],
+    "italics": false
+  },
+  "Cantora One": {
+    "weights": [
+      "400"
+    ],
+    "italics": false
   }
 }

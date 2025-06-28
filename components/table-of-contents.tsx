@@ -150,7 +150,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
         {showStickyTitle && (
           <div className="sticky-title">
             <h2 
-              className="text-lg font-semibold text-foreground mb-4 line-clamp-2"
+              className="text-lg font-semibold text-foreground mb-4 line-clamp-2 font-heading"
               dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(postTitle) }}
             />
           </div>
@@ -164,7 +164,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
             <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
               ▸
             </span>
-            <span className="font-semibold text-foreground">Contents</span>
+            <span className="font-semibold text-foreground font-heading">Contents</span>
           </button>
           
           {!isCollapsed && (

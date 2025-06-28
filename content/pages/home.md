@@ -3,6 +3,8 @@ title: "Welcome to My Website"
 description: "Personal website and blog"
 ---
 
+If you would like to give me some anonymous feedback, you can do so [here](https://www.admonymous.co/mll).
+
 ## Hello, I'm Your Name
 
 I'm a [your profession] specializing in [your specialty]. This is my personal corner of the internet where I share my thoughts, projects, and experiences.
