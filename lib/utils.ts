@@ -21,6 +21,8 @@ export function renderInlineMarkdown(text: string): string {
     .replace(/`(.*?)`/g, '<code>$1</code>')
     // Strikethrough: ~~text~~
     .replace(/~~(.*?)~~/g, '<del>$1</del>')
+    // Inline links: [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="underline hover:opacity-80">$1</a>')
 }
 
 /**

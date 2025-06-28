@@ -5,6 +5,7 @@ import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
 import tailwindConfig from "../tailwind.config"
+import { renderInlineMarkdown } from "@/lib/utils"
 
 interface SidenoteProps {
   id: string
@@ -88,8 +89,12 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   }
 
   const renderContent = () => {
+    const renderMarkdownSpan = (text: string) => (
+      <span dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(text) }} />
+    )
+
     if (!shouldTruncate) {
-      return actualContent
+      return typeof actualContent === 'string' ? renderMarkdownSpan(actualContent) : actualContent
     }
 
     const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
@@ -98,7 +103,7 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
     if (isExpanded) {
       return (
         <>
-          {actualContent}
+          {typeof actualContent === 'string' ? renderMarkdownSpan(actualContent) : actualContent}
           <button
             className="sidenote-toggle-button"
             onClick={() => setIsExpanded(false)}
@@ -112,7 +117,7 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
       const truncatedText = truncateText(fullText, maxNoteLength!)
       return (
         <>
-          {truncatedText}
+          {typeof actualContent === 'string' ? renderMarkdownSpan(truncatedText) : truncatedText}
           {truncationSuffix}
           <button
             className="sidenote-toggle-button"
@@ -240,8 +245,12 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
   }
 
   const renderContent = () => {
+    const renderMarkdownSpan = (text: string) => (
+      <span dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(text) }} />
+    )
+
     if (!shouldTruncate) {
-      return children
+      return typeof children === 'string' ? renderMarkdownSpan(children) : children
     }
 
     const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
@@ -250,7 +259,7 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
     if (isExpanded) {
       return (
         <>
-          {children}
+          {typeof children === 'string' ? renderMarkdownSpan(children) : children}
           <button
             className="sidenote-toggle-button"
             onClick={() => setIsExpanded(false)}
@@ -264,7 +273,7 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
       const truncatedText = truncateText(textContent, maxNoteLength!)
       return (
         <>
-          {truncatedText}
+          {typeof children === 'string' ? renderMarkdownSpan(truncatedText) : truncatedText}
           {truncationSuffix}
           <button
             className="sidenote-toggle-button"

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { renderInlineMarkdown } from "@/lib/utils"
 
 interface FootnotesProps {
   content: string
@@ -66,31 +67,49 @@ export function Footnotes({ content }: FootnotesProps) {
     // Remove code blocks to avoid parsing them as footnotes
     const contentWithoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '')
     
-    // Extract footnotes from the content - match the exact format in the markdown
-    // Look for [^id]: content at the beginning of a line
-    const footnoteRegex = /^\[\^([^\]]+)\]:\s*(.+)$/gm
+    // Extract footnotes (support multi-line & indented continuation lines)
     const items: FootnoteItem[] = []
-    let match
+    const lines = contentWithoutCodeBlocks.split(/\r?\n/)
+    let i = 0
     let counter = 1
 
-    // Reset regex lastIndex to ensure we start from the beginning
-    footnoteRegex.lastIndex = 0
-    
-    while ((match = footnoteRegex.exec(contentWithoutCodeBlocks)) !== null) {
-      const id = match[1]
-      const footnoteContent = match[2].trim()
-      
-      // Use the SAME filtering logic as the remark plugin
-      if (footnoteContent.length < 15 || isLikelyCodeExample(footnoteContent)) {
-        continue // Skip this footnote, same as remark plugin
+    while (i < lines.length) {
+      const line = lines[i]
+      const startMatch = line.match(/^\[\^([^\]]+)\]:\s*(.*)$/)
+      if (startMatch) {
+        const id = startMatch[1]
+        let body = startMatch[2]
+        i++
+        // Gather subsequent indented lines (4 spaces or a tab) as part of the footnote
+        while (i < lines.length) {
+          const contLine = lines[i]
+          if (/^\s{4,}.*/.test(contLine) || /^\t+.*/.test(contLine)) {
+            body += ' ' + contLine.trim()
+            i++
+          } else if (contLine.trim() === '') {
+            // Blank line may separate paragraphs; include and continue if next line is indented
+            const nextLine = lines[i + 1]
+            if (nextLine && (/^\s{4,}.*/.test(nextLine) || /^\t+.*/.test(nextLine))) {
+              body += ' '
+              i++
+            } else {
+              break
+            }
+          } else {
+            break
+          }
+        }
+
+        const footnoteContent = body.trim().replace(/\s+/g, ' ')
+
+        // Same filtering as remark plugin
+        if (footnoteContent.length >= 15 && !isLikelyCodeExample(footnoteContent)) {
+          items.push({ id, number: counter, content: footnoteContent })
+          counter++
+        }
+      } else {
+        i++
       }
-      
-      items.push({ 
-        id, 
-        number: counter, 
-        content: footnoteContent 
-      })
-      counter++
     }
 
     console.log('Footnotes found:', items.length, 'isMobile:', isMobile)
@@ -114,9 +133,7 @@ export function Footnotes({ content }: FootnotesProps) {
             >
               {footnote.number}.
             </a>
-            <span className="footnote-content">
-              {footnote.content}
-            </span>
+            <span className="footnote-content" dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(footnote.content) }} />
           </li>
         ))}
       </ol>

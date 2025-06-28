@@ -396,15 +396,23 @@ function isLikelyCodeExample(content: string, node: any): boolean {
 
 // Helper function to extract text content from footnote definition nodes
 function extractTextContent(node: any): string {
-  if (node.type === 'text') {
-    return node.value
+  switch (node.type) {
+    case 'text':
+      return node.value
+    case 'inlineCode':
+      // Preserve backticks for inline code so downstream renderer can style it
+      return `\`${node.value}\``
+    case 'link':
+      // Recreate markdown link syntax
+      const linkText = node.children ? node.children.map(extractTextContent).join('') : ''
+      const href = node.url || ''
+      return `[${linkText}](${href})`
+    default:
+      if (node.children) {
+        return node.children.map(extractTextContent).join('')
+      }
+      return ''
   }
-  
-  if (node.children) {
-    return node.children.map(extractTextContent).join('')
-  }
-  
-  return ''
 }
 
 // Helper to determine if target text exists inside a fenced code block within the NoteScope

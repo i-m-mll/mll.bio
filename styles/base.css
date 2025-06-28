@@ -66,7 +66,7 @@
     --sidenote-font-size: 0.8rem;
     --sidenote-line-height: 1.4;
     --sidenote-min-space-between: 0.5rem;
-    --sidenote-area-width: 22vw; /* Use viewport width for responsive resizing */
+    --sidenote-area-width: 22vw; /* Fit within grid third column */
     --sidenote-width-offset: 1.5rem; /* Provides padding from the edge */
     --sidenote-margin-offset: 0.75rem; /* Gap between text and note */
     --sidenote-min-width: 100px;
