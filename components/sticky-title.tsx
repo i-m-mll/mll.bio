@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useHeadingObserver } from "@/lib/use-heading-observer"
 import { renderInlineMarkdown } from "@/lib/utils"
 
 interface StickyTitleProps {
@@ -8,23 +8,8 @@ interface StickyTitleProps {
 }
 
 export function StickyTitle({ title }: StickyTitleProps) {
-  const [showStickyTitle, setShowStickyTitle] = useState(false)
-
-  useEffect(() => {
-    // Handle scroll to show/hide sticky title
-    const handleScroll = () => {
-      const mainTitle = document.querySelector('h1')
-      if (mainTitle) {
-        const rect = mainTitle.getBoundingClientRect()
-        setShowStickyTitle(rect.bottom < 0)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial check
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const { mainTitleOut } = useHeadingObserver()
+  const showStickyTitle = mainTitleOut
 
   // Only render the container when there's content to show
   if (!showStickyTitle) {

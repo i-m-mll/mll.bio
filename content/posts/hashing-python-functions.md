@@ -689,4 +689,3 @@ class WhereDict(AbstractTransformedOrderedDict[str, Callable[[PyTree], Any], T])
 
 [^1]: That is, any object the builtin function `hash` can take as an input, [returning a unique
     string](https://en.wikipedia.org/wiki/Hash_function).
-[^2]: 

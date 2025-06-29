@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useHeadingObserver } from "@/lib/use-heading-observer"
 import { TocList } from "@/components/toc-list"
 import { TocHeader } from "@/components/toc-header"
 
@@ -17,7 +18,8 @@ interface MobileTocProps {
 export function MobileToc({ content }: MobileTocProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([])
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [activeId, setActiveId] = useState<string>("")
+
+  const { activeId } = useHeadingObserver()
 
   useEffect(() => {
     // Extract headings from the content
@@ -35,31 +37,6 @@ export function MobileToc({ content }: MobileTocProps) {
 
     setTocItems(items)
   }, [content])
-
-  useEffect(() => {
-    // Handle scroll to highlight active section
-    const handleScroll = () => {
-      // Find the currently active heading
-      const headings = tocItems.map(item => document.getElementById(item.id)).filter(Boolean)
-      let currentActiveId = ""
-
-      for (const heading of headings) {
-        if (heading) {
-          const rect = heading.getBoundingClientRect()
-          if (rect.top <= 100) { // 100px offset from top
-            currentActiveId = heading.id
-          }
-        }
-      }
-
-      setActiveId(currentActiveId)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial check
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [tocItems])
 
   if (tocItems.length === 0) {
     return null

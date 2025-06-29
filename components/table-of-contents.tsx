@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useHeadingObserver } from "@/lib/use-heading-observer"
 import { uiConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown } from "@/lib/utils"
 
@@ -19,9 +20,11 @@ interface TableOfContentsProps {
 export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
   const [tocItems, setTocItems] = useState<TocItem[]>([])
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [showStickyTitle, setShowStickyTitle] = useState(false)
-  const [activeId, setActiveId] = useState<string>("")
   const [showMobileToc, setShowMobileToc] = useState(false)
+
+  // Global observer provides current heading + h1 visibility
+  const { activeId, mainTitleOut } = useHeadingObserver()
+  const showStickyTitle = mainTitleOut
 
   useEffect(() => {
     // Extract headings from the content
@@ -41,36 +44,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
     setTocItems(items)
   }, [content])
 
-  useEffect(() => {
-    // Handle scroll to show/hide sticky title and highlight active section
-    const handleScroll = () => {
-      const mainTitle = document.querySelector('h1')
-      if (mainTitle) {
-        const rect = mainTitle.getBoundingClientRect()
-        setShowStickyTitle(rect.bottom < 0)
-      }
 
-      // Find the currently active heading
-      const headings = tocItems.map(item => document.getElementById(item.id)).filter(Boolean)
-      let currentActiveId = ""
-
-      for (const heading of headings) {
-        if (heading) {
-          const rect = heading.getBoundingClientRect()
-          if (rect.top <= 100) { // 100px offset from top
-            currentActiveId = heading.id
-          }
-        }
-      }
-
-      setActiveId(currentActiveId)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial check
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [tocItems])
 
   if (tocItems.length === 0) {
     return null
