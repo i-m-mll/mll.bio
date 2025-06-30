@@ -6,12 +6,14 @@ import { Callout } from "@/components/callout"
 import { Sidenote, MarginNote } from "@/components/sidenote"
 import { NoteScope } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
+import ResponsiveImage from "@/components/ResponsiveImage"
 import { SidenoteProvider } from "@/components/sidenote-context"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
 import rehypeHighlight from "rehype-highlight"
 import remarkGfm from "remark-gfm"
+import { remarkImgAttrs } from "@/lib/remark-img-attrs"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 
@@ -22,6 +24,7 @@ const mdxComponents = {
   MarginNote,
   NoteScope,
   TableOfContents,
+  img: (props: any) => <ResponsiveImage {...props} />,
 }
 
 interface MDXContentProps {
@@ -36,6 +39,7 @@ export async function MDXContent({ children }: MDXContentProps) {
       [remarkGfm, { singleTilde: false }],
       remarkMath,
       remarkSidenotes,
+      remarkImgAttrs,
     ],
     rehypePlugins: [
       rehypeHeadingIds,

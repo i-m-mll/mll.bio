@@ -32,36 +32,41 @@ export function useHeadingObserver(
 
     if (headings.length === 0 && !mainTitle) return
 
-    // Trigger when heading top crosses offset (e.g. 20%) from top.
-    const rootMarginTop = `-${offset * 100}%` // negative pushes threshold down
-    const io = new IntersectionObserver(
+    // Observer for post headings – triggers slightly earlier so activeId updates
+    const rootMarginTop = `-${offset * 100}%`
+    const headingObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const target = entry.target as HTMLElement
-          if (target === mainTitle) {
-            // For title we only care about visibility
-            setMainTitleOut(!entry.isIntersecting)
-            return
-          }
-
-          // Any heading that becomes visible nearer the top becomes the active
           if (entry.isIntersecting) {
-            setActiveId(target.id)
+            setActiveId((entry.target as HTMLElement).id)
           }
         })
       },
       {
-        // make bottom margin large so we get callbacks early, but only when the
-        // element crosses the top threshold.
         rootMargin: `${rootMarginTop} 0px -80% 0px`,
         threshold: 0,
       },
     )
 
-    headings.forEach((h) => h.id && io.observe(h))
-    if (mainTitle) io.observe(mainTitle)
+    headings.forEach((h) => h.id && headingObserver.observe(h))
 
-    return () => io.disconnect()
+    // Observer for the main <h1> – we want it marked "out" only when fully
+    // outside viewport, so use default margins/threshold.
+    let titleObserver: IntersectionObserver | null = null
+    if (mainTitle) {
+      titleObserver = new IntersectionObserver(
+        ([entry]) => {
+          setMainTitleOut(!entry.isIntersecting)
+        },
+        { threshold: 0 },
+      )
+      titleObserver.observe(mainTitle)
+    }
+
+    return () => {
+      headingObserver.disconnect()
+      titleObserver?.disconnect()
+    }
   }, [selector, offset])
 
   return {

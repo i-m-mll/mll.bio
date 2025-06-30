@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { UiConfigProvider } from "@/components/ui-config-provider"
-import { CodeThemeLoader } from "@/components/code-theme-loader"
+import { CodeThemeStyles } from "@/components/CodeThemeStyles"
 import { siteConfig } from "@/lib/config/site"
 import { inter, roboto, roboto_mono, source_serif } from "@/lib/fonts"
 import DevFontSwitcher from "@/components/DevFontSwitcher"
@@ -42,7 +42,8 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased font-body">
         <ThemeProvider>
           <UiConfigProvider />
-          <CodeThemeLoader />
+          {/* Inject highlight.js themes at build time */}
+          <CodeThemeStyles />
           <div className="relative flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>

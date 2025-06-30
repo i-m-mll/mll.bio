@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/build-themes.mjs",
+    "predev": "node scripts/build-themes.mjs && node scripts/gen-images.mjs",
     "build": "next build",
-    "prebuild": "node scripts/build-themes.mjs",
+    "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs",
     "start": "next start",
     "lint": "next lint",
     "serve": "npm run build && npx serve out -p 3000",
     "serve-only": "npx serve out -p 3000",
-    "dev-fonts": "node scripts/gen-font-variants.mjs"
+    "dev-fonts": "node scripts/gen-font-variants.mjs",
+    "gen-images": "node scripts/gen-images.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.0",
@@ -22,6 +23,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "gray-matter": "^4.0.3",
+    
     "hast-util-to-string": "^3.0.1",
     "katex": "^0.16.22",
     "next": "^15.1.0",
@@ -46,6 +48,7 @@
     "eslint-config-next": "14.0.4",
     "postcss": "^8.5.5",
     "tailwindcss": "^4.1.10",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "sharp": "^0.33.2"
   }
 }

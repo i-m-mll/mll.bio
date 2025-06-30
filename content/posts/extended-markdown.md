@@ -97,7 +97,8 @@ You can add sidenotes[^1] to provide additional context without interrupting the
 
 You can include images like this:
 
-![Alt text](/placeholder.svg?height=200&width=400)
+![Me!](./extended-markdown/me.jpg "width=50%")
+![Wow](./extended-markdown/test.svg "width=70%")
 
 ## Horizontal Rule
 

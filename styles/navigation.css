@@ -50,6 +50,13 @@
   font-size: 0.7rem;
 }
 
+/* Inline code styling within TOC links */
+.toc-link code,
+.mobile-toc-link code {
+  @apply bg-muted px-1 py-0.5 rounded font-mono;
+  font-size: 0.8em;
+}
+
 /* Mobile TOC styles - match sidebar TOC but without right border */
 .mobile-toc {
   @apply my-6 p-1 bg-background;

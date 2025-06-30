@@ -1,0 +1,27 @@
+{
+  "/content/posts/extended-markdown/test.svg": {
+    "path": "/content/posts/extended-markdown/test.svg"
+  },
+  "/content/posts/extended-markdown/me.jpg": [
+    {
+      "w": 320,
+      "webp": "/optimized/mbb7zbst/320.webp",
+      "avif": "/optimized/mbb7zbst/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mbb7zbst/640.webp",
+      "avif": "/optimized/mbb7zbst/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mbb7zbst/960.webp",
+      "avif": "/optimized/mbb7zbst/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mbb7zbst/1280.webp",
+      "avif": "/optimized/mbb7zbst/1280.avif"
+    }
+  ]
+}
