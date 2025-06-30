@@ -34,10 +34,15 @@ export default function RootLayout({
     <html 
       lang="en" 
       suppressHydrationWarning
-      className={`${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable}`}
+      className={`no-js ${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable}`}
     >
       <head>
         <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');",
+          }}
+        />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-body">
         <ThemeProvider>

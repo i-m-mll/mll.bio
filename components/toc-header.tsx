@@ -27,7 +27,7 @@ export function TocHeader({ isCollapsed, onToggle, onClose, showCloseButton = fa
       onClick={onToggle}
       className="flex items-center gap-3 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
     >
-      <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
+      <span className={`toc-toggle-icon transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
         ▸
       </span>
       <span className="font-semibold text-foreground font-heading">Contents</span>

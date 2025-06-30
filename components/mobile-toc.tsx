@@ -15,27 +15,28 @@ interface MobileTocProps {
   content: string
 }
 
+function extractHeadings(markdown: string): TocItem[] {
+  const headingRegex = /^(#{2,6})\s+(.+)$/gm
+  const items: TocItem[] = []
+  let match: RegExpExecArray | null
+
+  while ((match = headingRegex.exec(markdown)) !== null) {
+    const level = match[1].length
+    const title = match[2].trim()
+    const id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+    items.push({ id, title, level })
+  }
+  return items
+}
+
 export function MobileToc({ content }: MobileTocProps) {
-  const [tocItems, setTocItems] = useState<TocItem[]>([])
+  const [tocItems, setTocItems] = useState<TocItem[]>(() => extractHeadings(content))
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const { activeId } = useHeadingObserver()
 
   useEffect(() => {
-    // Extract headings from the content
-    const headingRegex = /^(#{2,6})\s+(.+)$/gm
-    const items: TocItem[] = []
-    let match
-
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length
-      const title = match[2].trim()
-      const id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-      
-      items.push({ id, title, level })
-    }
-
-    setTocItems(items)
+    setTocItems(extractHeadings(content))
   }, [content])
 
   if (tocItems.length === 0) {

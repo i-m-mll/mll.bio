@@ -1,0 +1,29 @@
+/* Fallback styles for users with JavaScript disabled */
+
+/* Hide elements that are purely interactive (e.g., floating mobile button, theme toggle) */
+.no-js .js-only {
+  display: none !important;
+}
+
+/* Replace collapsible arrow with open circle when JS disabled */
+.no-js .toc-toggle-icon {
+  font-size: 0; /* visually hide original glyph */
+  line-height: 0;
+  transform: none !important;
+  position: static;
+  display: inline-block;
+}
+.no-js .toc-toggle-icon::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* Sticky title relies on IntersectionObserver; hide when JS disabled */
+.no-js .sticky-title {
+  display: none !important;
+} 

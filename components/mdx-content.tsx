@@ -8,6 +8,7 @@ import { NoteScope } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
 import ResponsiveImage from "@/components/ResponsiveImage"
 import { SidenoteProvider } from "@/components/sidenote-context"
+import { KatexStyles } from "@/components/KatexStyles"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
@@ -57,8 +58,12 @@ export async function MDXContent({ children }: MDXContentProps) {
   })
 
   return (
-    <SidenoteProvider>
-      <Content components={mdxComponents} />
-    </SidenoteProvider>
+    <>
+      {/* Ensure KaTeX CSS is included whenever MDX content is rendered */}
+      <KatexStyles />
+      <SidenoteProvider>
+        <Content components={mdxComponents} />
+      </SidenoteProvider>
+    </>
   )
 }

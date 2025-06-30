@@ -17,8 +17,25 @@ interface TableOfContentsProps {
   postTitle: string
 }
 
+// Utility to extract headings (h2-h6) from raw markdown content
+function extractHeadings(markdown: string) {
+  const headingRegex = /^(#{2,6})\s+(.+)$/gm
+  const items: TocItem[] = []
+  let match: RegExpExecArray | null
+
+  while ((match = headingRegex.exec(markdown)) !== null) {
+    const level = match[1].length
+    const title = match[2].trim()
+    const renderedTitle = renderInlineMarkdown(title)
+    const id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+    items.push({ id, title, renderedTitle, level })
+  }
+
+  return items
+}
+
 export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
-  const [tocItems, setTocItems] = useState<TocItem[]>([])
+  const [tocItems, setTocItems] = useState<TocItem[]>(() => extractHeadings(content))
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showMobileToc, setShowMobileToc] = useState(false)
 
@@ -26,25 +43,10 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
   const { activeId, mainTitleOut } = useHeadingObserver()
   const showStickyTitle = mainTitleOut
 
+  // Keep client-side behavior intact by updating when content changes.
   useEffect(() => {
-    // Extract headings from the content
-    const headingRegex = /^(#{2,6})\s+(.+)$/gm
-    const items: TocItem[] = []
-    let match
-
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length
-      const title = match[2].trim()
-      const renderedTitle = renderInlineMarkdown(title)
-      const id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-      
-      items.push({ id, title, renderedTitle, level })
-    }
-
-    setTocItems(items)
+    setTocItems(extractHeadings(content))
   }, [content])
-
-
 
   if (tocItems.length === 0) {
     return null
@@ -80,13 +82,13 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
         <>
           <button
             onClick={() => setShowMobileToc(!showMobileToc)}
-            className={`fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg tablet:hidden`}
+            className={`js-only fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg tablet:hidden`}
           >
             <span className="text-sm font-medium">Contents</span>
           </button>
           
           {showMobileToc && (
-            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm tablet:hidden">
+            <div className="js-only fixed inset-0 z-40 bg-background/80 backdrop-blur-sm tablet:hidden">
               <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
                 <div className="flex justify-between items-center mb-1">
                   <h3 className="font-semibold">Contents</h3>
@@ -102,7 +104,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
                   <ul className="space-y-1">
                     {tocItems.map((item) => (
                       <li key={item.id}>
-                        <button
+                        <a
+                          href={`#${item.id}`}
                           onClick={() => handleHeadingClick(item.id)}
                           className={`toc-link level-${item.level} ${
                             activeId === item.id ? 'active' : ''
@@ -135,7 +138,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center gap-3 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
           >
-            <span className={`transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
+            <span className={`toc-toggle-icon transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
               ▸
             </span>
             <span className="font-semibold text-foreground font-heading">Contents</span>
@@ -146,7 +149,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
               <ul className="space-y-1">
                 {tocItems.map((item) => (
                   <li key={item.id}>
-                    <button
+                    <a
+                      href={`#${item.id}`}
                       onClick={() => handleHeadingClick(item.id)}
                       className={`toc-link level-${item.level} ${
                         activeId === item.id ? 'active' : ''

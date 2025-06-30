@@ -23,7 +23,8 @@ export function TocList({ items, activeId, onItemClick }: TocListProps) {
           
           return (
             <li key={item.id}>
-              <button
+              <a
+                href={`#${item.id}`}
                 onClick={() => onItemClick(item.id)}
                 className={`block w-full text-left py-1 border-none bg-transparent cursor-pointer no-underline transition-colors duration-200 leading-snug toc-link level-${item.level} ${
                   activeId === item.id 

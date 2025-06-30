@@ -150,13 +150,54 @@ export function SidenoteSelection() {
           }
 
           if (textNodes.length > 0) {
-            // Create a new range that only includes the main text
+            // Create a new range that only includes the main text while
+            // *preserving* the user's original start/end positions whenever they
+            // are already outside sidelined content. This prevents the selection
+            // from being reset when the drag direction is backwards.
             const newRange = document.createRange()
-            newRange.setStart(textNodes[0], 0)
-            newRange.setEnd(textNodes[textNodes.length - 1], textNodes[textNodes.length - 1].textContent?.length || 0)
-            
+
+            // Helper to know if a node is inside any sidenote / marginnote
+            const isInsideNote = (node: Node | null) => {
+              if (!node) return false
+              const el = node.nodeType === Node.TEXT_NODE ? (node.parentElement) : (node as HTMLElement)
+              return !!el?.closest('.sidenote, .marginnote')
+            }
+
+            // Determine safe start boundary
+            const startNodeInNote = isInsideNote(range.startContainer)
+            const startNode = startNodeInNote ? textNodes[0] : range.startContainer
+            const startOffset = startNodeInNote ? 0 : range.startOffset
+
+            // Determine safe end boundary
+            const endNodeInNote = isInsideNote(range.endContainer)
+            const endNode = endNodeInNote ? textNodes[textNodes.length - 1] : range.endContainer
+            const endOffset = endNodeInNote ? (endNode.textContent?.length || 0) : range.endOffset
+
+            newRange.setStart(startNode, startOffset)
+            newRange.setEnd(endNode, endOffset)
+
+            // Apply the refined range while trying to preserve selection
+            // direction (anchor/focus). We capture them *before* resetting so
+            // we can restore afterwards.
+            const anchorNode = selection.anchorNode
+            const anchorOffset = selection.anchorOffset
+            const focusNode = selection.focusNode
+            const focusOffset = selection.focusOffset
+
             selection.removeAllRanges()
             selection.addRange(newRange)
+
+            // If the original anchor/focus were outside notes, restore them so
+            // backwards selections remain backwards. If either boundary was
+            // inside a note we simply keep the forward range – this mirrors the
+            // browser's own behaviour when the anchor/focus become invalid.
+            if (!isInsideNote(anchorNode) && !isInsideNote(focusNode)) {
+              try {
+                selection.setBaseAndExtent(anchorNode!, anchorOffset, focusNode!, focusOffset)
+              } catch {
+                /* Fallback: leave the range as-is if the browser rejects the call */
+              }
+            }
           }
         } catch (error) {
           console.warn('Selection cleanup failed:', error)
