@@ -7,6 +7,11 @@ import { uiConfig } from "@/lib/config/ui"
 import { cn } from "@/lib/utils"
 import { useScrollDirection } from "@/lib/hooks"
 import { ModeToggle } from "@/components/mode-toggle"
+import dynamic from "next/dynamic"
+
+const SearchBar = uiConfig.search.enabled
+  ? dynamic(() => import("@/components/search-bar"), { ssr: false })
+  : null as unknown as React.ComponentType
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -58,7 +63,8 @@ export function SiteHeader() {
             </Link>
           )}
         </nav>
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
+          {SearchBar && <SearchBar />}
           <ModeToggle />
         </div>
       </div>

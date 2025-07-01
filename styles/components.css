@@ -42,4 +42,29 @@
     height: 100%;
     display: block;
   }
+}
+
+/* Search snippet specific tweaks */
+.search-snippet code {
+  font-size: 0.8em;
+  line-height: 1.2em;
+}
+
+.search-snippet pre {
+  font-size: 0.75rem; /* text-xs */
+  line-height: 1rem;
+  background-color: var(--code-bg);
+  border: 1px solid hsl(var(--border));
+  padding: theme('spacing.3');
+  border-radius: theme('borderRadius.md');
+}
+
+.search-snippet pre code {
+  background-color: transparent;
+}
+
+/* Ensure syntax-highlight spans inherit code-bg so colours stay after repaint */
+article.prose pre code span.hljs,
+.search-snippet pre code span.hljs {
+  background-color: var(--code-bg) !important;
 } 

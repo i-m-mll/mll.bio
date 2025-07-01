@@ -64,4 +64,12 @@
   background-color: transparent !important;
   color: hsl(var(--foreground));
   /* padding: var(--code-block-padding); */
+}
+
+/* Ensure consistent background colour on inner spans and marks */
+article.prose pre code *,
+.search-snippet pre code *,
+article.prose pre code mark,
+.search-snippet pre code mark {
+  background-color: var(--code-bg) !important;
 } 

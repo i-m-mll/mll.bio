@@ -2,7 +2,7 @@ export const uiConfig = {
   // Header behavior
   header: {
     // Scroll sensitivity (pixels) - lower values = more sensitive to slow scrolling
-    scrollThreshold: 2,
+    scrollThreshold: 4,
     // Animation duration for hide/show transitions
     transitionDuration: 300, // milliseconds
     themeToggleSizeRem: 2.25, // size of the theme toggle icon/button in rem
@@ -107,6 +107,20 @@ export const uiConfig = {
   devTools: {
     // Enable or disable the in-browser font switcher overlay (dev only)
     fontSwitcher: false,
+  },
+
+  // Search configuration
+  search: {
+    // Enable or disable the site-wide search feature
+    enabled: true,
+    // Maximum number of matched positions to keep per document (null = keep all)
+    maxSnippetsPerResult: null as number | null,
+    // Max lines to display for paragraph snippets in the dropdown
+    snippetLinesParagraph: 4,
+    // Max lines to include for code snippets in dropdown (generated at build)
+    snippetLinesCode: 7,
+    // Maximum width of search dropdown in rem units (null = default)
+    dropdownMaxWidthRem: 40 as number | null,
   },
 
   // Future UI configurations can be added here

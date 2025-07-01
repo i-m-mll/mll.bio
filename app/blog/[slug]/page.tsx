@@ -9,6 +9,7 @@ import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown, stripMarkdown } from "@/lib/utils"
+import SearchHighlighter from "@/components/search-highlighter"
 
 export async function generateStaticParams() {
   // Only generate pages for published posts if blog is enabled
@@ -86,6 +87,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         
         <article className="prose dark:prose-invert mx-auto relative">
           <MDXContent>{post.content}</MDXContent>
+          <SearchHighlighter />
           <Footnotes content={post.content} />
         </article>
       </div>

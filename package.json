@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/build-themes.mjs && node scripts/gen-images.mjs",
+    "predev": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs",
     "build": "next build",
-    "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs",
+    "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs",
     "start": "next start",
     "lint": "next lint",
     "serve": "npm run build && npx serve out -p 3000",
@@ -36,7 +36,12 @@
     "remark-math": "^6.0.0",
     "tailwind-merge": "^2.1.0",
     "typeface-et-book": "^0.0.2",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "lunr": "^2.3.9",
+    "unified": "^11.0.4",
+    "remark-parse": "^10.0.2",
+    "remark-mdx": "^2.2.0",
+    "remark-html": "^15.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.10",
