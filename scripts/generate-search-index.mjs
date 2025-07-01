@@ -60,11 +60,13 @@ function buildIndex() {
     if (!fileName.endsWith('.md') && !fileName.endsWith('.mdx')) return
     const slug = fileName.replace(/\.mdx?$/, '')
     const fullPath = path.join(postsDirectory, fileName)
+    // Read file and strip YAML front-matter so it does not get indexed as regular text
     const raw = fs.readFileSync(fullPath, 'utf8')
-    const { data } = matter(raw)
+    const { data, content } = matter(raw)
     if (data.draft) return
     const title = data.title || slug
-    const blocks = getBlocks(raw)
+    // Only index the actual Markdown body (content) – excludes front-matter
+    const blocks = getBlocks(content)
     blocks.forEach((block, idx) => {
       const id = `${slug}::${idx}`
       allDocs.push({ id, title, content: block.plain, slug })

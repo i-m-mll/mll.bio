@@ -76,7 +76,8 @@ export const uiConfig = {
     collapseButtonText: 'less',
     
     // Highlighting when targeted by anchor links
-    highlightStartOpacity: 0.25, // Opacity at start of highlight (0-1)
+    highlightStartOpacity: 0.5, // Opacity at start of highlight (0-1)
+    highlightStartOpacityDark: 0.7,
     highlightEndOpacity: 0.0,   // Opacity after fade completes (0-1)
     highlightBorderStartOpacity: 0.5,  //! Unused
     highlightBorderEndOpacity: 0.01,  //! Unused
@@ -148,8 +149,11 @@ export function applySidenoteConfig() {
     // Set minimum spacing between sidenotes
     root.style.setProperty('--sidenote-min-space-between', sidenotes.minSpaceBetweenNotes)
     
+    // Set light and dark start opacity variables
+    root.style.setProperty('--sidenote-highlight-start-opacity-light', sidenotes.highlightStartOpacity.toString())
+    root.style.setProperty('--sidenote-highlight-start-opacity-dark', sidenotes.highlightStartOpacityDark.toString())
+    
     // Set highlighting configuration variables
-    root.style.setProperty('--sidenote-highlight-start-opacity', sidenotes.highlightStartOpacity.toString())
     root.style.setProperty('--sidenote-highlight-end-opacity', sidenotes.highlightEndOpacity.toString())
     root.style.setProperty('--sidenote-highlight-border-start-opacity', sidenotes.highlightBorderStartOpacity.toString())
     root.style.setProperty('--sidenote-highlight-border-end-opacity', sidenotes.highlightBorderEndOpacity.toString())

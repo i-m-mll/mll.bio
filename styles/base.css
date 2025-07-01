@@ -100,6 +100,21 @@
 
     /* Default title font */
     --dev-title-font: 'Fira Sans', sans-serif;
+
+    /* Light theme highlight opacity variable (fallback 0.25) */
+    --sidenote-highlight-start-opacity-light: 0.25;
+    /* Use light variable by default */
+    --sidenote-highlight-start-opacity: var(--sidenote-highlight-start-opacity-light, 0.25);
+
+    /*
+     * Point to the raw RGB components of the desired Tailwind color.
+     * Tailwind automatically generates these `--tw-color-*` variables for
+     * its own opacity modifiers (e.g., `bg-blue-500/50`), so we can
+     * safely hook into them. This is the canonical way to make a themeable
+     * color compatible with dynamic alpha channels.
+    */
+    /* Hard-coded RGB triplet for light-theme highlight (Tailwind blue-500) */
+    --sidenote-highlight-rgb: 59 130 246;
   }
 
   .dark {
@@ -125,6 +140,10 @@
     --giscus-border: var(--border);
     --giscus-background: var(--background);
     --giscus-text: var(--foreground);
+    /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
+    --sidenote-highlight-rgb: 96 165 250;
+    /* Override with dark variable if provided */
+    --sidenote-highlight-start-opacity: var(--sidenote-highlight-start-opacity-dark, 0.35);
   }
 
   /* Automatically use dark palette when user's system prefers dark, but
@@ -155,6 +174,8 @@
       --giscus-border: var(--border);
       --giscus-background: var(--background);
       --giscus-text: var(--foreground);
+      /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
+      --sidenote-highlight-rgb: 96 165 250;
     }
   }
 }
