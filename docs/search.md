@@ -28,7 +28,7 @@
    • The public index ships as `/public/search/index.json`, containing `{ index, store }`.
 
 6. **Result generation & de-duplication**  
-   • Each hit’s match positions are mapped back to snippets on the client.  
+   • Each hit's match positions are mapped back to snippets on the client.  
    • For code blocks snippets start at the first matching line; further matches that fall inside the same window are skipped, preventing duplicate/overlapping previews.  
    • Duplicate snippets across different match positions collapse into one dropdown entry.
 
@@ -44,14 +44,32 @@
    • All occurrences of every query token are wrapped in `<mark data-search-highlight>`.  
    • Highlights are removed and rebuilt on each navigation, preventing accumulation.
 
+9. **Snippet UI polish**  
+   • Code snippets show only their relevant section; rounded corners and borders adapt to whether the snippet starts/ends the original block.  
+   • Gradient *fade* at truncated edges hints that more lines exist above/below.
+
+10. **Stable client–side syntax highlighting**  
+    • Snippets are highlighted before insertion, eliminating flicker when results refresh.  
+    • Highlighting is safe-guarded against HTML injection; only visible text is wrapped in `<mark>`.
+
+11. **Minimum query length & HTML-safe matching**  
+    • Queries shorter than 2 characters are ignored.  
+    • Matching is done on plain text only, preventing hits inside `<a>` or attribute names.
+
+12. **Result list ergonomics**  
+    • Up/Down selection auto-scrolls the dropdown to keep the active item in view.  
+    • Active result is indicated by an inset ring (`ring-stone-200` / `ring-stone-700`) for high contrast in both light & dark themes.
+
+13. **Header behaviour**  
+    • The search bar hides together with the sticky header, fading/sliding out smoothly, and re-appears with its state preserved.
+
 ### TODO / outstanding items
 
-1. **Reliable centred scrolling** – some cases still overshoot (especially inside long code blocks or when the element’s height exceeds the viewport). Improve `scrollToCenter` to account for tall targets and sticky header height dynamically.
+1. **Reliable centred scrolling** – some cases still overshoot (especially inside long code blocks or when the element's height exceeds the viewport). Improve `scrollToCenter` to account for tall targets and sticky header height dynamically.
 
 2. **Optional deep anchors** – consider assigning permanent IDs to every block during MDX compilation so links can use real fragment identifiers (`#block-17`) instead of the ephemeral `&b=` query parameter.
 
 3. **Visual polish**  
-   • Tweak dropdown hover/active states.  
    • Consider showing the post date or reading-time meta beside each result.
 
 4. **Accessibility**  
@@ -59,4 +77,4 @@
    • Ensure high contrast for highlight colours in both light & dark modes.
 
 5. **Internationalisation**  
-   • Replace Lunr’s hard-coded English pipeline when non-English content is added.
+   • Replace Lunr's hard-coded English pipeline when non-English content is added.

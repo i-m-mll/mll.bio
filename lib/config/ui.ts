@@ -2,7 +2,7 @@ export const uiConfig = {
   // Header behavior
   header: {
     // Scroll sensitivity (pixels) - lower values = more sensitive to slow scrolling
-    scrollThreshold: 4,
+    scrollThreshold: 2,
     // Animation duration for hide/show transitions
     transitionDuration: 300, // milliseconds
     themeToggleSizeRem: 2.25, // size of the theme toggle icon/button in rem
@@ -119,8 +119,12 @@ export const uiConfig = {
     snippetLinesParagraph: 4,
     // Max lines to include for code snippets in dropdown (generated at build)
     snippetLinesCode: 7,
-    // Maximum width of search dropdown in rem units (null = default)
-    dropdownMaxWidthRem: 40 as number | null,
+    // Responsive dropdown width; values feed into CSS clamp(min, vwFraction, ideal)
+    dropdownWidth: {
+      idealRem: 40,
+      minRem: 16,
+      vwFraction: 0.7, // 70% of viewport width
+    } as const,
   },
 
   // Future UI configurations can be added here

@@ -19,8 +19,8 @@ export function SiteHeader() {
 
   return (
     <header className={cn(
-      "sticky top-0 z-40 w-full border-b bg-background transition-transform duration-300 ease-in-out",
-      scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
+      "sticky top-0 z-40 w-full border-b bg-background transition-all duration-300 ease-in-out overflow-visible",
+      scrollDirection === "down" ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
     )}>
       <div className="container flex h-16 items-center">
         <div className="mr-8">
@@ -64,7 +64,7 @@ export function SiteHeader() {
           )}
         </nav>
         <div className="flex items-center space-x-4">
-          {SearchBar && <SearchBar />}
+          {SearchBar && <div className="hidden sm:block"><SearchBar /></div>}
           <ModeToggle />
         </div>
       </div>

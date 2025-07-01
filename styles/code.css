@@ -66,10 +66,19 @@
   /* padding: var(--code-block-padding); */
 }
 
+/* Same override for search results */
+.search-snippet pre .hljs {
+  background-color: transparent !important;
+  color: hsl(var(--foreground));
+}
+
+/* Ensure highlighted terms do not reset text colour */
+.search-snippet mark {
+  color: inherit;
+}
+
 /* Ensure consistent background colour on inner spans and marks */
-article.prose pre code *,
-.search-snippet pre code *,
-article.prose pre code mark,
-.search-snippet pre code mark {
+article.prose pre code *:not(mark[data-search-highlight]),
+.search-snippet pre code *:not(mark[data-search-highlight]) {
   background-color: var(--code-bg) !important;
 } 

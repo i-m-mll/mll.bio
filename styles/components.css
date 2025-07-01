@@ -54,9 +54,11 @@
   font-size: 0.75rem; /* text-xs */
   line-height: 1rem;
   background-color: var(--code-bg);
-  border: 1px solid hsl(var(--border));
+  border-style: solid;
+  border-color: hsl(var(--border));
   padding: theme('spacing.3');
-  border-radius: theme('borderRadius.md');
+  position: relative;
+  overflow: hidden;
 }
 
 .search-snippet pre code {
@@ -67,4 +69,21 @@
 article.prose pre code span.hljs,
 .search-snippet pre code span.hljs {
   background-color: var(--code-bg) !important;
+}
+
+/* Use CSS masking for smoother fades without extra layers */
+.search-snippet pre.fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 100%);
+}
+
+.search-snippet pre.fade-bottom {
+  mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+}
+
+.search-snippet pre.fade-top.fade-bottom {
+  /* when both fades apply, combine with dual mask */
+  mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
 } 

@@ -1,10 +1,10 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, useLayoutEffect } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { renderInlineMarkdown, cn } from "@/lib/utils"
 import { uiConfig } from "@/lib/config/ui"
-import { renderInlineMarkdown } from "@/lib/utils"
 
 interface StoredDoc {
   title: string
@@ -23,6 +23,11 @@ interface DisplayResult {
   blockIdx?: number
 }
 
+// Component props to allow reuse in overlay/mobile variant
+interface SearchBarProps {
+  variant?: "default" | "overlay"
+}
+
 // Simple debounce implementation (no external dep)
 function useDebouncedValue<T>(value: T, delay = 300) {
   const [debounced, setDebounced] = useState(value)
@@ -33,7 +38,16 @@ function useDebouncedValue<T>(value: T, delay = 300) {
   return debounced
 }
 
-export default function SearchBar() {
+// Safely wrap matched tokens in <mark> while ignoring HTML tags/attributes
+function highlightTokensInHtml(html: string, tokenRegex: RegExp, markClass: string): string {
+  const segments = html.split(/(<[^>]+?>)/g)
+  return segments.map(seg => {
+    if (seg.startsWith('<')) return seg
+    return seg.replace(tokenRegex, `<mark class="${markClass}" data-search-highlight>$1</mark>`)
+  }).join('')
+}
+
+export default function SearchBar({ variant = "default" }: SearchBarProps) {
   const [query, setQuery] = useState("")
   const debouncedQuery = useDebouncedValue(query, 200)
   const [results, setResults] = useState<DisplayResult[]>([])
@@ -45,15 +59,21 @@ export default function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
   const hljsRef = useRef<any>(null)
   const router = useRouter()
+  const [hljsLoaded, setHljsLoaded] = useState(false)
+  const listRef = useRef<HTMLUListElement>(null)
 
   // Load Lunr + index.json lazily
   const loadIndex = useCallback(async () => {
     if (indexLoaded) return
     try {
-      const [{ default: lunrModule }, data] = await Promise.all([
+      const [{ default: lunrModule }, { default: hljsModule }, data] = await Promise.all([
         import("lunr"),
+        import("highlight.js"),
         fetch("/search/index.json").then((r) => r.json()),
       ])
+      const hljs = (hljsModule as any).default ?? hljsModule
+      hljsRef.current = hljs
+      setHljsLoaded(true)
       const lunr = (lunrModule as any).default ?? lunrModule
       lunrRef.current = lunr
       lunrIndexRef.current = lunr.Index.load(data.index)
@@ -66,12 +86,13 @@ export default function SearchBar() {
 
   // Handle searching when debouncedQuery changes
   useEffect(() => {
-    if (!indexLoaded || debouncedQuery.trim() === "" || !lunrIndexRef.current) {
+    const trimmed = debouncedQuery.trim()
+    if (!indexLoaded || !hljsLoaded || trimmed.length < 2 || !lunrIndexRef.current) {
       setResults([])
       return
     }
     try {
-      const terms = debouncedQuery.trim().split(/\s+/)
+      const terms = trimmed.split(/\s+/)
       const lunrIdx = lunrIndexRef.current
       const lunrLib = lunrRef.current
 
@@ -154,22 +175,47 @@ export default function SearchBar() {
             }
             if (lineIndex <= lastEndLine) return
 
-            const startLine = lineIndex // begin snippet at the matched line
-            const endLine = Math.min(codeLines.length, startLine + uiConfig.search.snippetLinesCode)
-            const snippetLines = codeLines.slice(startLine, endLine).filter(l => !l.trim().startsWith('```'))
-            const langClass = doc.lang ? `language-${doc.lang}` : ''
-            // Determine appropriate rounded corners
-            const topRounded = startLine === 0
-            const bottomRounded = endLine === codeLines.length
-            let preClasses = 'border-x'
-            if (topRounded) preClasses += ' rounded-t-md'
-            if (bottomRounded) preClasses += ' rounded-b-md'
-            if (startLine !== 0) preClasses += ' border-t-0'
-            if (endLine !== codeLines.length) preClasses += ' border-b-0'
+            const visibleCount = uiConfig.search.snippetLinesCode
+            const extraBefore = (lineIndex !== 0) ? 1 : 0 // top fade line
+            const startLineSlice = Math.max(0, lineIndex - extraBefore)
+            const atBottomBeforeCalc = (lineIndex + visibleCount >= codeLines.length)
+            const extraAfter = atBottomBeforeCalc ? 0 : 1 // bottom fade line if truncated at bottom
+            const endLineSlice = Math.min(codeLines.length, startLineSlice + visibleCount + extraBefore + extraAfter)
 
-            snippetHtml = `<pre class="${preClasses}"><code class="${langClass}">${snippetLines.join('\n')}</code></pre>`
+            const snippetLines = codeLines.slice(startLineSlice, endLineSlice).filter(l => !l.trim().startsWith('```'))
 
-            lastEndLine = endLine - 1
+            const atTop = startLineSlice === 0
+            const atBottom = endLineSlice === codeLines.length
+            let preClasses = 'border-x relative overflow-hidden'
+            if (atTop) {
+              preClasses += ' border-t rounded-t-md'
+            } else {
+              preClasses += ' fade-top'
+            }
+
+            if (atBottom) {
+              preClasses += ' border-b rounded-b-md'
+            } else {
+              preClasses += ' fade-bottom'
+            }
+
+            const codeSnippet = snippetLines.join('\n')
+            let highlightedCode = codeSnippet
+            if (hljsRef.current) {
+              try {
+                if (doc.lang && hljsRef.current.getLanguage(doc.lang)) {
+                  highlightedCode = hljsRef.current.highlight(codeSnippet, { language: doc.lang }).value
+                } else {
+                  highlightedCode = hljsRef.current.highlightAuto(codeSnippet).value
+                }
+              } catch (_) {
+                highlightedCode = hljsRef.current?.escapeHTML ? hljsRef.current.escapeHTML(codeSnippet) : codeSnippet
+              }
+            }
+
+            snippetHtml = `<pre class="${preClasses}"><code class="hljs ${doc.lang ? `language-${doc.lang}` : ''}">${highlightedCode}</code></pre>`
+
+            lastEndLine = endLineSlice - 1
           }
           const key = snippetHtml
           if (!processedMap[key]) {
@@ -190,7 +236,7 @@ export default function SearchBar() {
       console.error(err)
       setResults([])
     }
-  }, [debouncedQuery, indexLoaded])
+  }, [debouncedQuery, indexLoaded, hljsLoaded])
 
   const buildHref = (slug: string, blockIdx?: number) => {
     const qStr = (query.trim() || debouncedQuery).trim()
@@ -203,38 +249,18 @@ export default function SearchBar() {
     return queryStr ? `/blog/${slug}?${queryStr}` : `/blog/${slug}`
   }
 
-  useLayoutEffect(() => {
-    if (!hljsRef.current) {
-      import('highlight.js').then((m) => { hljsRef.current = m.default })
-    }
-  }, [])
-
+  // Ensure the selected result is visible inside the dropdown
   useEffect(() => {
-    if (!hljsRef.current || results.length === 0) return
-    const hljs = hljsRef.current
-    const tokens = debouncedQuery.split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    const tokenRegex = tokens.length ? new RegExp(`(${tokens.join('|')})`, 'gi') : null
-    document.querySelectorAll('.search-snippet pre code').forEach((el) => {
-      const codeEl = el as HTMLElement
-      if (codeEl.classList.contains('hljs')) return
-      const hasLang = [...codeEl.classList].some(c=>c.startsWith('language-'))
-      if (hasLang) {
-        hljs.highlightElement(codeEl)
-      } else {
-        const result = hljs.highlightAuto(codeEl.textContent || '')
-        codeEl.innerHTML = result.value
-        codeEl.classList.add('hljs')
-      }
-
-      // re-apply token highlighting
-      if (tokenRegex) {
-        codeEl.innerHTML = codeEl.innerHTML.replace(tokenRegex, '<mark>$1</mark>')
-      }
-    })
-  }, [results])
+    if (!listRef.current) return
+    if (selectedIndex < 0) return
+    const item = listRef.current.children[selectedIndex] as HTMLElement | undefined
+    if (item) {
+      item.scrollIntoView({ block: 'nearest' })
+    }
+  }, [selectedIndex])
 
   return (
-    <div className="relative">
+    <div className={cn("relative", variant === "overlay" ? "w-full" : undefined)}>
       <input
         ref={inputRef}
         type="search"
@@ -257,12 +283,31 @@ export default function SearchBar() {
           }
         }}
         placeholder="Search…"
-        className="h-8 w-40 rounded-md border border-input bg-muted/30 px-2 text-sm transition-all focus:w-56 focus:border-accent focus:bg-background focus:outline-none"
+        className={cn(
+          variant === "overlay"
+            ? "h-10 w-full rounded-md border border-input bg-background px-3 text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-accent focus:border-accent focus:outline-none"
+            : "h-8 w-40 rounded-md border border-input bg-muted/30 px-2 text-sm transition-all focus:w-56 focus:border-accent focus:bg-background focus:outline-none"
+        )}
+        autoFocus={variant === "overlay"}
       />
       {results.length > 0 && (
-        <ul className="absolute right-0 mt-1 max-h-72 overflow-y-auto rounded-md border border-input bg-background shadow-lg" style={{width: uiConfig.search.dropdownMaxWidthRem ? `${uiConfig.search.dropdownMaxWidthRem}rem` : 'auto', maxWidth: '90vw'}}>
+        <ul
+          ref={listRef}
+          className={cn(
+            "mt-2 overflow-y-auto bg-background",
+            variant === "overlay"
+              ? "max-h-[60vh] w-full border-t border-input"
+              : "absolute right-0 max-h-72 rounded-md border border-input shadow-lg"
+          )}
+          style={(() => {
+            if (variant === "overlay") return {}
+            const { dropdownWidth } = uiConfig.search
+            const clampStr = `clamp(${dropdownWidth.minRem}rem, ${dropdownWidth.vwFraction * 100}vw, ${dropdownWidth.idealRem}rem)`
+            return { width: clampStr, maxWidth: 'calc(100vw - 1rem)' }
+          })()}
+        >
           {results.map((r, idx) => (
-            <li key={r.id} className={`border-b last:border-b-0 ${idx === selectedIndex ? 'bg-accent/30' : ''}`}>
+            <li key={r.id} className={`border-b last:border-b-0 ${idx === selectedIndex ? 'ring-inset ring-2 ring-stone-200 dark:ring-stone-700' : ''}`}>
               <Link href={buildHref(r.slug, r.blockIdx)} scroll={false} className="block w-full px-3 py-2 text-left" onClick={() => {setQuery(""); setResults([]) }}>
                 <div className="font-medium text-sm" dangerouslySetInnerHTML={{__html: renderInlineMarkdown(r.title)}} />
                 {r.snippetHtml ? (
@@ -276,7 +321,7 @@ export default function SearchBar() {
                     const tokens = debouncedQuery.split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
                     if (!tokens.length) return r.snippetHtml
                     const regex = new RegExp(`(${tokens.join('|')})`, 'gi')
-                    return r.snippetHtml.replace(regex, '<mark>$1</mark>')
+                    return highlightTokensInHtml(r.snippetHtml, regex, 'bg-yellow-300 dark:bg-yellow-600 text-inherit')
                   })() }} />
                 ) : (
                   <div className="text-xs text-muted-foreground line-clamp-2">
