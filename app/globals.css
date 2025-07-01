@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '../styles/et-book-complete.css';
+@import 'rehype-callouts/theme/vitepress';
 
 @config '../tailwind.config.ts';
 

@@ -2,7 +2,6 @@
 import { compile, run } from "@mdx-js/mdx"
 import * as runtime from "react/jsx-runtime"
 
-import { Callout } from "@/components/callout"
 import { Sidenote, MarginNote } from "@/components/sidenote"
 import { NoteScope } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
@@ -17,10 +16,10 @@ import remarkGfm from "remark-gfm"
 import { remarkImgAttrs } from "@/lib/remark-img-attrs"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
+import rehypeCallouts from "rehype-callouts"
 
 // Map of components that MDX can render (these have their own "use client" if needed)
 const mdxComponents = {
-  Callout,
   Sidenote,
   MarginNote,
   NoteScope,
@@ -49,6 +48,10 @@ export async function MDXContent({ children }: MDXContentProps) {
         ignoreMissing: true,
       }],
       rehypeKatex,
+      [rehypeCallouts, {
+        theme: 'vitepress',
+        showIndicator: true,
+      }],
     ],
   })
 

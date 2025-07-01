@@ -71,21 +71,46 @@ You can add sidenotes[^1] to provide additional context without interrupting the
 
 ## Custom Callouts
 
-<Callout type="info">
-  This is an informational callout.
-</Callout>
+### Basic Callouts
 
-<Callout type="warning">
-  This is a warning callout.
-</Callout>
+> [!note]
+> This is an informational callout using the standard Obsidian syntax.
 
-<Callout type="error">
-  This is an error callout.
-</Callout>
+> [!warning]
+> This is a warning callout that draws attention to important information.
 
-<Callout type="success">
-  This is a success callout.
-</Callout>
+> [!danger]
+> This is an error/danger callout for critical warnings.
+
+> [!tip]
+> This is a success/tip callout for helpful information.
+
+### Callouts with Titles
+
+> [!info] Pro Tip
+> You can add custom titles to callouts to make them more descriptive and organized. The title supports **markdown formatting** too!
+
+> [!warning] Important Notice
+> Titled callouts help readers quickly understand the purpose of the callout and provide better organization of content.
+
+### Collapsible Callouts
+
+> [!note]- Additional Reading
+> This callout can be collapsed to save space (note the minus sign after the type). It's perfect for optional content like detailed explanations, additional resources, or lengthy examples that readers can choose to view.
+> 
+> You can include any markdown content here:
+> - Lists with **bold text**
+> - `Code snippets`
+> - [Links](https://example.com)
+> - And much more!
+
+> [!tip]+ Advanced Features
+> This callout uses the plus sign, which means it's collapsible but starts expanded by default. This is great for content that's important but can be hidden if needed.
+>
+> The syntax is simple:
+> - `[!type]` - regular callout
+> - `[!type]-` - collapsible, starts collapsed
+> - `[!type]+` - collapsible, starts expanded
 
 ## Links
 
