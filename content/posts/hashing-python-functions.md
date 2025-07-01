@@ -12,6 +12,7 @@ abstract: |
     But what if I very wisely insist I must build such a `dict` anyway?
     However misguided, it turns out solving this problem helps us with a more practical one:
     serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
+tags: "python, jax, equinox, hashing, machine learning"
 ---
 
 <NoteScope>

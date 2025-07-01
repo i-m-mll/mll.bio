@@ -13,6 +13,7 @@ export interface Post {
     abstract?: string
     showtoc?: boolean
     draft?: boolean
+    tags?: string[]
     // Keep 'date' for backward compatibility
     date?: string
   }
@@ -33,6 +34,24 @@ function formatDate(dateInput: string | Date): string {
   const year = date.getFullYear()
   
   return `${day} ${month} ${year}`
+}
+
+// Helper function to parse tags from frontmatter
+function parseTags(tagsInput: string | string[] | undefined): string[] | undefined {
+  if (!tagsInput) return undefined
+  
+  if (Array.isArray(tagsInput)) {
+    return tagsInput.map(tag => tag.trim()).filter(tag => tag.length > 0)
+  }
+  
+  if (typeof tagsInput === 'string') {
+    return tagsInput
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0)
+  }
+  
+  return undefined
 }
 
 export async function getPosts(): Promise<Post[]> {
@@ -59,6 +78,7 @@ export async function getPosts(): Promise<Post[]> {
       // Use 'published' if available, otherwise fall back to 'date'
       const publishedDate = data.published || data.date || new Date().toISOString()
       const updatedDate = data.updated
+      const tags = parseTags(data.tags)
 
       return {
         slug,
@@ -71,6 +91,7 @@ export async function getPosts(): Promise<Post[]> {
           abstract: data.abstract || undefined,
           showtoc: data.showtoc !== false,
           draft: data.draft || false,
+          tags,
           // Keep 'date' for backward compatibility
           date: formatDate(publishedDate),
         },
@@ -111,6 +132,7 @@ export async function getPost(slug: string): Promise<Post | null> {
     // Use 'published' if available, otherwise fall back to 'date'
     const publishedDate = data.published || data.date || new Date().toISOString()
     const updatedDate = data.updated
+    const tags = parseTags(data.tags)
 
     return {
       slug,
@@ -123,6 +145,7 @@ export async function getPost(slug: string): Promise<Post | null> {
         abstract: data.abstract || undefined,
         showtoc: data.showtoc !== false,
         draft: data.draft || false,
+        tags,
         // Keep 'date' for backward compatibility
         date: formatDate(publishedDate),
       },

@@ -15,6 +15,18 @@ export function PostList({ posts }: { posts: Post[] }) {
               className="text-xl font-bold tracking-tight hover:underline font-heading"
               dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
             />
+            {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {post.frontmatter.tags.map((tag, index) => (
+                  <span 
+                    key={index}
+                    className="bg-stone-100 dark:bg-stone-925 text-muted-foreground px-1.5 py-0.5 rounded text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
             <p className="text-muted-foreground">{post.frontmatter.description}</p>
           </Link>
         </article>

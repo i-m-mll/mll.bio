@@ -66,6 +66,18 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {post.frontmatter.updated && (
               <div>Updated: {post.frontmatter.updated}</div>
             )}
+            {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {post.frontmatter.tags.map((tag, index) => (
+                  <span 
+                    key={index}
+                    className="bg-stone-100 dark:bg-stone-925 text-muted-foreground px-2 py-1 rounded text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <h1 
             className="mb-2 font-heading"
