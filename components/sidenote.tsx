@@ -33,6 +33,7 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const fullTextRef = useRef<string>('')
+  const isDesktop = useMediaQuery(`(min-width: ${tailwindConfig.theme.screens.desktop})`)
 
   // Apply configuration on mount
   useEffect(() => {
@@ -59,7 +60,9 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
   useEffect(() => {
     // Check if truncation should be enabled
     const { maxNoteLength } = uiConfig.sidenotes
-    if (maxNoteLength === null || maxNoteLength === undefined) {
+    
+    // Disable truncation on non-desktop breakpoints – notes are inline there
+    if (!isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
       setShouldTruncate(false)
       return
     }
@@ -73,7 +76,7 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
     } else {
       setShouldTruncate(false)
     }
-  }, [actualContent])
+  }, [actualContent, isDesktop])
 
   const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text
@@ -215,9 +218,9 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
   }
 
   useEffect(() => {
-    // Check if truncation should be enabled
+    // Check if truncation should be enabled – only for desktop margin notes
     const { maxNoteLength } = uiConfig.sidenotes
-    if (maxNoteLength === null || maxNoteLength === undefined) {
+    if (!isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
       setShouldTruncate(false)
       return
     }
@@ -229,7 +232,7 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
     } else {
       setShouldTruncate(false)
     }
-  }, [children])
+  }, [children, isDesktop])
 
   const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text
