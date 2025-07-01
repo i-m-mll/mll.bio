@@ -8,7 +8,7 @@ function scopeCssToDarkMode(css: string): string {
     if (selectors.startsWith('@')) return m
     const scoped = selectors
       .split(',')
-      .map((s) => `.dark ${s.trim()}`)
+      .map((s: string) => `.dark ${s.trim()}`)
       .join(', ')
     return `${p1}${scoped}${p3}`
   })
@@ -16,10 +16,14 @@ function scopeCssToDarkMode(css: string): string {
 
 export function CodeThemeStyles() {
   const darkScoped = scopeCssToDarkMode(darkThemeCss)
+  // Provide a fallback for environments without JS: rely on prefers-color-scheme
+  const darkMedia = `@media (prefers-color-scheme: dark){${darkThemeCss}}`
   return (
     <>
       <style id="code-theme-light" dangerouslySetInnerHTML={{ __html: lightThemeCss }} />
       <style id="code-theme-dark" dangerouslySetInnerHTML={{ __html: darkScoped }} />
+      {/* Fallback for no-JS: system dark preference */}
+      <style id="code-theme-dark-media" dangerouslySetInnerHTML={{ __html: darkMedia }} />
     </>
   )
 }

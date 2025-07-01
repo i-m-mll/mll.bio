@@ -10,7 +10,7 @@ interface FontMeta {
 }
 
 const LS_KEY = 'dev-font-favorites'
-const DEFAULT_FONT = 'et-book'
+const DEFAULT_FONT = 'Fira Sans'
 
 // Ensure JSON typing
 const FONT_META: Record<string, FontMeta> = {

@@ -37,6 +37,8 @@ const config = {
         mono: ['Iosevka Web', 'var(--font-roboto-mono)', 'monospace'],
         // Serif alternative
         serif: ['var(--font-source-serif)', 'serif'],
+        // Title font (Fira Sans)
+        title: ['var(--font-fira-sans)', '"Fira Sans"', 'sans-serif'],
       },
 
       fontWeight: {

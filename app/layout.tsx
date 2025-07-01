@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { UiConfigProvider } from "@/components/ui-config-provider"
 import { CodeThemeStyles } from "@/components/CodeThemeStyles"
 import { siteConfig } from "@/lib/config/site"
-import { inter, roboto, roboto_mono, source_serif } from "@/lib/fonts"
+import { inter, roboto, roboto_mono, source_serif, fira_sans } from "@/lib/fonts"
 import DevFontSwitcher from "@/components/DevFontSwitcher"
 import { uiConfig } from "@/lib/config/ui"
 
@@ -30,11 +30,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // No per-request cookie reading in static export; theme class set by JS only
+  const initialThemeClass = ""
   return (
     <html 
       lang="en" 
       suppressHydrationWarning
-      className={`no-js ${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable}`}
+      className={`no-js ${initialThemeClass} ${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable} ${fira_sans.variable}`}
     >
       <head>
         <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />

@@ -97,6 +97,9 @@
 
     --prose-line-height: 1.6;
     --code-line-height: 1.7;
+
+    /* Default title font */
+    --dev-title-font: 'Fira Sans', sans-serif;
   }
 
   .dark {
@@ -123,6 +126,37 @@
     --giscus-background: var(--background);
     --giscus-text: var(--foreground);
   }
+
+  /* Automatically use dark palette when user's system prefers dark, but
+     only when the page isn't already explicitly set to light or dark via
+     a class. This ensures manual theme toggles (which add .light / .dark)
+     always win. */
+  @media (prefers-color-scheme: dark) {
+    html:not(.light):not(.dark) {
+      --background: 240 10% 3.9%;
+      --foreground: 0 0% 98%;
+      --card: 240 10% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 240 10% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --input: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+      --giscus-border: var(--border);
+      --giscus-background: var(--background);
+      --giscus-text: var(--foreground);
+    }
+  }
 }
 
 @layer base {
@@ -144,4 +178,53 @@ html {
 .footer-container {
   @apply flex items-center py-2.5;
   min-height: var(--footer-height);
+}
+
+/* Fallback: when JS is disabled and OS prefers dark, ensure common elements
+   that normally rely on Tailwind `dark:` variants still get an appropriate
+   dark background. */
+@media (prefers-color-scheme: dark) {
+  html.no-js pre,
+  html.no-js pre code,
+  html.no-js code.hljs {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+  }
+
+  /* Ensure body text uses foreground colour when Tailwind dark: variants are absent */
+  html.no-js body {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }
+
+  /* Override light-only abstract boxes (bg-stone-75) to dark palette equivalent */
+  html.no-js .bg-stone-75 {
+    background-color: #141210 !important; /* matches stone-925 */
+    color: hsl(var(--foreground));
+  }
+
+  /* Typical "abstract" callouts are rendered as blockquotes in MDX */
+  html.no-js blockquote {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  /* Ensure typography plugin uses dark palette when .prose lacks the `prose-invert` class */
+  html.no-js .prose {
+    --tw-prose-body: hsl(var(--foreground));
+    --tw-prose-headings: hsl(var(--foreground));
+    --tw-prose-lead: hsl(var(--foreground));
+    --tw-prose-links: hsl(var(--primary));
+    --tw-prose-bold: hsl(var(--foreground));
+    --tw-prose-counters: hsl(var(--muted-foreground));
+    --tw-prose-bullets: hsl(var(--muted-foreground));
+    --tw-prose-hr: hsl(var(--border));
+    --tw-prose-quotes: hsl(var(--foreground));
+    --tw-prose-quote-borders: hsl(var(--border));
+    --tw-prose-captions: hsl(var(--muted-foreground));
+    --tw-prose-code: hsl(var(--foreground));
+    --tw-prose-pre-code: hsl(var(--foreground));
+    --tw-prose-pre-bg: transparent;
+    --tw-prose-th-borders: hsl(var(--border));
+    --tw-prose-td-borders: hsl(var(--border));
+  }
 } 

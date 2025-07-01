@@ -19,7 +19,10 @@ The implementation follows the principles outlined in Tufte CSS[^4], providing a
 
 ## Margin Notes vs Sidenotes
 
-Margin notes are different from sidenotes in several ways: <MarginNote>Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes.</MarginNote>
+Margin notes are different from sidenotes in several ways: <MarginNote>Notice how this margin note
+doesn't interrupt the numbering sequence of the sidenotes. Notice how this margin note doesn't
+interrupt the numbering sequence of the sidenotes. Notice how this margin note doesn't interrupt the
+numbering sequence of the sidenotes. Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes.</MarginNote>
 
 - **Sidenotes**: Numbered, referenced with superscript numbers in the text
 - **Margin notes**: Unnumbered, inserted inline without visible markers
@@ -73,4 +76,4 @@ def a_very_important_function(): # line 5
 [^2]: Here's the second numbered sidenote, showing how they maintain sequential numbering.
 [^3]: Edward Tufte is known for his work on information design and data visualization. His books demonstrate elegant typography and layout principles.
 [^4]: Tufte CSS is a set of stylesheets inspired by the handouts of Edward Tufte, available at https://edwardtufte.github.io/tufte-css/
-[^5]: The right margin provides space for both types of notes, with appropriate spacing between them.
+[^5]: The right margin provides space for both types of notes, with appropriate spacing between them. The right margin provides space for both types of notes, with appropriate spacing between them. The right margin provides space for both types of notes, with appropriate spacing between them.

@@ -20,7 +20,7 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center">
         <div className="mr-8">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold leading-none text-title" style={{ fontFamily: 'var(--dev-title-font, et-book)' }}>{siteConfig.name}</span>
+            <span className="font-semibold leading-none text-title" style={{ fontFamily: 'var(--dev-title-font, var(--font-fira-sans))' }}>{siteConfig.name}</span>
           </Link>
         </div>
         <nav className="flex items-center space-x-6 text-nav font-medium flex-1">

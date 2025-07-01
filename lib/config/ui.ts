@@ -66,7 +66,7 @@ export const uiConfig = {
     minSpaceBetweenNotes: '0rem',
     
     // Maximum length for sidenote truncation (null to disable)
-    maxNoteLength: null as number | null,
+    maxNoteLength: 200 as number | null,
     
     // Text to show when content is truncated
     truncationSuffix: '...',
