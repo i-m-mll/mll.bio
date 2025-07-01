@@ -3,8 +3,6 @@ title: "Welcome to My Website"
 description: "Personal website and blog"
 ---
 
-T
-
 ## MLL
 
 Hi

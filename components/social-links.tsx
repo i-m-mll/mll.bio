@@ -3,16 +3,48 @@
 import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
 import Link from "next/link"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 
 export function SocialLinks() {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted before applying theme-dependent styling
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const iconSize = `${uiConfig.socialLinks.iconSizeRem}rem`
   const defaultOpacity = uiConfig.socialLinks.iconOpacityDefault
   const hoverOpacity = uiConfig.socialLinks.iconOpacityHover
   
-  // Calculate default grayscale color for labels based on default icon opacity
+  // Helpers -------------------------------------------------------------
+  const isDarkMode = mounted && resolvedTheme === "dark"
+
+  // Calculate a complementary medium-gray for the current theme using the
+  // same opacity parameters.  In light mode we darken (towards black); in
+  // dark mode we lighten (towards white).
   const getDefaultLabelColor = () => {
+    if (!mounted) {
+      // Return light theme default during SSR/before mount
+      const grayValue = Math.round(170 * (1 - defaultOpacity))
+      return `rgb(${grayValue}, ${grayValue}, ${grayValue})`
+    }
+    
+    if (isDarkMode) {
+      // Light gray on dark background
+      const grayValue = 255 - Math.round(170 * (1 - defaultOpacity))
+      return `rgb(${grayValue}, ${grayValue}, ${grayValue})`
+    }
+    // Medium gray on light background
     const grayValue = Math.round(170 * (1 - defaultOpacity))
     return `rgb(${grayValue}, ${grayValue}, ${grayValue})`
+  }
+
+  const getHoverLabelColor = () => {
+    if (!mounted) return "#000000" // Default to light theme color
+    return isDarkMode ? "#ffffff" : "#000000"
   }
 
   const socialIcons: Record<string, { src?: string, label: string, svg?: JSX.Element }> = {
@@ -83,10 +115,13 @@ export function SocialLinks() {
           
           if (iconContainer) {
             iconContainer.style.opacity = hoverOpacity.toString()
+            if (iconConfig.svg) {
+              iconContainer.style.color = getHoverLabelColor()
+            }
           }
           
           if (textLabel) {
-            textLabel.style.color = '#000000'
+            textLabel.style.color = getHoverLabelColor()
           }
         }
 
@@ -97,7 +132,7 @@ export function SocialLinks() {
           if (iconContainer) {
             resetIconOpacity(iconContainer)
             if (iconConfig.svg) {
-              iconContainer.style.color = '#000000'
+              iconContainer.style.color = getDefaultLabelColor()
             }
           }
           
@@ -125,7 +160,10 @@ export function SocialLinks() {
                 <div
                   data-icon
                   className="transition-all duration-200"
-                  style={{ opacity: defaultOpacity }}
+                  style={{
+                    opacity: defaultOpacity,
+                    color: getDefaultLabelColor(),
+                  }}
                 >
                   {iconConfig.svg}
                 </div>
@@ -134,13 +172,14 @@ export function SocialLinks() {
                   data-icon
                   src={iconConfig.src}
                   alt={iconConfig.label}
-                  style={{ 
-                    width: iconSize, 
+                  className="dark:invert"
+                  style={{
+                    width: iconSize,
                     height: iconSize,
                     opacity: defaultOpacity,
                     transform: key === 'manifold' ? 'scale(1.33)' : undefined,
                     transformOrigin: 'center',
-                    transition: 'all 200ms'
+                    transition: 'all 200ms',
                   }}
                 />
               )}
