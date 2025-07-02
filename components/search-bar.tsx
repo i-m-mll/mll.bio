@@ -61,6 +61,8 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
   const router = useRouter()
   const [hljsLoaded, setHljsLoaded] = useState(false)
   const listRef = useRef<HTMLUListElement>(null)
+  // Ref for the whole search component wrapper to detect outside clicks
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
   // Load Lunr + index.json lazily
   const loadIndex = useCallback(async () => {
@@ -84,13 +86,10 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
     }
   }, [indexLoaded])
 
-  // Handle searching when debouncedQuery changes
-  useEffect(() => {
-    const trimmed = debouncedQuery.trim()
-    if (!indexLoaded || !hljsLoaded || trimmed.length < 2 || !lunrIndexRef.current) {
-      setResults([])
-      return
-    }
+  // Helper to compute search results for a given trimmed query string
+  const computeResults = useCallback((trimmed: string): DisplayResult[] => {
+    if (!indexLoaded || !hljsLoaded || trimmed.length < 2 || !lunrIndexRef.current) return []
+
     try {
       const terms = trimmed.split(/\s+/)
       const lunrIdx = lunrIndexRef.current
@@ -123,9 +122,8 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
           }
         })
       })
-      const radius = 30
-      const maxSnippets = uiConfig.search.maxSnippetsPerResult
 
+      const maxSnippets = uiConfig.search.maxSnippetsPerResult
       const processedMap: Record<string, DisplayResult> = {}
 
       hits.forEach((h: any) => {
@@ -134,6 +132,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
           const parts = (h.ref as string).split("::")
           return parts.length === 2 ? parseInt(parts[1], 10) : undefined
         })()
+
         const positions: number[][] = []
         try {
           const metadata = h.matchData.metadata
@@ -230,13 +229,22 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
         })
       })
 
-      const processed = Object.values(processedMap)
-      setResults(processed.slice(0, 20))
+      return Object.values(processedMap).slice(0, 20)
     } catch (err) {
       console.error(err)
-      setResults([])
+      return []
     }
-  }, [debouncedQuery, indexLoaded, hljsLoaded])
+  }, [indexLoaded, hljsLoaded])
+
+  // Handle searching when debouncedQuery changes
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim()
+    if (trimmed.length === 0) {
+      setResults([])
+      return
+    }
+    setResults(computeResults(trimmed))
+  }, [debouncedQuery, computeResults])
 
   const buildHref = (slug: string, blockIdx?: number) => {
     const qStr = (query.trim() || debouncedQuery).trim()
@@ -259,13 +267,42 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
     }
   }, [selectedIndex])
 
+  // Close dropdown when clicking outside of the search component
+  useEffect(() => {
+    if (results.length === 0) return
+
+    function handleOutsideClick(event: MouseEvent | TouchEvent) {
+      if (!wrapperRef.current) return
+      if (!wrapperRef.current.contains(event.target as Node)) {
+        setResults([])
+        setSelectedIndex(-1)
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick)
+    document.addEventListener("touchstart", handleOutsideClick)
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick)
+      document.removeEventListener("touchstart", handleOutsideClick)
+    }
+  }, [results])
+
   return (
-    <div className={cn("relative", variant === "overlay" ? "w-full" : undefined)}>
+    <div ref={wrapperRef} className={cn("relative", variant === "overlay" ? "w-full" : undefined)}>
       <input
         ref={inputRef}
         type="search"
         value={query}
-        onFocus={loadIndex}
+        onFocus={(e) => {
+          loadIndex()
+          setSelectedIndex(-1)
+          if (query.trim().length >= 2) {
+            const trimmed = query.trim()
+            const newResults = computeResults(trimmed)
+            setResults(newResults)
+          }
+        }}
         onChange={(e) => { setQuery(e.target.value); setSelectedIndex(-1) }}
         onKeyDown={(e) => {
           if (results.length === 0) return

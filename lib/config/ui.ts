@@ -93,9 +93,9 @@ export const uiConfig = {
   // Social links configuration
   socialLinks: {
     // Icon size in rem (1.5 = 24px base size, 2.25 = 36px for 50% increase)
-    iconSizeRem: 1.5,
+    iconSizeRem: 1.4,
     // Gap between social link cards in rem
-    gapRem: 1.5,
+    gapRem: 0.5,
     // Text size for labels
     labelTextSize: 'text-sm',
     // Icon opacity when not hovered (0.0 to 1.0)

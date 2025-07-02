@@ -98,7 +98,10 @@ export function SocialLinks() {
   }
 
   return (
-    <div className="flex justify-center flex-wrap gap-6">
+    <div
+      className="mx-auto w-full p-4 rounded-md bg-stone-75 dark:bg-stone-925 flex flex-wrap justify-center"
+      style={{ gap: `${uiConfig.socialLinks.gapRem}rem`, maxWidth: 'var(--content-width)' }}
+    >
       {Object.entries(siteConfig.social).map(([key, url]) => {
         if (!url) return null
         
@@ -151,7 +154,7 @@ export function SocialLinks() {
             key={key}
             href={href}
             {...(needsTargetBlank && { target: "_blank", rel: "noopener noreferrer" })}
-            className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-all duration-200 group"
+            className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-background transition-colors duration-200 group"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
