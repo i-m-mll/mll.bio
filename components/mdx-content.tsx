@@ -8,6 +8,7 @@ import { TableOfContents } from "@/components/table-of-contents"
 import ResponsiveImage from "@/components/ResponsiveImage"
 import { SidenoteProvider } from "@/components/sidenote-context"
 import { KatexStyles } from "@/components/KatexStyles"
+import { Tabs, Tab } from "@/components/tabs"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
@@ -25,6 +26,8 @@ const mdxComponents = {
   NoteScope,
   TableOfContents,
   img: (props: any) => <ResponsiveImage {...props} />,
+  Tab,
+  Tabs,
 }
 
 interface MDXContentProps {

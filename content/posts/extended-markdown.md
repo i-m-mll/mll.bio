@@ -112,6 +112,22 @@ You can add sidenotes[^1] to provide additional context without interrupting the
 > - `[!type]-` - collapsible, starts collapsed
 > - `[!type]+` - collapsible, starts expanded
 
+## Tabs
+
+<Tabs>
+  <Tab label="React">
+  Babbo of the babbo
+    ```js
+    // React example
+    ```
+  </Tab>
+  <Tab label="Vue">
+    ```js
+    // Vue example
+    ```
+  </Tab>
+</Tabs>
+
 ## Links
 
 [External link](https://example.com)
