@@ -4,16 +4,23 @@ published: 2025-06-16
 updated: 2025-06-16
 description: Hashing the unhashable
 abstract: |
-    It is impossible in general to verify the equivalence of functions in terms of their input-output behaviour, or *semantics*. 
-    Many programming languages, including Python, don't evaluate functions' equivalence in terms of their code structure, or *syntax*, either.
-    Nor does Python compute hashes of functions based on their structure, but merely their memory address.
-    So it doesn't make sense to represent a mapping from some tree node-accessors to some respective node data,
-    using a `dict` where the node-accessors (that is, *where*-functions) are keys.
+    It is [impossible](https://en.wikipedia.org/wiki/Rice%27s_theorem) in general to verify the 
+    equivalence of [functions](https://en.wikipedia.org/wiki/Computable_function) in terms of 
+    their input-output behaviour, or *semantics*. For different practical reasons, many programming 
+    languages, including Python, also don't evaluate functions' equivalence in terms of their code 
+    structure, or *syntax*. Instead, Python computes hashes and equivalence (or, uniqueness) 
+    of functions based solely on their memory address.
+    So it doesn't make sense to use a `dict` to map from tree node-accessor (AKA 
+    *where*-function) keys to respective node data, when you want the uniqueness of those keys to be decided by what node (that is, *where*) they access. 
     But what if I very wisely insist I must build such a `dict` anyway?
     However misguided, it turns out solving this problem helps us with a more practical one:
-    serialising hyperparameters for training runs, when those hyperparameters happen to be *where*-functions.
-tags: "python, jax, equinox, hashing, machine learning"
+    serialising hyperparameters for training runs, when those hyperparameters happen to be 
+    *where*-functions.
+tags: python, jax, equinox, hashing, machine learning
 ---
+
+Another option: instead of creating a custom dict, create a `WhereFunction` that takes a function
+upon instantiation, and defines `__hash__` based on `where_func_to_str`. Should work?
 
 <NoteScope>
 For the past two years, I've developed my machine learning projects with [JAX]() and [Equinox]().
@@ -23,7 +30,9 @@ like [`grad`](), [`vmap`](), and [`jit`](). But the *substance* of its power is
 [PyTrees](https://jax.readthedocs.io/en/latest/pytrees.html), or the ability to transform
 over arbitrary types of tree-structured inputs in a unified way. 
 <MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
-knows how to treat like any other tree because it's been told how to flatten and unflatten the nodes".</MarginNote>
+knows how to treat like any other tree because it's been told how to flatten and unflatten the
+nodes". Technically every Python object is a PyTree, even if it is treated as just a single leaf.
+</MarginNote>
 </NoteScope>
 
 ## *Where*-functions
@@ -151,6 +160,8 @@ the uniqueness of a key's *hash*... and this doesn't work like you might think, 
 once naively hoped, when the key happens to be a function.
 
 ## What's in a function?
+
+(Also: https://docs.python.org/3/faq/design.html#why-must-dictionary-keys-be-immutable)
 
 Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^1] can be used as a key in a `dict`.
 While a Python function *is* hashable, its hash is based on its *object identity*, which in
