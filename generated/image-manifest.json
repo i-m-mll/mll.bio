@@ -2,6 +2,366 @@
   "/content/posts/extended-markdown/test.svg": {
     "path": "/content/posts/extended-markdown/test.svg"
   },
+  "/content/series/probability-theory/assets/9e151bf5f11dbbd888640b5f577a329d.svg.svg": {
+    "path": "/content/series/probability-theory/assets/9e151bf5f11dbbd888640b5f577a329d.svg.svg"
+  },
+  "/content/series/probability-theory/assets/block-and-signal-flow-diagrams.svg": {
+    "path": "/content/series/probability-theory/assets/block-and-signal-flow-diagrams.svg"
+  },
+  "/content/series/probability-theory/assets/chan.svg": {
+    "path": "/content/series/probability-theory/assets/chan.svg"
+  },
+  "/content/series/probability-theory/assets/chancomp-matmul.svg": {
+    "path": "/content/series/probability-theory/assets/chancomp-matmul.svg"
+  },
+  "/content/series/probability-theory/assets/chancomp-single-matmul.svg": {
+    "path": "/content/series/probability-theory/assets/chancomp-single-matmul.svg"
+  },
+  "/content/series/probability-theory/assets/chancomp-single.svg": {
+    "path": "/content/series/probability-theory/assets/chancomp-single.svg"
+  },
+  "/content/series/probability-theory/assets/chancomp.svg": {
+    "path": "/content/series/probability-theory/assets/chancomp.svg"
+  },
+  "/content/series/probability-theory/assets/channel-old.svg": {
+    "path": "/content/series/probability-theory/assets/channel-old.svg"
+  },
+  "/content/series/probability-theory/assets/chans.svg": {
+    "path": "/content/series/probability-theory/assets/chans.svg"
+  },
+  "/content/series/probability-theory/assets/collider.svg": {
+    "path": "/content/series/probability-theory/assets/collider.svg"
+  },
+  "/content/series/probability-theory/assets/composition-2.svg": {
+    "path": "/content/series/probability-theory/assets/composition-2.svg"
+  },
+  "/content/series/probability-theory/assets/conditioning-disease-99.svg": {
+    "path": "/content/series/probability-theory/assets/conditioning-disease-99.svg"
+  },
+  "/content/series/probability-theory/assets/conditioning-disease-event.svg": {
+    "path": "/content/series/probability-theory/assets/conditioning-disease-event.svg"
+  },
+  "/content/series/probability-theory/assets/conditioning-disease.svg": {
+    "path": "/content/series/probability-theory/assets/conditioning-disease.svg"
+  },
+  "/content/series/probability-theory/assets/conditioning.svg": {
+    "path": "/content/series/probability-theory/assets/conditioning.svg"
+  },
+  "/content/series/probability-theory/assets/crossover-eqn-1.svg": {
+    "path": "/content/series/probability-theory/assets/crossover-eqn-1.svg"
+  },
+  "/content/series/probability-theory/assets/crossover-eqn-2.svg": {
+    "path": "/content/series/probability-theory/assets/crossover-eqn-2.svg"
+  },
+  "/content/series/probability-theory/assets/determ-chan.svg": {
+    "path": "/content/series/probability-theory/assets/determ-chan.svg"
+  },
+  "/content/series/probability-theory/assets/disease-test-hypotheses-fn.svg": {
+    "path": "/content/series/probability-theory/assets/disease-test-hypotheses-fn.svg"
+  },
+  "/content/series/probability-theory/assets/disease-test-hypotheses.svg": {
+    "path": "/content/series/probability-theory/assets/disease-test-hypotheses.svg"
+  },
+  "/content/series/probability-theory/assets/disintegrate-total.svg": {
+    "path": "/content/series/probability-theory/assets/disintegrate-total.svg"
+  },
+  "/content/series/probability-theory/assets/dist.svg": {
+    "path": "/content/series/probability-theory/assets/dist.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-1.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-1.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-2.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-2.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-3.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-3.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-4.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-4.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-5.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-5.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-6.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-6.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-7.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-7.svg"
+  },
+  "/content/series/probability-theory/assets/entwine-total.svg": {
+    "path": "/content/series/probability-theory/assets/entwine-total.svg"
+  },
+  "/content/series/probability-theory/assets/f3dae4c6b0212bbd6360244351bb308e.svg.svg": {
+    "path": "/content/series/probability-theory/assets/f3dae4c6b0212bbd6360244351bb308e.svg.svg"
+  },
+  "/content/series/probability-theory/assets/fncomp.svg": {
+    "path": "/content/series/probability-theory/assets/fncomp.svg"
+  },
+  "/content/series/probability-theory/assets/function.svg": {
+    "path": "/content/series/probability-theory/assets/function.svg"
+  },
+  "/content/series/probability-theory/assets/influence-eqns.svg": {
+    "path": "/content/series/probability-theory/assets/influence-eqns.svg"
+  },
+  "/content/series/probability-theory/assets/injection.svg": {
+    "path": "/content/series/probability-theory/assets/injection.svg"
+  },
+  "/content/series/probability-theory/assets/iso.svg": {
+    "path": "/content/series/probability-theory/assets/iso.svg"
+  },
+  "/content/series/probability-theory/assets/joint-form-2.svg": {
+    "path": "/content/series/probability-theory/assets/joint-form-2.svg"
+  },
+  "/content/series/probability-theory/assets/joint-form.svg": {
+    "path": "/content/series/probability-theory/assets/joint-form.svg"
+  },
+  "/content/series/probability-theory/assets/joint.svg": {
+    "path": "/content/series/probability-theory/assets/joint.svg"
+  },
+  "/content/series/probability-theory/assets/jointforget.svg": {
+    "path": "/content/series/probability-theory/assets/jointforget.svg"
+  },
+  "/content/series/probability-theory/assets/marg1-single.svg": {
+    "path": "/content/series/probability-theory/assets/marg1-single.svg"
+  },
+  "/content/series/probability-theory/assets/marg1.svg": {
+    "path": "/content/series/probability-theory/assets/marg1.svg"
+  },
+  "/content/series/probability-theory/assets/marg2.svg": {
+    "path": "/content/series/probability-theory/assets/marg2.svg"
+  },
+  "/content/series/probability-theory/assets/morphism.svg": {
+    "path": "/content/series/probability-theory/assets/morphism.svg"
+  },
+  "/content/series/probability-theory/assets/pred-disease-sharp.svg": {
+    "path": "/content/series/probability-theory/assets/pred-disease-sharp.svg"
+  },
+  "/content/series/probability-theory/assets/pred-disease.svg": {
+    "path": "/content/series/probability-theory/assets/pred-disease.svg"
+  },
+  "/content/series/probability-theory/assets/pred-sharp.svg": {
+    "path": "/content/series/probability-theory/assets/pred-sharp.svg"
+  },
+  "/content/series/probability-theory/assets/pred-transfn-eqn.svg": {
+    "path": "/content/series/probability-theory/assets/pred-transfn-eqn.svg"
+  },
+  "/content/series/probability-theory/assets/pred-transfn.svg": {
+    "path": "/content/series/probability-theory/assets/pred-transfn.svg"
+  },
+  "/content/series/probability-theory/assets/pred.svg": {
+    "path": "/content/series/probability-theory/assets/pred.svg"
+  },
+  "/content/series/probability-theory/assets/preds-are-chans.svg": {
+    "path": "/content/series/probability-theory/assets/preds-are-chans.svg"
+  },
+  "/content/series/probability-theory/assets/projections.svg": {
+    "path": "/content/series/probability-theory/assets/projections.svg"
+  },
+  "/content/series/probability-theory/assets/samples.svg": {
+    "path": "/content/series/probability-theory/assets/samples.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-1.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-1.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-2.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-2.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-3.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-3.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-4.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-4.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-5.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-5.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-eq-1.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-eq-1.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-eq-2.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-eq-2.svg"
+  },
+  "/content/series/probability-theory/assets/serial-block-eq-3.svg": {
+    "path": "/content/series/probability-theory/assets/serial-block-eq-3.svg"
+  },
+  "/content/series/probability-theory/assets/serial-cond-1.svg": {
+    "path": "/content/series/probability-theory/assets/serial-cond-1.svg"
+  },
+  "/content/series/probability-theory/assets/serial-cond-2.svg": {
+    "path": "/content/series/probability-theory/assets/serial-cond-2.svg"
+  },
+  "/content/series/probability-theory/assets/serial-cond-3.svg": {
+    "path": "/content/series/probability-theory/assets/serial-cond-3.svg"
+  },
+  "/content/series/probability-theory/assets/serial-cond-4.svg": {
+    "path": "/content/series/probability-theory/assets/serial-cond-4.svg"
+  },
+  "/content/series/probability-theory/assets/serial-pred-1.svg": {
+    "path": "/content/series/probability-theory/assets/serial-pred-1.svg"
+  },
+  "/content/series/probability-theory/assets/serial-pred-2.svg": {
+    "path": "/content/series/probability-theory/assets/serial-pred-2.svg"
+  },
+  "/content/series/probability-theory/assets/serial-pred-3.svg": {
+    "path": "/content/series/probability-theory/assets/serial-pred-3.svg"
+  },
+  "/content/series/probability-theory/assets/serial-pred-3b.svg": {
+    "path": "/content/series/probability-theory/assets/serial-pred-3b.svg"
+  },
+  "/content/series/probability-theory/assets/serial-pred-4.svg": {
+    "path": "/content/series/probability-theory/assets/serial-pred-4.svg"
+  },
+  "/content/series/probability-theory/assets/serial-state-1.svg": {
+    "path": "/content/series/probability-theory/assets/serial-state-1.svg"
+  },
+  "/content/series/probability-theory/assets/serial-state-2.svg": {
+    "path": "/content/series/probability-theory/assets/serial-state-2.svg"
+  },
+  "/content/series/probability-theory/assets/serial.svg": {
+    "path": "/content/series/probability-theory/assets/serial.svg"
+  },
+  "/content/series/probability-theory/assets/sets-2.svg": {
+    "path": "/content/series/probability-theory/assets/sets-2.svg"
+  },
+  "/content/series/probability-theory/assets/sets.svg": {
+    "path": "/content/series/probability-theory/assets/sets.svg"
+  },
+  "/content/series/probability-theory/assets/state-disease.svg": {
+    "path": "/content/series/probability-theory/assets/state-disease.svg"
+  },
+  "/content/series/probability-theory/assets/state-transfn-eqn.svg": {
+    "path": "/content/series/probability-theory/assets/state-transfn-eqn.svg"
+  },
+  "/content/series/probability-theory/assets/state-transfn.svg": {
+    "path": "/content/series/probability-theory/assets/state-transfn.svg"
+  },
+  "/content/series/probability-theory/assets/state.svg": {
+    "path": "/content/series/probability-theory/assets/state.svg"
+  },
+  "/content/series/probability-theory/assets/string-chan.svg": {
+    "path": "/content/series/probability-theory/assets/string-chan.svg"
+  },
+  "/content/series/probability-theory/assets/string-pred.svg": {
+    "path": "/content/series/probability-theory/assets/string-pred.svg"
+  },
+  "/content/series/probability-theory/assets/string-state.svg": {
+    "path": "/content/series/probability-theory/assets/string-state.svg"
+  },
+  "/content/series/probability-theory/assets/string-test.svg": {
+    "path": "/content/series/probability-theory/assets/string-test.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-0.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-0.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-1.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-1.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-3.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-3.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-4.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-4.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-5.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-5.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-6.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-6.svg"
+  },
+  "/content/series/probability-theory/assets/student-collider-7.svg": {
+    "path": "/content/series/probability-theory/assets/student-collider-7.svg"
+  },
+  "/content/series/probability-theory/assets/student-crossover-1.svg": {
+    "path": "/content/series/probability-theory/assets/student-crossover-1.svg"
+  },
+  "/content/series/probability-theory/assets/student-crossover-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-crossover-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-crossover-3.svg": {
+    "path": "/content/series/probability-theory/assets/student-crossover-3.svg"
+  },
+  "/content/series/probability-theory/assets/student-crossover-4.svg": {
+    "path": "/content/series/probability-theory/assets/student-crossover-4.svg"
+  },
+  "/content/series/probability-theory/assets/student-crossover-5.svg": {
+    "path": "/content/series/probability-theory/assets/student-crossover-5.svg"
+  },
+  "/content/series/probability-theory/assets/student-disintegrate-d-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-disintegrate-d-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-disintegrate-d.svg": {
+    "path": "/content/series/probability-theory/assets/student-disintegrate-d.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-1.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-1.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-3.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-3.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-4.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-4.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-5.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-5.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-6.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-6.svg"
+  },
+  "/content/series/probability-theory/assets/student-entwine-7.svg": {
+    "path": "/content/series/probability-theory/assets/student-entwine-7.svg"
+  },
+  "/content/series/probability-theory/assets/student-joint-form-1.svg": {
+    "path": "/content/series/probability-theory/assets/student-joint-form-1.svg"
+  },
+  "/content/series/probability-theory/assets/student-joint-form-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-joint-form-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-joint-form-3.svg": {
+    "path": "/content/series/probability-theory/assets/student-joint-form-3.svg"
+  },
+  "/content/series/probability-theory/assets/student-marg1-1.svg": {
+    "path": "/content/series/probability-theory/assets/student-marg1-1.svg"
+  },
+  "/content/series/probability-theory/assets/student-marg1-2.svg": {
+    "path": "/content/series/probability-theory/assets/student-marg1-2.svg"
+  },
+  "/content/series/probability-theory/assets/student-marg2.svg": {
+    "path": "/content/series/probability-theory/assets/student-marg2.svg"
+  },
+  "/content/series/probability-theory/assets/student-weaken.svg": {
+    "path": "/content/series/probability-theory/assets/student-weaken.svg"
+  },
+  "/content/series/probability-theory/assets/surjection.svg": {
+    "path": "/content/series/probability-theory/assets/surjection.svg"
+  },
+  "/content/series/probability-theory/assets/validity-disease-sharp.svg": {
+    "path": "/content/series/probability-theory/assets/validity-disease-sharp.svg"
+  },
+  "/content/series/probability-theory/assets/validity-disease.svg": {
+    "path": "/content/series/probability-theory/assets/validity-disease.svg"
+  },
+  "/content/series/probability-theory/assets/validity-point.svg": {
+    "path": "/content/series/probability-theory/assets/validity-point.svg"
+  },
+  "/content/series/probability-theory/assets/validity-sharp.svg": {
+    "path": "/content/series/probability-theory/assets/validity-sharp.svg"
+  },
+  "/content/series/probability-theory/assets/validity.svg": {
+    "path": "/content/series/probability-theory/assets/validity.svg"
+  },
+  "/content/series/probability-theory/assets/weaken-marginalize-1.svg": {
+    "path": "/content/series/probability-theory/assets/weaken-marginalize-1.svg"
+  },
+  "/content/series/probability-theory/assets/weaken1.svg": {
+    "path": "/content/series/probability-theory/assets/weaken1.svg"
+  },
   "/content/posts/extended-markdown/me.jpg": [
     {
       "w": 320,
@@ -22,6 +382,874 @@
       "w": 1280,
       "webp": "/optimized/mbb7zbst/1280.webp",
       "avif": "/optimized/mbb7zbst/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/BIT-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwk/320.webp",
+      "avif": "/optimized/mjcznqwk/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/BIT-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwk/320.webp",
+      "avif": "/optimized/mjcznqwk/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/GAN.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwk/320.webp",
+      "avif": "/optimized/mjcznqwk/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwk/640.webp",
+      "avif": "/optimized/mjcznqwk/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwk/960.webp",
+      "avif": "/optimized/mjcznqwk/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/THROBAC-I.jpg": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwl/960.webp",
+      "avif": "/optimized/mjcznqwl/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqwl/1280.webp",
+      "avif": "/optimized/mjcznqwl/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/alarm-barber-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/alarm-barber-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/alarm-crossover.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/alarm-transf.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwl/960.webp",
+      "avif": "/optimized/mjcznqwl/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/alarm.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwl/320.webp",
+      "avif": "/optimized/mjcznqwl/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwl/640.webp",
+      "avif": "/optimized/mjcznqwl/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwl/960.webp",
+      "avif": "/optimized/mjcznqwl/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/barber-soft.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwm/320.webp",
+      "avif": "/optimized/mjcznqwm/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwm/640.webp",
+      "avif": "/optimized/mjcznqwm/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/bayes-inference-theorem.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwm/320.webp",
+      "avif": "/optimized/mjcznqwm/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwm/640.webp",
+      "avif": "/optimized/mjcznqwm/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwm/960.webp",
+      "avif": "/optimized/mjcznqwm/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqwm/1280.webp",
+      "avif": "/optimized/mjcznqwm/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/bn-alarm.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwm/320.webp",
+      "avif": "/optimized/mjcznqwm/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwm/640.webp",
+      "avif": "/optimized/mjcznqwm/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwm/960.webp",
+      "avif": "/optimized/mjcznqwm/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/bn-disease.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwm/320.webp",
+      "avif": "/optimized/mjcznqwm/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwm/640.webp",
+      "avif": "/optimized/mjcznqwm/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwm/960.webp",
+      "avif": "/optimized/mjcznqwm/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/bn-serial-explanation.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwm/320.webp",
+      "avif": "/optimized/mjcznqwm/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwm/640.webp",
+      "avif": "/optimized/mjcznqwm/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwm/960.webp",
+      "avif": "/optimized/mjcznqwm/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/causal.png": [],
+  "/content/series/probability-theory/assets/collider-condn-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwp/320.webp",
+      "avif": "/optimized/mjcznqwp/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/collider-condn-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwp/320.webp",
+      "avif": "/optimized/mjcznqwp/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwp/640.webp",
+      "avif": "/optimized/mjcznqwp/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/complex.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwp/320.webp",
+      "avif": "/optimized/mjcznqwp/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwp/640.webp",
+      "avif": "/optimized/mjcznqwp/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/condl-indep.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwq/320.webp",
+      "avif": "/optimized/mjcznqwq/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/copy-discard.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwq/320.webp",
+      "avif": "/optimized/mjcznqwq/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwq/640.webp",
+      "avif": "/optimized/mjcznqwq/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwq/960.webp",
+      "avif": "/optimized/mjcznqwq/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/crossover-inference.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwr/320.webp",
+      "avif": "/optimized/mjcznqwr/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwr/640.webp",
+      "avif": "/optimized/mjcznqwr/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/dep_test.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwr/320.webp",
+      "avif": "/optimized/mjcznqwr/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/dilemma.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwr/320.webp",
+      "avif": "/optimized/mjcznqwr/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwr/640.webp",
+      "avif": "/optimized/mjcznqwr/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqwr/960.webp",
+      "avif": "/optimized/mjcznqwr/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqwr/1280.webp",
+      "avif": "/optimized/mjcznqwr/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/dsep.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqws/320.webp",
+      "avif": "/optimized/mjcznqws/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqws/640.webp",
+      "avif": "/optimized/mjcznqws/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqws/960.webp",
+      "avif": "/optimized/mjcznqws/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/eqn-alarm.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwu/320.webp",
+      "avif": "/optimized/mjcznqwu/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwu/640.webp",
+      "avif": "/optimized/mjcznqwu/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/eqn-bayes.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwv/320.webp",
+      "avif": "/optimized/mjcznqwv/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwv/640.webp",
+      "avif": "/optimized/mjcznqwv/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/fork.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwv/320.webp",
+      "avif": "/optimized/mjcznqwv/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwv/640.webp",
+      "avif": "/optimized/mjcznqwv/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/forming-joint.png": [],
+  "/content/series/probability-theory/assets/inference.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqww/320.webp",
+      "avif": "/optimized/mjcznqww/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqww/640.webp",
+      "avif": "/optimized/mjcznqww/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/integration.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqww/320.webp",
+      "avif": "/optimized/mjcznqww/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqww/640.webp",
+      "avif": "/optimized/mjcznqww/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqww/960.webp",
+      "avif": "/optimized/mjcznqww/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/lol.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqwx/320.webp",
+      "avif": "/optimized/mjcznqwx/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqwx/640.webp",
+      "avif": "/optimized/mjcznqwx/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/simulink.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx4/320.webp",
+      "avif": "/optimized/mjcznqx4/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/state-sum.png": [],
+  "/content/series/probability-theory/assets/string-7sketches-rot.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx5/320.webp",
+      "avif": "/optimized/mjcznqx5/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-7sketches.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx5/320.webp",
+      "avif": "/optimized/mjcznqx5/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx5/640.webp",
+      "avif": "/optimized/mjcznqx5/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-alarm.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx5/320.webp",
+      "avif": "/optimized/mjcznqx5/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx5/640.webp",
+      "avif": "/optimized/mjcznqx5/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-bayes-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx5/320.webp",
+      "avif": "/optimized/mjcznqx5/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-bayes.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx6/640.webp",
+      "avif": "/optimized/mjcznqx6/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx6/960.webp",
+      "avif": "/optimized/mjcznqx6/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqx6/1280.webp",
+      "avif": "/optimized/mjcznqx6/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-comp.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-cond-indep.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx6/640.webp",
+      "avif": "/optimized/mjcznqx6/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx6/960.webp",
+      "avif": "/optimized/mjcznqx6/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-condl-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-condl.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx6/640.webp",
+      "avif": "/optimized/mjcznqx6/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx6/960.webp",
+      "avif": "/optimized/mjcznqx6/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-disintegrate-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx6/320.webp",
+      "avif": "/optimized/mjcznqx6/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx6/640.webp",
+      "avif": "/optimized/mjcznqx6/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx6/960.webp",
+      "avif": "/optimized/mjcznqx6/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-disintegrate.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx7/320.webp",
+      "avif": "/optimized/mjcznqx7/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx7/640.webp",
+      "avif": "/optimized/mjcznqx7/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx7/960.webp",
+      "avif": "/optimized/mjcznqx7/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqx7/1280.webp",
+      "avif": "/optimized/mjcznqx7/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-joint.png": [],
+  "/content/series/probability-theory/assets/string-marginal.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx7/320.webp",
+      "avif": "/optimized/mjcznqx7/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx7/640.webp",
+      "avif": "/optimized/mjcznqx7/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqx7/960.webp",
+      "avif": "/optimized/mjcznqx7/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqx7/1280.webp",
+      "avif": "/optimized/mjcznqx7/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-multi.png": [],
+  "/content/series/probability-theory/assets/string-normalize.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx7/320.webp",
+      "avif": "/optimized/mjcznqx7/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqx7/640.webp",
+      "avif": "/optimized/mjcznqx7/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-parallel-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx7/320.webp",
+      "avif": "/optimized/mjcznqx7/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-parallel.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx7/320.webp",
+      "avif": "/optimized/mjcznqx7/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-pred.png": [],
+  "/content/series/probability-theory/assets/string-product.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx8/320.webp",
+      "avif": "/optimized/mjcznqx8/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-proj1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx8/320.webp",
+      "avif": "/optimized/mjcznqx8/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-proj2.png": [],
+  "/content/series/probability-theory/assets/string-scalar-mult.png": [],
+  "/content/series/probability-theory/assets/string-state.png": [],
+  "/content/series/probability-theory/assets/string-validity.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx8/320.webp",
+      "avif": "/optimized/mjcznqx8/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/string-weaken.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqx8/320.webp",
+      "avif": "/optimized/mjcznqx8/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-crossover-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxa/320.webp",
+      "avif": "/optimized/mjcznqxa/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxa/640.webp",
+      "avif": "/optimized/mjcznqxa/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxa/960.webp",
+      "avif": "/optimized/mjcznqxa/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-crossover-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxb/320.webp",
+      "avif": "/optimized/mjcznqxb/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxb/640.webp",
+      "avif": "/optimized/mjcznqxb/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxb/960.webp",
+      "avif": "/optimized/mjcznqxb/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-crossover-3.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxb/320.webp",
+      "avif": "/optimized/mjcznqxb/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxb/640.webp",
+      "avif": "/optimized/mjcznqxb/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxb/960.webp",
+      "avif": "/optimized/mjcznqxb/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-crossover-4.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxc/320.webp",
+      "avif": "/optimized/mjcznqxc/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxc/640.webp",
+      "avif": "/optimized/mjcznqxc/640.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-crossover-evidential.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxc/320.webp",
+      "avif": "/optimized/mjcznqxc/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxc/640.webp",
+      "avif": "/optimized/mjcznqxc/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxc/960.webp",
+      "avif": "/optimized/mjcznqxc/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqxc/1280.webp",
+      "avif": "/optimized/mjcznqxc/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-joint.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxf/320.webp",
+      "avif": "/optimized/mjcznqxf/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxf/640.webp",
+      "avif": "/optimized/mjcznqxf/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxf/960.webp",
+      "avif": "/optimized/mjcznqxf/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-string.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxg/320.webp",
+      "avif": "/optimized/mjcznqxg/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxg/640.webp",
+      "avif": "/optimized/mjcznqxg/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxg/960.webp",
+      "avif": "/optimized/mjcznqxg/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-transf-1.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxg/320.webp",
+      "avif": "/optimized/mjcznqxg/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxg/640.webp",
+      "avif": "/optimized/mjcznqxg/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxg/960.webp",
+      "avif": "/optimized/mjcznqxg/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqxg/1280.webp",
+      "avif": "/optimized/mjcznqxg/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-transf-2.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxg/320.webp",
+      "avif": "/optimized/mjcznqxg/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxg/640.webp",
+      "avif": "/optimized/mjcznqxg/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxg/960.webp",
+      "avif": "/optimized/mjcznqxg/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqxg/1280.webp",
+      "avif": "/optimized/mjcznqxg/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-transf-3.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxh/320.webp",
+      "avif": "/optimized/mjcznqxh/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxh/640.webp",
+      "avif": "/optimized/mjcznqxh/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxh/960.webp",
+      "avif": "/optimized/mjcznqxh/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqxh/1280.webp",
+      "avif": "/optimized/mjcznqxh/1280.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student-transf-4.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxh/320.webp",
+      "avif": "/optimized/mjcznqxh/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxh/640.webp",
+      "avif": "/optimized/mjcznqxh/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxh/960.webp",
+      "avif": "/optimized/mjcznqxh/960.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/student.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxi/320.webp",
+      "avif": "/optimized/mjcznqxi/320.avif"
+    }
+  ],
+  "/content/series/probability-theory/assets/transformer-inference.png": [
+    {
+      "w": 320,
+      "webp": "/optimized/mjcznqxi/320.webp",
+      "avif": "/optimized/mjcznqxi/320.avif"
+    },
+    {
+      "w": 640,
+      "webp": "/optimized/mjcznqxi/640.webp",
+      "avif": "/optimized/mjcznqxi/640.avif"
+    },
+    {
+      "w": 960,
+      "webp": "/optimized/mjcznqxi/960.webp",
+      "avif": "/optimized/mjcznqxi/960.avif"
+    },
+    {
+      "w": 1280,
+      "webp": "/optimized/mjcznqxi/1280.webp",
+      "avif": "/optimized/mjcznqxi/1280.avif"
     }
   ]
 }

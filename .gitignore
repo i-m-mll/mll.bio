@@ -39,6 +39,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated/optimized assets (regenerated during build)
+/public/optimized/
+/public/content/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

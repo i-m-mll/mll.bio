@@ -191,7 +191,8 @@
     @apply bg-background text-foreground;
     font-size: calc(1rem * var(--global-font-scale));
     /* Minimum width to prevent crushing on very narrow viewports */
-    min-width: 320px;
+    /* Increased from 320px to accommodate full name in header */
+    min-width: 400px;
   }
 }
 

@@ -22,6 +22,7 @@
     "bluesky-comments": "^0.12.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "framer-motion": "^12.23.26",
     "gray-matter": "^4.0.3",
     "hast-util-to-string": "^3.0.1",
     "katex": "^0.16.22",

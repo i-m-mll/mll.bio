@@ -18,6 +18,24 @@ export interface Poem {
 
 const poemsDirectory = path.join(process.cwd(), "content/poems")
 
+/**
+ * Process poem content to handle line breaks properly:
+ * - Single newlines within stanzas become <br/> tags (visible line breaks)
+ * - Double newlines (blank lines) become paragraph breaks (stanza separation)
+ */
+function processPoetryLineBreaks(content: string): string {
+  // Split by blank lines (stanza separators)
+  const stanzas = content.split(/\n\s*\n/)
+
+  // Within each stanza, replace single newlines with <br/>
+  const processed = stanzas.map(stanza =>
+    stanza.trim().replace(/\n/g, '<br/>\n')
+  )
+
+  // Join stanzas with double newlines (creates <p> breaks in markdown)
+  return processed.join('\n\n')
+}
+
 export async function getAllPoems(): Promise<Poem[]> {
   if (!fs.existsSync(poemsDirectory)) {
     return []
@@ -43,7 +61,7 @@ export async function getAllPoems(): Promise<Poem[]> {
 
     poems.push({
       slug,
-      content,
+      content: processPoetryLineBreaks(content),
       frontmatter: {
         title: data.title || slug.replace(/-/g, " "),
         created: data.created,

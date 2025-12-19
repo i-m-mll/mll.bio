@@ -1,6 +1,7 @@
 import { getAllPoems, poemsConfig, formatPoemDate } from "@/lib/poems"
 import { MDXContent } from "@/components/mdx-content"
 import { siteConfig } from "@/lib/config/site"
+import { getSection } from "@/lib/sections"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 
 export default async function VersePage() {
   const poems = await getAllPoems()
+  const intro = await getSection("verse-intro")
   const isSideBySide = poemsConfig.layout === "side-by-side"
   const { dates: dateConfig } = poemsConfig
 
@@ -94,6 +96,11 @@ export default async function VersePage() {
     <main className="container max-w-4xl py-10">
       <header className="mb-12">
         <h1 className="text-3xl font-bold tracking-tight">Verse</h1>
+        {intro && (
+          <article className="prose dark:prose-invert mt-4">
+            <MDXContent>{intro.content}</MDXContent>
+          </article>
+        )}
       </header>
 
       {poems.length === 0 ? (

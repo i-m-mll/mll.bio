@@ -1,5 +1,5 @@
 ---
-title: "Social Odia"
+title: "Social odia"
 created: 2023-02-09
 updated: 2024-01-10
 order: 2

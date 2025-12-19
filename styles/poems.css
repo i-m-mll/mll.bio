@@ -1,8 +1,8 @@
 /* Poem-specific styles */
 
 .poem-content {
-  /* Preserve line breaks as written - never wrap lines within the poem */
-  white-space: pre;
+  /* Prevent line wrapping - poems should scroll horizontally if too wide */
+  white-space: nowrap;
   /* Enable horizontal scroll for poems wider than container */
   overflow-x: auto;
   /* Ensure the content box doesn't get constrained by flex */
@@ -10,21 +10,22 @@
   max-width: 100%;
 }
 
+/* Stanza spacing - use !important to override Tailwind prose */
 .poem-content p {
-  /* Tight spacing between stanzas - much smaller than column gap */
-  margin-bottom: 0.28rem;
+  margin-top: 0 !important;
+  /* Adjust this value for inter-stanza spacing */
+  margin-bottom: 0.75em !important;
 }
 
 .poem-content p:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
 /* Override prose styles for poem content */
 .poem-content.prose p {
-  /* Keep poem lines close together within a stanza */
   line-height: 1.5;
-  margin-top: 0;
-  margin-bottom: 0.28rem;
+  margin-top: 0 !important;
+  margin-bottom: 0.75em !important;
 }
 
 /* Poem card styling */

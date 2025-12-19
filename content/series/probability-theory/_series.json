@@ -1,8 +1,0 @@
-{
-  "title": "Probability Theory",
-  "description": "A visual introduction to probability theory through the lens of category theory. Explore functions, channels, and events using intuitive diagrams and formal notation.",
-  "order": 1,
-  "status": "in progress",
-  "epistemic": "educational synthesis of established material",
-  "tags": ["probability", "category theory", "mathematics"]
-}

@@ -1,5 +1,7 @@
 export const siteConfig = {
   name: "MLL",
+  // Full name shown on homepage (animates to 'name' on other pages)
+  fullName: "MLL",
   description: "Personal website and blog",
   url: "https://mll.bio",
   author: "MLL",
@@ -14,13 +16,48 @@ export const siteConfig = {
   pages: {
     blog: true,
     verse: true,
-    about: true,
+    // Set to false to incorporate About content into homepage instead
+    about: false,
+  },
+
+  // Homepage configuration
+  homepage: {
+    // Ordered list of sections to display on the homepage
+    // Available sections: "intro", "social-links", "what-i-do", "projects",
+    //                     "background", "go-ahead", "subscribe", "recent-posts"
+    // "projects" shows the projects list from lib/config/projects.ts
+    // "background" is typically omitted when about is on homepage (to avoid redundancy)
+    sections: [
+      "intro",
+      "social-links",
+      "what-i-do",
+      "projects",
+      // "background", // Uncomment if about page is separate
+      "go-ahead",
+      "subscribe",
+      "recent-posts",
+    ] as const,
   },
 
   // Header navigation options
   header: {
     // Show explicit "Home" link in nav (if false, users click site name to go home)
-    showHomeLink: true,
+    showHomeLink: false,
+    // Animate between fullName (homepage) and name (other pages)
+    animateName: true,
+    // Animation style: "fade" (letters fade out), "slide" (letters slide away)
+    animationStyle: "fade" as "fade" | "slide",
+    // Animation duration in milliseconds
+    animationDuration: 400,
+    // Viewport width (px) below which the name collapses to initials even on homepage
+    collapseNameWidth: 650,
+    // Right-align nav links (recommended when animateName is true)
+    navAlignRight: true,
+    // Collapse search to icon (expands on click)
+    collapsibleSearch: true,
+    // If true, search collapses on click-away even when there's content entered
+    // If false, search only collapses on click-away when empty
+    collapseSearchOnClickAway: false,
   },
 
   // Social links
