@@ -38,8 +38,6 @@ function loadFont(family: string, weight: string, italic: boolean) {
 }
 
 export default function DevFontSwitcher() {
-  if (process.env.NODE_ENV === 'production') return null
-
   const [family, setFamily] = useState<string>(DEFAULT_FONT)
   const [weight, setWeight] = useState('400')
   const [italic, setItalic] = useState(false)
@@ -54,7 +52,9 @@ export default function DevFontSwitcher() {
       if (stored) {
         setFavorites(JSON.parse(stored))
       }
-    } catch {}
+    } catch {
+      // Ignore localStorage errors
+    }
   }, [])
 
   // Update localStorage when favorites change (skip first empty mount)
@@ -62,18 +62,6 @@ export default function DevFontSwitcher() {
     if (typeof window === 'undefined') return
     localStorage.setItem(LS_KEY, JSON.stringify(favorites))
   }, [favorites])
-
-  const toggleFavorite = () => {
-    setFavorites((prev) => {
-      const next = prev.includes(family)
-        ? prev.filter((f) => f !== family)
-        : [...prev, family]
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(LS_KEY, JSON.stringify(next))
-      }
-      return next
-    })
-  }
 
   // Build sorted list with favorites first
   const sortedFonts = useMemo(() => {
@@ -108,6 +96,21 @@ export default function DevFontSwitcher() {
     loadFont(family, weight, italic)
     document.documentElement.style.setProperty('--dev-title-font-size', `${size}rem`)
   }, [family, weight, italic, size])
+
+  // Don't render in production
+  if (process.env.NODE_ENV === 'production') return null
+
+  const toggleFavorite = () => {
+    setFavorites((prev) => {
+      const next = prev.includes(family)
+        ? prev.filter((f) => f !== family)
+        : [...prev, family]
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(LS_KEY, JSON.stringify(next))
+      }
+      return next
+    })
+  }
 
   const meta = FONT_META[family as string]
   const weights = meta?.weights?.length ? meta.weights : ['400']

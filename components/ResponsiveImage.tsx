@@ -1,10 +1,14 @@
 import React from "react"
 import fs from "node:fs"
 import pathMod from "node:path"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - JSON import via require to avoid TS config tweaks
-const manifest: Record<string, Array<{ w: number; webp: string; avif: string }>> =
-  require("../generated/image-manifest.json")
+
+// Manifest entry can be either an array of responsive variants (for raster images)
+// or an object with a path property (for SVGs that are inlined)
+type RasterVariant = { w: number; webp: string; avif: string }
+type SvgEntry = { path: string }
+type ManifestEntry = RasterVariant[] | SvgEntry
+
+const manifest: Record<string, ManifestEntry> = require("../generated/image-manifest.json")
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
@@ -22,9 +26,10 @@ const ResponsiveImage: React.FC<Props> = ({ src = "", alt = "", ...rest }) => {
   }
 
   if (!Array.isArray(entry)) {
-    // Inline the SVG so text inside is selectable and stylable
+    // SVG entry - inline the SVG so text inside is selectable and stylable
+    const svgEntry = entry as SvgEntry
     try {
-      const abs = pathMod.join(process.cwd(), entry.path)
+      const abs = pathMod.join(process.cwd(), svgEntry.path)
       const svgContent = fs.readFileSync(abs, "utf8")
       return (
         <span
@@ -36,7 +41,7 @@ const ResponsiveImage: React.FC<Props> = ({ src = "", alt = "", ...rest }) => {
       )
     } catch {
       // Fallback if read fails
-      return <img src={entry.path} alt={alt} loading="lazy" {...rest} />
+      return <img src={svgEntry.path} alt={alt} loading="lazy" {...rest} />
     }
   }
 

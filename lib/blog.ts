@@ -8,9 +8,13 @@ export interface Post {
   frontmatter: {
     title: string
     published: string
+    publishedRaw: string // ISO date for reliable sorting
     updated?: string
+    updatedRaw?: string // ISO date for reliable sorting
     description: string
     abstract?: string
+    status?: string // Completion status (e.g., "work in progress", "rough draft", "finished")
+    epistemic?: string // Epistemic confidence (e.g., "speculative", "confident", "exploratory")
     showtoc?: boolean
     draft?: boolean
     tags?: string[]
@@ -77,7 +81,9 @@ export async function getPosts(): Promise<Post[]> {
 
       // Use 'published' if available, otherwise fall back to 'date'
       const publishedDate = data.published || data.date || new Date().toISOString()
+      const publishedRaw = new Date(publishedDate).toISOString()
       const updatedDate = data.updated
+      const updatedRaw = updatedDate ? new Date(updatedDate).toISOString() : undefined
       const tags = parseTags(data.tags)
 
       return {
@@ -86,9 +92,13 @@ export async function getPosts(): Promise<Post[]> {
         frontmatter: {
           title: data.title || slug,
           published: formatDate(publishedDate),
+          publishedRaw,
           updated: updatedDate ? formatDate(updatedDate) : undefined,
+          updatedRaw,
           description: data.description || "",
           abstract: data.abstract || undefined,
+          status: data.status || undefined,
+          epistemic: data.epistemic || undefined,
           showtoc: data.showtoc !== false,
           draft: data.draft || false,
           tags,
@@ -99,9 +109,9 @@ export async function getPosts(): Promise<Post[]> {
     })
     // Filter out draft posts
     .filter((post) => !post.frontmatter.draft)
-    // Sort posts by published date (most recent first)
+    // Sort posts by published date (most recent first) using raw ISO dates
     .sort((a, b) => {
-      return new Date(b.frontmatter.published).getTime() - new Date(a.frontmatter.published).getTime()
+      return new Date(b.frontmatter.publishedRaw).getTime() - new Date(a.frontmatter.publishedRaw).getTime()
     })
 
   return posts
@@ -131,7 +141,9 @@ export async function getPost(slug: string): Promise<Post | null> {
 
     // Use 'published' if available, otherwise fall back to 'date'
     const publishedDate = data.published || data.date || new Date().toISOString()
+    const publishedRaw = new Date(publishedDate).toISOString()
     const updatedDate = data.updated
+    const updatedRaw = updatedDate ? new Date(updatedDate).toISOString() : undefined
     const tags = parseTags(data.tags)
 
     return {
@@ -140,9 +152,13 @@ export async function getPost(slug: string): Promise<Post | null> {
       frontmatter: {
         title: data.title || slug,
         published: formatDate(publishedDate),
+        publishedRaw,
         updated: updatedDate ? formatDate(updatedDate) : undefined,
+        updatedRaw,
         description: data.description || "",
         abstract: data.abstract || undefined,
+        status: data.status || undefined,
+        epistemic: data.epistemic || undefined,
         showtoc: data.showtoc !== false,
         draft: data.draft || false,
         tags,
@@ -151,7 +167,10 @@ export async function getPost(slug: string): Promise<Post | null> {
       },
     }
   } catch (error) {
-    console.error(`Error getting post ${slug}:`, error)
+    // Log errors only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`Error getting post ${slug}:`, error)
+    }
     return null
   }
 }

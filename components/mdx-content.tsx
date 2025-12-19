@@ -9,6 +9,14 @@ import ResponsiveImage from "@/components/ResponsiveImage"
 import { SidenoteProvider } from "@/components/sidenote-context"
 import { KatexStyles } from "@/components/KatexStyles"
 import { Tabs, Tab } from "@/components/tabs"
+import {
+  CollapsibleCallout,
+  InfoCallout,
+  NotationCallout,
+  StringDiagramCallout,
+  CaptionCallout,
+} from "@/components/collapsible-callout"
+import { Figure } from "@/components/figure"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
@@ -19,6 +27,24 @@ import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import rehypeCallouts from "rehype-callouts"
 
+// Global KaTeX macros for probability theory series and general use
+const katexMacros: Record<string, string> = {
+  // Function composition in intuitive order (f then g, not g∘f)
+  "\\comp": "\\mathrel{\\circ}",
+  "\\compo": "\\mathrel{\\unicode{x2A3E}}",
+  // Arrow variants
+  "\\mapsfrom": "\\mathrel{\\unicode{x21a4}}",
+  "\\klarrow": "\\mathrel{\\unicode{x21F4}}",
+  // Other symbols
+  "\\weaken": "\\unicode{xA7FD}",
+  "\\marg": "\\mathsf{M}",
+  "\\valid": "\\parallel",
+  "\\ccomp": "\\mathrel{\\tiny{\\odot}\\normalsize}",
+  "\\pcomp": "\\mathrel{\\otimes}",
+  "\\condindep": "\\perp\\!\\!\\!\\!\\!\\!\\perp",
+  "\\conddep": "\\top\\!\\!\\!\\!\\!\\!\\top",
+}
+
 // Map of components that MDX can render (these have their own "use client" if needed)
 const mdxComponents = {
   Sidenote,
@@ -28,6 +54,14 @@ const mdxComponents = {
   img: (props: any) => <ResponsiveImage {...props} />,
   Tab,
   Tabs,
+  // Collapsible callout components for series posts
+  CollapsibleCallout,
+  InfoCallout,
+  NotationCallout,
+  StringDiagramCallout,
+  CaptionCallout,
+  // Figure with margin-aligned caption
+  Figure,
 }
 
 interface MDXContentProps {
@@ -50,7 +84,11 @@ export async function MDXContent({ children }: MDXContentProps) {
         theme: { light: "github-light", dark: "github-dark" },
         ignoreMissing: true,
       }],
-      rehypeKatex,
+      [rehypeKatex, {
+        macros: katexMacros,
+        strict: false,
+        trust: true,
+      }],
       [rehypeCallouts, {
         theme: 'vitepress',
         showIndicator: true,

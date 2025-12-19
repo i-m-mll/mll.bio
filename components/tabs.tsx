@@ -48,15 +48,17 @@ export function Tabs({ children, defaultIndex = 0, className = "", ariaLabel }: 
   const tabIdBase = useId()
   const tabElements = Children.toArray(children).filter(Boolean) as ReactElement<TabProps>[]
 
-  // Guard: render nothing if no valid tab children provided
-  if (tabElements.length === 0) return null
-
+  // useState must be called before any early returns
   const [activeIndex, setActiveIndex] = useState(() => {
     // Clamp defaultIndex
     if (defaultIndex < 0) return 0
+    if (tabElements.length === 0) return 0
     if (defaultIndex >= tabElements.length) return tabElements.length - 1
     return defaultIndex
   })
+
+  // Guard: render nothing if no valid tab children provided
+  if (tabElements.length === 0) return null
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     const { key } = e
@@ -147,4 +149,5 @@ export function Tabs({ children, defaultIndex = 0, className = "", ariaLabel }: 
 }
 
 // Allow import { Tabs, Tab } from "components/tabs"
-export default { Tabs, Tab } 
+const TabsModule = { Tabs, Tab }
+export default TabsModule 

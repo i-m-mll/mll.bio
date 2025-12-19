@@ -9,6 +9,7 @@ import { uiConfig } from "@/lib/config/ui"
 interface StoredDoc {
   title: string
   slug: string
+  url?: string
   snippetHtml: string
   isCode?: boolean
   codeText?: string
@@ -19,6 +20,7 @@ interface DisplayResult {
   id: string
   title: string
   slug: string
+  url: string
   snippetHtml: string
   blockIdx?: number
 }
@@ -153,6 +155,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
               id: `${doc.slug}-${blockIdxFromRef ?? 'x'}-desc`,
               title: doc.title,
               slug: doc.slug,
+              url: doc.url || `/blog/${doc.slug}`,
               snippetHtml: doc.snippetHtml,
               blockIdx: blockIdxFromRef,
             }
@@ -222,6 +225,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
               id: `${doc.slug}-${blockIdxFromRef ?? 'x'}-${p[0]}`,
               title: doc.title,
               slug: doc.slug,
+              url: doc.url || `/blog/${doc.slug}`,
               snippetHtml,
               blockIdx: blockIdxFromRef,
             }
@@ -246,7 +250,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
     setResults(computeResults(trimmed))
   }, [debouncedQuery, computeResults])
 
-  const buildHref = (slug: string, blockIdx?: number) => {
+  const buildHref = (url: string, blockIdx?: number) => {
     const qStr = (query.trim() || debouncedQuery).trim()
     const params = new URLSearchParams()
     if (qStr) params.set('q', qStr)
@@ -254,7 +258,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
       params.set('b', String(blockIdx))
     }
     const queryStr = params.toString()
-    return queryStr ? `/blog/${slug}?${queryStr}` : `/blog/${slug}`
+    return queryStr ? `${url}?${queryStr}` : url
   }
 
   // Ensure the selected result is visible inside the dropdown
@@ -315,7 +319,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
           } else if (e.key === 'Enter') {
             if (selectedIndex >= 0 && selectedIndex < results.length) {
               const sel = results[selectedIndex]
-              router.push(buildHref(sel.slug, sel.blockIdx), { scroll: false })
+              router.push(buildHref(sel.url, sel.blockIdx), { scroll: false })
             }
           }
         }}
@@ -345,7 +349,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
         >
           {results.map((r, idx) => (
             <li key={r.id} className={`border-b last:border-b-0 ${idx === selectedIndex ? 'ring-inset ring-2 ring-stone-200 dark:ring-stone-700' : ''}`}>
-              <Link href={buildHref(r.slug, r.blockIdx)} scroll={false} className="block w-full px-3 py-2 text-left" onClick={() => {setQuery(""); setResults([]) }}>
+              <Link href={buildHref(r.url, r.blockIdx)} scroll={false} className="block w-full px-3 py-2 text-left" onClick={() => {setQuery(""); setResults([]) }}>
                 <div className="font-medium text-sm" dangerouslySetInnerHTML={{__html: renderInlineMarkdown(r.title)}} />
                 {r.snippetHtml ? (
                   <div className="text-xs text-muted-foreground search-snippet" style={(() => {

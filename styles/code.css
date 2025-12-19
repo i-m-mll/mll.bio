@@ -4,8 +4,11 @@
 :root {
   --code-bg: theme('colors.stone.75');
   --code-border-color: theme('colors.stone.200');
-  
+
   --prose-pre-bg: var(--code-bg);
+
+  /* Inline code font size - adjust this to change inline `code` sizing */
+  --inline-code-font-size: 0.8em;
 }
 
 .dark {
@@ -35,15 +38,22 @@
     font-weight: 400;
 }
 
-/* 
- * Specific styling for inline code, i.e., `code` elements NOT inside a `pre` 
+/*
+ * Specific styling for inline code, i.e., `code` elements NOT inside a `pre`
  * block. The :not(:where([class~="hljs"] *)) part is a bit of a hack to
  * exclude code blocks that have been processed by highlight.js, as those
  * will have a `hljs` class on them.
+ *
+ * Font size is reduced to compensate for monospace fonts typically having
+ * larger x-height than proportional fonts, making them appear larger at
+ * the same nominal size.
  */
 .prose :where(code):not(pre *) {
   @apply bg-muted px-1 py-0.5 rounded;
-  font-size: 0.8em;
+  font-size: var(--inline-code-font-size);
+  /* Slight negative vertical margin to compensate for padding affecting line-height */
+  margin-top: -0.1em;
+  margin-bottom: -0.1em;
 }
 
 /* Code inside a pre block should have a transparent background */

@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { getPost, getPosts } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
@@ -24,7 +25,7 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = await getPost(slug)
 
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   // Check if blog is enabled in config
   if (!siteConfig.pages.blog) {
     notFound()
@@ -61,15 +62,35 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       )}
       <div className="container min-w-0 pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
-          <div className="text-muted-foreground text-sm mb-6">
+          <div className="text-muted-foreground text-sm mb-6 space-y-0.5">
             <div>Published: {post.frontmatter.published}</div>
             {post.frontmatter.updated && (
               <div>Updated: {post.frontmatter.updated}</div>
             )}
+            {post.frontmatter.status && (
+              <div>
+                Status:{" "}
+                <em
+                  dangerouslySetInnerHTML={{
+                    __html: renderInlineMarkdown(post.frontmatter.status)
+                  }}
+                />
+              </div>
+            )}
+            {post.frontmatter.epistemic && (
+              <div>
+                Epistemic status:{" "}
+                <em
+                  dangerouslySetInnerHTML={{
+                    __html: renderInlineMarkdown(post.frontmatter.epistemic)
+                  }}
+                />
+              </div>
+            )}
             {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1">
+              <div className="pt-1 flex flex-wrap gap-1">
                 {post.frontmatter.tags.map((tag, index) => (
-                  <span 
+                  <span
                     key={index}
                     className="bg-stone-100 dark:bg-stone-925 text-muted-foreground px-2 py-1 rounded text-xs"
                   >
@@ -79,7 +100,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               </div>
             )}
           </div>
-          <h1 
+          <h1
             className="mb-2 font-heading"
             dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
           />
@@ -99,7 +120,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         
         <article className="prose dark:prose-invert mx-auto relative">
           <MDXContent>{post.content}</MDXContent>
-          <SearchHighlighter />
+          <Suspense fallback={null}>
+            <SearchHighlighter />
+          </Suspense>
           <Footnotes content={post.content} />
         </article>
       </div>

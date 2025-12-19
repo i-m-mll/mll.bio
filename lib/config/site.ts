@@ -4,10 +4,23 @@ export const siteConfig = {
   url: "https://mll.bio",
   author: "MLL",
 
+  // Newsletter/subscription settings
+  newsletter: {
+    // Buttondown username (set to empty string to disable)
+    buttondownUsername: "mll",
+  },
+
   // Toggle pages on/off
   pages: {
     blog: true,
+    verse: true,
     about: true,
+  },
+
+  // Header navigation options
+  header: {
+    // Show explicit "Home" link in nav (if false, users click site name to go home)
+    showHomeLink: true,
   },
 
   // Social links
@@ -52,9 +65,10 @@ export const siteConfig = {
 }
 
 // Responsive breakpoints configuration
+// These should match the values in tailwind.config.ts
 export const breakpoints = {
-  // When sidenotes become footnotes
-  desktop: 1200,
-  // When TOC becomes mobile
-  mobile: 700,
+  // When sidenotes become footnotes (matches 'desktop' in tailwind)
+  desktop: 1051,
+  // When TOC becomes mobile (matches 'tablet' in tailwind)
+  mobile: 701,
 } as const 

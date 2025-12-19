@@ -3,6 +3,7 @@ title: "Extended Markdown Features"
 published: "2023-06-15"
 description: "Demonstrating the extended Markdown features available in this blog"
 showtoc: true
+draft: true
 ---
 
 This post demonstrates the extended Markdown features available in this blog.

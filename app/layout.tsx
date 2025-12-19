@@ -40,6 +40,7 @@ export default function RootLayout({
     >
       <head>
         <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
         <script
           dangerouslySetInnerHTML={{
             __html: "document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');",

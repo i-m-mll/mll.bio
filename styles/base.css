@@ -83,6 +83,9 @@
     /* Footer variables */
     --footer-height: 2.5rem;
 
+    /* Subtle border for horizontal rules / dividers */
+    --border-subtle: 240 5.9% 92%;
+
     /* Spacing controls for inline notes on mobile */
     --inline-note-margin-top: 1.25rem; /* Default: 1.25rem (my-5) */
     --inline-note-margin-bottom: -1.25rem; /* Default: -1.5rem (-mb-6) */
@@ -187,6 +190,8 @@
   body {
     @apply bg-background text-foreground;
     font-size: calc(1rem * var(--global-font-scale));
+    /* Minimum width to prevent crushing on very narrow viewports */
+    min-width: 320px;
   }
 }
 
@@ -248,4 +253,18 @@ html {
     --tw-prose-th-borders: hsl(var(--border));
     --tw-prose-td-borders: hsl(var(--border));
   }
+}
+
+/* Elegant three-dot horizontal rule for prose content */
+.prose hr {
+  border: none;
+  text-align: center;
+  margin: 2.5rem 0;
+}
+
+.prose hr::before {
+  content: "⁂";
+  font-size: 1.25rem;
+  color: hsl(var(--muted-foreground) / 0.5);
+  letter-spacing: 0.5em;
 } 

@@ -1,0 +1,63 @@
+/* Poem-specific styles */
+
+.poem-content {
+  /* Preserve line breaks as written - never wrap lines within the poem */
+  white-space: pre;
+  /* Enable horizontal scroll for poems wider than container */
+  overflow-x: auto;
+  /* Ensure the content box doesn't get constrained by flex */
+  min-width: 0;
+  max-width: 100%;
+}
+
+.poem-content p {
+  /* Tight spacing between stanzas - much smaller than column gap */
+  margin-bottom: 0.28rem;
+}
+
+.poem-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Override prose styles for poem content */
+.poem-content.prose p {
+  /* Keep poem lines close together within a stanza */
+  line-height: 1.5;
+  margin-top: 0;
+  margin-bottom: 0.28rem;
+}
+
+/* Poem card styling */
+.poem-card {
+  /* Subtle visual separation */
+  padding: 1rem 0;
+  /* Prevent flex item from overflowing container - allows child scroll to work */
+  min-width: 0;
+  /* Prevent card from being split across columns */
+  break-inside: avoid;
+  /* Allow horizontal scroll within card if poem is wider than column */
+  overflow-x: auto;
+}
+
+/* CSS columns container for masonry-like layout */
+.poems-columns {
+  /* Single column on mobile */
+  columns: 1;
+  column-gap: 3rem;
+}
+
+/* Two columns only on wide viewports where there's enough room */
+/* 900px ensures each column has ~400px which fits most poems */
+@media (min-width: 900px) {
+  .poems-columns {
+    columns: 2;
+  }
+}
+
+/* On mobile, add subtle horizontal rule between poems */
+@media (max-width: 700px) {
+  .poem-card + .poem-card {
+    border-top: 1px solid hsl(var(--border) / 0.4);
+    padding-top: 1.5rem;
+  }
+}

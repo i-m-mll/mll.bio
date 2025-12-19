@@ -1,0 +1,344 @@
+---
+title: Events
+order: 30
+created: 2023-12-16T13:22
+updated: 2024-05-14T21:58
+draft: true
+---
+
+Now we'll learn about two of the basic game pieces of probability theory:
+
+- *States* are plain old "probability distributions"—the *un*conditional ones.
+- *Events* are statements or observations about outcomes.
+
+Functionally, events and states have opposite roles and flavours.
+
+Both can be seen as specific types of [channel](/series/probability-theory/channels#channels).
+
+## States
+
+A channel gives a distribution on the target, for every point we *could* start from in the source. But where *do* we start from?
+
+The disease→test channel we saw last time gives us the probability that someone will get a certain test result, *conditional* that they have the disease or not.
+
+![chan](/series/probability-theory/assets/1-channels/disease/chan.svg)
+
+How many positive tests do we actually expect to see, in practice? That depends on how many people actually have the disease—simply, *unconditionally*, with nothing left to be *given*.
+
+There's a specific kind of channel we can use for that—a channel that starts from a set with only one point in it.
+
+<Figure src="/series/probability-theory/assets/2-events/disease/state.svg" alt="Disease state">
+It's hard to see from the histogram – even though we've made it taller here – but there's a 2% probability of having the disease. If it were zero, we'd have used a dashed gray arrow.
+</Figure>
+
+We don't need to label that one point. There are no other options to distinguish it from. It's always given. We always start from it.
+
+This kind of channel is called a *state*, because it models a *given* state of the world.
+
+This state on $\mathsf{D}$ gives the probability that someone will have the disease, without the answer depending on any other context.
+
+<InfoCallout title='"Channel", "state", "(conditional) distribution"'>
+To be clear about names:
+- A channel, or *a conditional (probability) distribution*, is a collection of distributions/states on a target set, where we haven't decided yet which distribution is given.
+- A state is a single distribution on a target set. This is traditionally just called *a (probability) distribution*.
+
+Compared to states, channels have an extra qualifier ("conditional") in their traditional names. This might lead us to think that channels are a special case, when really it's the other way around!
+</InfoCallout>
+
+<InfoCallout title='"Unconditional"'>
+Is our model of the state of the world ever truly unconditional? No, not really. It's always changing through the work we do – explicitly or not – to collect and organize new information.
+
+For example, perhaps we have a prior belief in a 1% probability of having the disease, because that's what we've observed over a long time. But maybe we live in Norway and we've only been observing Norwegians. Or maybe a surprise pandemic will happen next year.
+
+The important thing is that *making a probability distribution unconditional on anything else is a convenience, for the sake of modeling a particular situation.* If the context changes, our model may also have to change.
+
+Later in this post we'll learn about one way we can update our prior beliefs, given new information.
+
+In the previous post, we already saw an example of something that looks like a state.
+
+![dist_fair](/series/probability-theory/assets/1-channels/dist_fair.svg)
+
+By excluding the other members of the source set, we were saying something like "we've decided Max is the one rolling dice now". In that sense, we were narrowing the context for our model. We could have focused on Claire instead. *Any* channel can be seen as a collection of states, one for each point in the source that we might start from, or decide is "given".
+</InfoCallout>
+
+<NotationCallout title="States">
+A state $\omega$ is a channel where the source is the one-element set $\mathbf{1}$:
+
+$$
+\omega:\mathbf{1}\rightarrow\mathcal{D}(X)
+$$
+
+[Jacobs *et al.*](/series/probability-theory#sources) use the *ket* notation $\ket{\cdot}$ to write out states. For example:
+
+$$
+\omega = r_1\ket{x_1}+\dots+r_n\ket{x_n}=\sum_i r_i\ket{x_i}
+$$
+
+The terms $\ket{x_i}$ are not numbers. They're the points on which the distribution is defined. So $r_i\ket{x_i}$ does not imply actual multiplication. The equation means "I'll take $r_1$ of point $x_1$, and $r_2$ of point $x_2$, and ..., to form my state on $X$."
+
+For example, a state describing a fair coin looks like
+
+$$
+\sigma = 0.5\ket{\mathsf{heads}}+0.5\ket{\mathsf{tails}}
+$$
+
+A state is a special type of channel, but we can also see *any* channel $f:X\to \mathcal{D}(Y)$ as a set of states. For each point $x$ in the channel's source $X$, there is one state on $Y$, $\omega_{x}:\mathbf{1}\to \mathcal{D}(Y)$.
+</NotationCallout>
+
+<StringDiagramCallout title="String diagrams: States">
+String diagrams represent states as triangles.
+![string-state](/series/probability-theory/assets/2-events/string-state.svg)
+These are the inputs or "starting points" of a diagram – they introduce information to the process the diagram describes.
+</StringDiagramCallout>
+
+### Pushing states forward
+
+So, what's the overall probability of a positive test?
+
+A state is just a type of channel, and we can [compose](/series/probability-theory/channels#channel-composition) it with other channels. That's how we can transform our state on $\mathsf{D}$ to a state on $\mathsf{T}$.
+
+![transfn_comp.svg](/series/probability-theory/assets/2-events/disease/transfn_comp.svg)
+
+The thickness of the bottom path $\boldsymbol{\color{a1}{\to}\color{a3}{\to}}$ makes it clear that almost all the time, the person being tested doesn't actually have the disease, and the test accurately reports that they don't: we'll see mostly negative tests.
+
+The probability of a positive test is about $7\%$, though the probability of having the disease was only $2\%$. That's because there are two paths that reach a positive test.
+
+![transfn_comp_pos.svg](/series/probability-theory/assets/2-events/disease/transfn_comp_pos.svg)
+
+There's only a $\color{a1}{2\%}$ chance we'll have the disease, and in that case we'll test positive $\color{a2}{90}\%$ of the time – so $\color{a1}{2\%}\color{black}\times\color{a2}{90\%}\color{black}=1.8\%$ of the time, we follow the upper path to a positive test . But there's also a $\color{a3}5\%$ chance the test will be a false positive, in the $\color{a1}{98\%}$ of cases where we don't have the disease. We follow the lower path $\color{a1}{98\%}\color{black}\times\color{a3}{5\%}\color{black}=4.9\%$ of the time. Most of the positive tests are actually false positives!
+
+<NotationCallout title="State transformation">
+**TODO:** Is there any classical notation (e.g. from Bayesian networks) for state transformation? Other than just matrix multiplication of probability tables.
+
+Say $\omega\in\mathcal{D}(X)$ is a state on $X$ and $f: X \rightarrow \mathcal{D}(Y)$ is a channel. We want to obtain a state $\sigma\in\mathcal{D}(Y)$ on $Y$ by pushing $\omega$ through $f$.
+
+That's just channel composition: $\sigma=f\ccomp \omega$.
+
+However, because states hold a privileged position as *unconditional channels*, state transformation deserves some special notation. Here are two alternatives for writing the composite:
+
+- **with a function**: $\sigma = f_*(\omega)$
+  The asterisk makes it clear that $\omega$ is not an input $x\in X$ to $f$ – it's an entire distribution on $\mathcal{D}(X)$ that's pushed through $f$.
+- **with an operator**: $\sigma = f \gg \omega$
+  In this case, $\gg$ is essentially a direct substitute for $\ccomp$ that emphasizes that this is a *pushforward* composition.
+</NotationCallout>
+
+<StringDiagramCallout title="String diagrams: State transformation">
+State transformation is just composition where the composite channel is a state. For example, giving labels to the channels in our preceding diagram,
+![transfn_comp_labels.svg](/series/probability-theory/assets/2-events/disease/transfn_comp_labels.svg)
+and the corresponding string diagram is
+
+![string_state_transfn.svg](/series/probability-theory/assets/2-events/string_state_transfn.svg)
+</StringDiagramCallout>
+
+## Events
+
+This morning, I was still half-asleep when I wandered to my fridge to get something to drink. There were three options: coffee with milk, decaffeinated coffee with milk, and a coffee-flavoured protein shake. (I enjoy variety.)
+
+Now it's 30 minutes later, and I can't remember which one I drank. I was half-asleep, and they all taste pretty similar.
+
+Normally, I'd reach for the coffee ($b_\mathsf{c}$) about 80% of the time, but only 10% each for the decaf ($b_\mathsf{d}$) or the protein shake ($b_\mathsf{p}$). These *prior beliefs* can be represented by a state.
+
+![B is for beverage](/series/probability-theory/assets/2-events/drinks/state.svg)
+
+An *event* is a statement – the answer to a true-false question – about a set of outcomes. Here are two events that are relevant to our current problem:
+
+<Figure src="/series/probability-theory/assets/2-events/drinks/events_nocaf_caf.svg" alt="Caffeine events">
+Both of these are simple functions: exactly one arrow begins at each starting point in $\mathsf{B}$.
+</Figure>
+
+On the left, we map the protein shake and the decaf coffee to $\mathsf{T}$ (for $\mathsf{True}$) because they satisfy the claim "*this* lacks caffeine".
+
+On the right, we see the opposite: only the coffee is mapped to $\mathsf{T}$, in answer to "*this* has caffeine".
+
+These two events are *mutually exclusive*, since one can't happen when the other does: either we drank something that has caffeine, or something that doesn't.[^2]
+
+## Fuzzy events
+
+Like states, events are also a special type of channel.
+
+We just saw an event $\mathsf{Lacks~caffeine}$, which is a simple function. [Recall](/series/probability-theory/channels#functions-are-channels) that simple functions are a special case of channels where all the weight is on one arrow for each starting point. That means we can re-draw our $\mathsf{Lacks~caffeine}$ event as such a channel.
+
+![chan_nocaf.svg](/series/probability-theory/assets/2-events/drinks/chan_nocaf.svg)
+
+Finally, since there are only two ending points ($\mathsf{T}$ and $\mathsf{F}$), and each starting point must form a distribution over them that sums to 1 (or 100%), we [really](/series/probability-theory/channels#degrees-of-freedom) only need to remember one of the two probabilities.
+
+![pred_as_chan_evol.svg](/series/probability-theory/assets/2-events/drinks/pred_as_chan_evol.svg)
+
+We can imagine events that are only *kind of* true or false, by giving weights between 0 and 1.
+
+**TODO**: Jacobs et al. uses "predicate" for the general form, and "event" for the non-fuzzy form in keeping with the usage in probability theory. I'd also like to use "event" the same way it's used elsewhere, but "predicate" is not a very nice word. For now I've been calling the general form "fuzzy event" but as we say with "conditional probability distribution", I think using adjectives to modify a less-general term to get a more-general one is sus.
+
+**TODO**: Example of fuzzy event. Tails vs. "tailsy"?
+
+Why might these be useful? Unreliable information, uncertain *statements* (not probabilities in the world model itself), etc.[^3]
+
+<NotationCallout title="Fuzzy events">
+Channels whose target is a two-element set $\mathbf{2}$; compared to states which are channels whose source is a one-element set $\mathbf{1}$.
+
+- Set of fuzzy events on $A$: $[0, 1]^A$
+- Sharp (non-fuzzy) event on $E\subseteq A$: $\mathbf{1}_E$
+  - where $\mathbf{1}_E(a)=1$ if $a\in E$ and $\mathbf{1}_E(a)=0$ if $a\notin E$
+  - $\mathbf{1}_A$ and $\mathbf{0}=\mathbf{1}_\emptyset$ for the truth-falsity (all/nothing) events
+
+Properties:
+
+- Multiplication: $p, q\in[0, 1]^A$, then $p~\&~q\in[0,1]^A$ as $a \mapsto p(a)\cdot q(a)$
+  - Note that $\mathbf{1}_E~\&~\mathbf{1}_D=\mathbf{1}_{E\cap D}$
+- Scaling: $r\in [0,1]$, then $r\cdot p\in [0,1]^A$ as $a\mapsto r\cdot p(a)$
+- Orthosupplement: $p^\bot\in[0,1]^A$ as $(p^\bot)(a)=1-p(a)$
+  - $(\mathbf{1}_E)^\bot=\mathbf{1}_{\neg E}$
+</NotationCallout>
+
+## Event transformation
+
+When fuzzy events are allowed, we can pull an event back through a channel, similarly to how we were able to push a state forward.
+
+This doesn't work if we want to use only non-fuzzy, all-or-nothing events: if we pull a non-fuzzy event back through a channel, we generally get a fuzzy one!
+
+This is yet another example of channel composition.
+
+Example: pulling back $\mathsf{Tests~positive}$ (or possibly $\mathsf{Receives~care}$) in the disease network. Validity of the resulting event.
+
+![serial-pred-1](/series/probability-theory/assets/mappings/serial-pred-1.svg)
+![serial-pred-2](/series/probability-theory/assets/mappings/serial-pred-2.svg)
+![serial-pred-3](/series/probability-theory/assets/mappings/serial-pred-3.svg)
+
+<NotationCallout title="Event transformation">
+Say $p\in[0,1]^Y$ is a fuzzy event on $Y$ and $f: X \rightarrow \mathcal{D}(Y)$ is a channel. We want to obtain a fuzzy event $q\in[0,1]^X$ on $X$ by pulling back $p$ through $f$.
+
+We could write this event transformation in two ways:
+
+- As a function: $q = f^*(p)$
+  Note that the asterisk is just to make it explicit that we are doing event transformation, and not passing $p$ through $f$ as if it were an element of $X$
+- As an operator: $q = f \ll p$
+</NotationCallout>
+
+## *The* probability of an event
+
+Given my usual chances of drinking each thing, what's the probability I drank something without caffeine?
+
+![prob_nocaf.svg](/series/probability-theory/assets/2-events/drinks/prob_nocaf.svg)
+
+This is just another case of composition – multiply along, sum across. We're specifically interested in the probability we'll end at $\mathsf{T}$, so let's calculate just that part.
+
+![prob_nocaf1.svg](/series/probability-theory/assets/2-events/drinks/prob_nocaf1.svg)
+
+Since the event is a function, each of its arrows ($\boldsymbol{\color{a2}\to}$,$\boldsymbol{\color{a3}\to}$) has weight $1$, or $100\%$. That means nothing happens when we multiply along each path, and we can just sum over the blue arrows:
+
+$$
+\begin{align*}
+\color{a1}10\%\color{black}\times\color{a2}100\%\color{black}+\color{a1}10\%\color{black}\times\color{a3}100\%\color{black}&=\color{a1}10\%\color{black}+\color{a1}10\%\\&=\color{black}20\%
+\end{align*}
+$$
+
+This might seem pretty obvious: I had a 10% chance of drinking each of the two caffeine-free drinks, so there's a 20% chance I drank something caffeine-free.
+Or, the expected value of the event with respect to a state.
+![validity](/series/probability-theory/assets/mappings/validity.svg)
+
+<NotationCallout title="Probability (or validity) of an event">
+$\Pr(E)$ or $\Pr_\omega(E)$
+
+Can be seen as both event transformation (pull back the event onto the single-element set, treating the state as a channel) or a state transformation (push forward the state onto $\left\{ \mathsf{T}, \mathsf{F} \right\}$, treating the fuzzy event as a channel).
+
+$\omega\models p$
+- $\omega\models p := \sum_{a\in A}\omega(a)\cdot p(a)$
+- For a non-fuzzy event, $\Pr_\omega(E)=\omega\models\mathbf{1}_E=\sum_{a\in E}\omega(a)$
+  - $\omega\models\mathbf{1}_{\{x\}} = \omega(x)$
+  - $\omega\models\mathbf{1}=1$
+- $\omega\models p^\bot=1-\omega\models p$
+- $\omega\models r\cdot p=r\cdot(\omega\models p)$
+- Note this is syntactic sugar for a special kind of channel composition
+
+For mathematicians, logicians, and computer scientists the symbol $\models$ has some prior meaning: $A\models B$ means that $B$ is a semantic consequence of $A$, or that a less general structure $B$ satisfies a more general structure $A$. So, how much does an event satisfy a state of affairs?
+
+For others, this notation is kind of unfortunate. The symbol $\models$ is visually similar to the equals sign $=$, which makes it harder to visually chunk equations without including extra parentheses.
+
+$$(\omega\models p^\bot)=1-(\omega\models p)$$
+
+It's also kind of similar to symbols sometimes used in probability theory for conditional dependence $\conddep$ and independence $\condindep$
+
+What could be an alternative? I'm no mathematician, but how about $\omega\parallel p$? In geometry, $AB \parallel CD$ means "the line $AB$ is parallel to the line $CD$". Maybe it's a valid to consider how "aligned" an event is with a state of affairs, especially considering that the calculation of validity is analogous to a dot product between vectors.
+
+Consider the same equations as above, written with this operator:
+
+- $\omega\parallel p := \sum_{a\in A}\omega(a)\cdot p(a)$
+- $\Pr_\omega(E)=\omega\parallel\mathbf{1}_E=\sum_{a\in E}\omega(a)$
+  - $\omega\parallel\mathbf{1}_{\{x\}} = \omega(x)$
+  - $\omega\parallel\mathbf{1}=1$
+- $\omega\parallel p^\bot=1-\omega\parallel p$
+- $\omega\parallel r\cdot p=r\cdot(\omega\parallel p)$
+
+What are the disadvantages of this notation?
+- it might be mistaken for `||`, which is a common programming syntax for the logical OR operator. But there's already largely a separation between mathematical and programming notation.
+- the notation for conditioning, which we'll introduce in a moment, uses a single vertical line, which in combination with $\parallel$ could also lead to some chunking issues.
+
+While it might not be absolutely wise to introduce new notation in the first place, it does happen sometimes. As long as the notation is not super well-established (such as is the case with $\models$) it's worth discussing the UX.
+</NotationCallout>
+
+<StringDiagramCallout title="String diagrams">
+![validity diagram](/series/probability-theory/assets/string/validity.png)
+When the diagram is totally closed by triangles, that means the whole thing evaluates to a single number.
+</StringDiagramCallout>
+
+## States versus events
+
+While states and fuzzy events are both special types of channels, they have different properties and serve different roles.
+
+- Ontological (world model) versus epistemic (statements about the world model) flavour
+- Consistent (distributional) versus potentially inconsistent (not distributional) – there's nothing stopping us from having a fuzzy event that maps $d+$ to 0.6, and $d-$ to 0.8
+- State information moves *forwards* through the network of channels, and represent causality; event information moves *backwards* and represents the (?) influence of the current epistemic context
+
+<InfoCallout title="Are fuzzy events really necessary?">
+In the usual theory of Bayesian networks, there are only conditional distributions and non-fuzzy events. However, it is possible to model fuzzy events using only states, channels, and non-fuzzy events: by adding an extra node into the network, and describing the fuzzy probabilities of the event using the state on that node.
+
+**TODO**: reference. intro to [@Barber_2011]?
+
+Basically, this looks like treating the fuzzy event as a channel $X\klarrow \mathbf{2}$, where $\mathbf{2}=\lbrace t,f\rbrace$. Then the original fuzzy event can be recovered by pulling back $\mathbf{1}_{\lbrace t\rbrace}$ through that channel.
+
+Since fuzzy events are actually a special type of channel, there's no reason in principle that we can't do that – model the fuzziness of the event as just another part of the network of state-transforming channels.
+
+However, that seems like a hack from the functional perspective, because it does not preserve what's important about the duality between states and events:
+
+- Whereas states are distributional and consistent over a set of possible outcomes, it's useful to see events – true-false questions about those outcomes – as potentially inconsistent. Instead of hacking the network so that potentially any channel's internally consistent states can model inconsistent information, it's better to treat events as the one, special type of channel which we frame as possibly inconsistent.
+- All-or-nothing events can't be transformed backwards through the channels in a network, to get all-or-nothing events on preceding nodes. Fuzzy events can.
+
+The reasons for using fuzzy events go a bit deeper still, but this might not be apparent until later in this series.
+</InfoCallout>
+
+<InfoCallout title="Analogies of the duality">
+TODO: Is the duality between states and fuzzy events analogous to states/costates in control theory, actions/payoffs in game theory, actions/rewards in RL, and inputs/error signals in ML?
+
+Is this worth mentioning?
+</InfoCallout>
+
+<NotationCallout title="States versus fuzzy events">
+If I include this stuff, it should definitely be in a formal box so as not to confuse the hell out of everyone.
+
+- A state $\omega\in\mathcal{D}(X)$ can also be seen as a function $X\rightarrow[0,1]$. Thus a state is also a fuzzy event.
+- However, a fuzzy event $p: X\rightarrow[0,1]$ does not in general form a state, since it may be the case that $\sum_{x\in X} p(x) \neq 1$. A fuzzy event is not a distribution.
+- The set of states $\mathcal{D}(X)$ forms a [*convex set*](https://en.wikipedia.org/wiki/Convex_set), but the set of fuzzy events $[0,1]^X$ forms an *effect module*.
+</NotationCallout>
+
+## Conditioning
+
+Earlier I claimed a 20% chance I drank something caffeine-free, based on my prior knowledge of how I usually behave. That's fine… but based on how I'm feeling now, I'm *sure* that what I drank didn't have caffeine in it. In that case, clearly the chance that I drank one of the two caffeine-free drinks isn't just 20%. Intuitively, it should actually be 100%: 50% for the protein shake, and 50% for the decaf coffee, since we've eliminated the 80% chance that what I drank was the regular coffee.
+
+The calculation we just intuitively described is *conditioning*: if I know that a certain event has occurred in a given context, I can use that information to update a state to suit the context.[^4]
+
+I know I drank something without caffeine in it. How does that affect the prior state on $\mathsf{B}$?
+
+![condition](/series/probability-theory/assets/2-events/drinks/condition.svg)
+
+<NotationCallout title="Conditioning">
+The notation Pr(A|B) is weird because the vertical bar $|$
+
+- looks like an operator, but $A|B$ is not an event
+- looks like $p(x|y)$, but members of a set ($x$) are a different kind of thing than events ($A$)
+</NotationCallout>
+
+## The *conditional* probability of an event
+
+Example where we use conditioning by one event, followed by validity of another.
+
+[^2]: Of course, there might be a small amount of caffeine in the decaf coffee or the protein shake. Like all categories, they mean what's convenient – which foremost in this case is probably whether there's enough of the drug to satisfy our dependence.
+[^4]: This depends on the state and the event being defined on the same set of outcomes – just like channel composition only works when the target of the first channel is the same as the source of the second one, so they fit together.

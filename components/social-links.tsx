@@ -99,8 +99,8 @@ export function SocialLinks() {
 
   return (
     <div
-      className="mx-auto w-full p-4 rounded-md bg-stone-75 dark:bg-stone-925 flex flex-wrap justify-center"
-      style={{ gap: `${uiConfig.socialLinks.gapRem}rem`, maxWidth: 'var(--content-width)' }}
+      className="mx-auto w-full p-4 rounded-md bg-stone-75 dark:bg-stone-925 flex flex-wrap justify-evenly"
+      style={{ maxWidth: 'var(--content-width)' }}
     >
       {Object.entries(siteConfig.social).map(([key, url]) => {
         if (!url) return null

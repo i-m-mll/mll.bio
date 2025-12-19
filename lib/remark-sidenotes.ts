@@ -2,7 +2,7 @@ import { visit, SKIP } from 'unist-util-visit'
 import type { Root, FootnoteDefinition, FootnoteReference, Text, Paragraph } from 'mdast'
 
 export function remarkSidenotes() {
-  return (tree: Root, file: any) => {
+  return (tree: Root) => {
     const footnoteDefinitions = new Map<string, string>()
     let sidenoteCounter = 0
     

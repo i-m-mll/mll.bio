@@ -21,7 +21,7 @@ export const remarkImgAttrs: Plugin = () => (tree: any) => {
     node.title = null
 
     const hProps: Record<string, unknown> = {}
-    attrString.split(/\s+/).forEach((pair) => {
+    attrString.split(/\s+/).forEach((pair: string) => {
       const [key, rawVal] = pair.split("=")
       if (!key) return
       const val = rawVal?.replace(/^"|"$/g, "")

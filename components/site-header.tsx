@@ -29,25 +29,15 @@ export function SiteHeader() {
           </Link>
         </div>
         <nav className="flex items-center space-x-6 text-nav font-medium flex-1">
-          <Link
-            href="/"
-            className={cn(
-              "site-nav-link transition-colors hover:text-foreground/80",
-              pathname === "/" ? "text-foreground" : "text-foreground/60",
-            )}
-          >
-            Home
-          </Link>
-
-          {siteConfig.pages.blog && (
+          {siteConfig.header.showHomeLink && (
             <Link
-              href="/blog"
+              href="/"
               className={cn(
                 "site-nav-link transition-colors hover:text-foreground/80",
-                pathname?.startsWith("/blog") ? "text-foreground" : "text-foreground/60",
+                pathname === "/" ? "text-foreground" : "text-foreground/60",
               )}
             >
-              Posts
+              Home
             </Link>
           )}
 
@@ -62,6 +52,31 @@ export function SiteHeader() {
               About
             </Link>
           )}
+
+          {siteConfig.pages.blog && (
+            <Link
+              href="/blog"
+              className={cn(
+                "site-nav-link transition-colors hover:text-foreground/80",
+                (pathname?.startsWith("/blog") || pathname?.startsWith("/series")) ? "text-foreground" : "text-foreground/60",
+              )}
+            >
+              Posts
+            </Link>
+          )}
+
+          {siteConfig.pages.verse && (
+            <Link
+              href="/verse"
+              className={cn(
+                "site-nav-link transition-colors hover:text-foreground/80",
+                pathname === "/verse" ? "text-foreground" : "text-foreground/60",
+              )}
+            >
+              Verse
+            </Link>
+          )}
+
         </nav>
         <div className="flex items-center space-x-4">
           {SearchBar && <div className="hidden sm:block"><SearchBar /></div>}

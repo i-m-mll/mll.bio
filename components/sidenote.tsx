@@ -1,11 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import React from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
+import { useTruncatableNote } from "../hooks/use-truncatable-note"
 import tailwindConfig from "../tailwind.config"
-import { renderInlineMarkdown } from "@/lib/utils"
 
 interface SidenoteProps {
   id: string
@@ -28,111 +27,21 @@ interface MarginNoteProps {
   dataFollowsCode?: string
 }
 
-export function Sidenote({ id, number, type = 'sidenote', children, content }: SidenoteProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [shouldTruncate, setShouldTruncate] = useState(false)
+export function Sidenote({ id, number, children, content }: SidenoteProps) {
   const contentRef = useRef<HTMLDivElement>(null)
-  const fullTextRef = useRef<string>('')
   const isDesktop = useMediaQuery(`(min-width: ${tailwindConfig.theme.screens.desktop})`)
-
-  // Apply configuration on mount
-  useEffect(() => {
-    applySidenoteConfig()
-  }, [])
 
   // Use content prop if provided, otherwise use children
   const actualContent = content || children
-  
+
   // Convert number to integer if it's a string
   const numberValue = typeof number === 'string' ? parseInt(number, 10) : number || 1
 
-  // Convert content to text for length checking
-  const getTextContent = (node: React.ReactNode): string => {
-    if (typeof node === 'string') return node
-    if (typeof node === 'number') return node.toString()
-    if (Array.isArray(node)) return node.map(getTextContent).join('')
-    if (node && typeof node === 'object' && 'props' in node) {
-      return getTextContent(node.props.children)
-    }
-    return ''
-  }
-
-  useEffect(() => {
-    // Check if truncation should be enabled
-    const { maxNoteLength } = uiConfig.sidenotes
-    
-    // Disable truncation on non-desktop breakpoints – notes are inline there
-    if (!isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
-      setShouldTruncate(false)
-      return
-    }
-
-    const textContent = getTextContent(actualContent)
-    fullTextRef.current = textContent
-    
-    if (textContent.length > maxNoteLength) {
-      setShouldTruncate(true)
-      setIsExpanded(false) // Start collapsed
-    } else {
-      setShouldTruncate(false)
-    }
-  }, [actualContent, isDesktop])
-
-  const truncateText = (text: string, maxLength: number): string => {
-    if (text.length <= maxLength) return text
-    
-    // Find a good breaking point near the max length (prefer word boundaries)
-    let truncateAt = maxLength
-    const spaceIndex = text.lastIndexOf(' ', maxLength)
-    if (spaceIndex > maxLength * 0.8) { // Only use space if it's not too far back
-      truncateAt = spaceIndex
-    }
-    
-    return text.substring(0, truncateAt)
-  }
-
-  const renderContent = () => {
-    const renderMarkdownSpan = (text: string) => (
-      <span dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(text) }} />
-    )
-
-    if (!shouldTruncate) {
-      return typeof actualContent === 'string' ? renderMarkdownSpan(actualContent) : actualContent
-    }
-
-    const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
-    const fullText = fullTextRef.current
-    
-    if (isExpanded) {
-      return (
-        <>
-          {typeof actualContent === 'string' ? renderMarkdownSpan(actualContent) : actualContent}
-          <button
-            className="sidenote-toggle-button"
-            onClick={() => setIsExpanded(false)}
-            aria-label="Collapse note"
-          >
-            {collapseButtonText}
-          </button>
-        </>
-      )
-    } else {
-      const truncatedText = truncateText(fullText, maxNoteLength!)
-      return (
-        <>
-          {typeof actualContent === 'string' ? renderMarkdownSpan(truncatedText) : truncatedText}
-          {truncationSuffix}
-          <button
-            className="sidenote-toggle-button"
-            onClick={() => setIsExpanded(true)}
-            aria-label="Expand note"
-          >
-            {expandButtonText}
-          </button>
-        </>
-      )
-    }
-  }
+  // Use shared truncation logic
+  const { shouldTruncate, isExpanded, renderContent } = useTruncatableNote({
+    content: actualContent,
+    isDesktop,
+  })
 
   const className = `sidenote${shouldTruncate ? ' sidenote-truncatable' : ''}${isExpanded ? ' sidenote-expanded' : ''}`
 
@@ -183,8 +92,6 @@ export function Sidenote({ id, number, type = 'sidenote', children, content }: S
 }
 
 export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode, dataMobileVersion, dataFollowsCode }: MarginNoteProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [shouldTruncate, setShouldTruncate] = useState(false)
   const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const isCodeBlock = dataInCode === 'true'
@@ -201,94 +108,11 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
 
   const marginNoteId = id || generatedId || 'temp-id'
 
-  // Apply configuration on mount
-  useEffect(() => {
-    applySidenoteConfig()
-  }, [])
-
-  // Convert children to text for length checking
-  const getTextContent = (node: React.ReactNode): string => {
-    if (typeof node === 'string') return node
-    if (typeof node === 'number') return node.toString()
-    if (Array.isArray(node)) return node.map(getTextContent).join('')
-    if (node && typeof node === 'object' && 'props' in node) {
-      return getTextContent(node.props.children)
-    }
-    return ''
-  }
-
-  useEffect(() => {
-    // Check if truncation should be enabled – only for desktop margin notes
-    const { maxNoteLength } = uiConfig.sidenotes
-    if (!isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
-      setShouldTruncate(false)
-      return
-    }
-    
-    const textContent = getTextContent(children)
-    if (textContent.length > maxNoteLength) {
-      setShouldTruncate(true)
-      setIsExpanded(false) // Start collapsed
-    } else {
-      setShouldTruncate(false)
-    }
-  }, [children, isDesktop])
-
-  const truncateText = (text: string, maxLength: number): string => {
-    if (text.length <= maxLength) return text
-    
-    // Find a good breaking point near the max length (prefer word boundaries)
-    let truncateAt = maxLength
-    const spaceIndex = text.lastIndexOf(' ', maxLength)
-    if (spaceIndex > maxLength * 0.8) { // Only use space if it's not too far back
-      truncateAt = spaceIndex
-    }
-    
-    return text.substring(0, truncateAt)
-  }
-
-  const renderContent = () => {
-    const renderMarkdownSpan = (text: string) => (
-      <span dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(text) }} />
-    )
-
-    if (!shouldTruncate) {
-      return typeof children === 'string' ? renderMarkdownSpan(children) : children
-    }
-
-    const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
-    const textContent = getTextContent(children)
-    
-    if (isExpanded) {
-      return (
-        <>
-          {typeof children === 'string' ? renderMarkdownSpan(children) : children}
-          <button
-            className="sidenote-toggle-button"
-            onClick={() => setIsExpanded(false)}
-            aria-label="Collapse note"
-          >
-            {collapseButtonText}
-          </button>
-        </>
-      )
-    } else {
-      const truncatedText = truncateText(textContent, maxNoteLength!)
-      return (
-        <>
-          {typeof children === 'string' ? renderMarkdownSpan(truncatedText) : truncatedText}
-          {truncationSuffix}
-          <button
-            className="sidenote-toggle-button"
-            onClick={() => setIsExpanded(true)}
-            aria-label="Expand note"
-          >
-            {expandButtonText}
-          </button>
-        </>
-      )
-    }
-  }
+  // Use shared truncation logic
+  const { shouldTruncate, isExpanded, renderContent } = useTruncatableNote({
+    content: children,
+    isDesktop,
+  })
 
   if (isPositioned && !isMobileVersion) {
     let computedTop = y || top;

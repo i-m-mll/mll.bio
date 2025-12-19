@@ -29,10 +29,7 @@ The basis of JAX's power is how flexibly we can compose our computation graphs b
 like [`grad`](), [`vmap`](), and [`jit`](). But the *substance* of its power is
 [PyTrees](https://jax.readthedocs.io/en/latest/pytrees.html), or the ability to transform
 over arbitrary types of tree-structured inputs in a unified way. 
-<MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX
-knows how to treat like any other tree because it's been told how to flatten and unflatten the
-nodes". Technically every Python object is a PyTree, even if it is treated as just a single leaf.
-</MarginNote>
+<MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX knows how to treat like any other tree because it's been told how to flatten and unflatten the nodes". Technically every Python object is a PyTree, even if it is treated as just a single leaf.</MarginNote>
 </NoteScope>
 
 ## *Where*-functions
@@ -63,9 +60,7 @@ tree = Foo(
     (3.14, 2.718)
 )
 ```
-<MarginNote target="(Module)">An Equinox `Module` is a type of Python
-[dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a
-PyTree.</MarginNote>
+<MarginNote target="(Module)">An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
 </NoteScope>
 
 A *where*-function lets us specify the nodes whose values will be replaced:
@@ -261,9 +256,7 @@ given some PyTree, whatever its name, we are accessing some part(s) of it, whose
 
 3. What about *where*-functions that return non-hashable types? For example, `lambda state: [state.layer2]`?
 
-<MarginNote>Tuples are also hashable, so `("layer2", "layer3")` is fine as a dict key. However,
-assuming we do find a `where_func_to_str` that works like we want, we'll need to make sure our
-*where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
+<MarginNote>Tuples are also hashable, so `("layer2", "layer3")` is fine as a dict key. However, assuming we do find a `where_func_to_str` that works like we want, we'll need to make sure our *where*-functions return PyTrees which are hashable when their leaves are replaced with strings.</MarginNote>
 
 On my quest for a *where*-based `dict`, I made three attempts to write a `where_func_to_str`. But
 let's start with an example that will not work.

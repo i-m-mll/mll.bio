@@ -3,7 +3,7 @@ title: "Welcome to My Website"
 description: "Personal website and blog"
 ---
 
-## MLL
+# MLL
 
 Hi
 
@@ -21,6 +21,5 @@ Feel free to explore my blog posts below or learn more about me on the About pag
 
 ### Go ahead!
 
-TODO: Subscribe to [updates]().     
-Propose a [meeting](https://cal.com/mll).    
+Propose a [meeting](https://cal.com/mll).
 Give anonymous [feedback](https://www.admonymous.co/mll).    

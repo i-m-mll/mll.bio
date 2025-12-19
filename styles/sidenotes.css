@@ -289,7 +289,7 @@
 
 /* Footnotes section styles - accessible on all devices for hyperlink navigation */
 .footnotes-section {
-  @apply mt-12 pt-4 pb-8 border-t border-border;
+  @apply mt-12 pt-4 pb-8 border-t border-border/40;
   /* On desktop: position off-screen but keep accessible for anchor navigation */
   @apply desktop:absolute desktop:left-[-9999px] desktop:w-px desktop:h-px desktop:overflow-hidden;
   @apply desktop:clip-sr-only desktop:clip-path-sr-only;

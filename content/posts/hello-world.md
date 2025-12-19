@@ -3,7 +3,9 @@ title: "Hello **World** - My *First* Post"
 published: "2023-06-01"
 updated: "2023-06-15"
 description: "My first blog post"
-draft: false
+draft: true
+epistemic: lyrlyrlyrlyrLYRLYRLYRLYR
+status: finished
 abstract: "This is my **first** blog post where I introduce myself and share some initial thoughts about blogging. Welcome to my journey!"
 tags: "introduction, blogging, first post"
 ---

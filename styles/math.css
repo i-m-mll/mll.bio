@@ -1,10 +1,17 @@
 /* Math equation styles */
+
+/* Inline math should match body text size */
 .katex {
-  @apply text-lg;
+  font-size: 1em;
 }
 
+/* Display (block) math can be slightly larger for emphasis */
 .katex-display {
   @apply text-center my-4;
+}
+
+.katex-display > .katex {
+  font-size: 1.1em;
 }
 
 /* Ensure math renders properly in dark mode */

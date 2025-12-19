@@ -163,8 +163,8 @@ const config = {
               '--heading-margin-bottom-factor': '0.6',
 
               // Headings
-              h1: { 
-                fontSize: '1.9em',
+              h1: {
+                fontSize: '1.7em', // ~1.875rem to match text-3xl used on page titles
                 fontFamily: headingFont,
                 scrollMargin: 'var(--spacing-20, 5rem)',
                 marginTop: `calc(0em * var(--heading-margin-top-factor))`,
