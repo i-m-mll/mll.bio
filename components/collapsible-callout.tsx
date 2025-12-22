@@ -8,7 +8,7 @@ type CalloutType = "info" | "notn1" | "strdiag" | "caption" | "warning" | "error
 
 interface CollapsibleCalloutProps {
   type: CalloutType
-  title?: string
+  title?: string | null  // null = no title, undefined = use default label
   children: ReactNode
   defaultOpen?: boolean
   collapsible?: boolean
@@ -128,13 +128,17 @@ export function CollapsibleCallout({
     return <FigureCaption>{children}</FigureCaption>
   }
 
-  const displayTitle = title || styles.label
+  // null = explicitly no title, undefined = use default label
+  const displayTitle = title === null ? null : (title || styles.label)
 
-  if (!collapsible) {
+  // No title means no header to click, so force non-collapsible
+  const isCollapsible = collapsible && displayTitle !== null
+
+  if (!isCollapsible) {
     return (
       <div className={`my-4 rounded-md border ${styles.bg} ${styles.border}`}>
         {displayTitle && (
-          <div className="flex items-center gap-2 px-4 py-2 font-medium border-b border-inherit">
+          <div className="flex items-center gap-2 px-4 py-2 font-semibold border-b border-inherit">
             <CalloutIcon type={type} />
             <span>{displayTitle}</span>
           </div>
@@ -151,7 +155,7 @@ export function CollapsibleCallout({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-4 py-2 font-medium text-left hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-t-md"
+        className={`flex items-center justify-between w-full px-4 py-2 font-semibold text-left hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${isOpen ? "bg-black/5 dark:bg-white/5 rounded-t-md" : "rounded-md"}`}
         aria-expanded={isOpen}
       >
         <span className="flex items-center gap-2">

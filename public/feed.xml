@@ -10,6 +10,13 @@
     <managingEditor>MLL <mll@mll.bio></managingEditor>
     <webMaster>MLL <mll@mll.bio></webMaster>
     <item>
+      <title>Hashing functions by what they select</title>
+      <link>https://mll.bio/blog/hashing-python-functions-alt</link>
+      <guid isPermaLink="true">https://mll.bio/blog/hashing-python-functions-alt</guid>
+      <pubDate>Mon, 16 Jun 2025 00:00:00 GMT</pubDate>
+      <description>When identity isn&apos;t enough</description>
+    </item>
+    <item>
       <title>Working with Python *where*-functions</title>
       <link>https://mll.bio/blog/hashing-python-functions</link>
       <guid isPermaLink="true">https://mll.bio/blog/hashing-python-functions</guid>
@@ -17,14 +24,14 @@
       <description>Hashing the unhashable</description>
     </item>
     <item>
-      <title>Functions (Probability Theory)</title>
+      <title>Functions (Functional Probability)</title>
       <link>https://mll.bio/series/probability-theory/functions</link>
       <guid isPermaLink="true">https://mll.bio/series/probability-theory/functions</guid>
       <pubDate>Thu, 21 Dec 2023 00:08:00 GMT</pubDate>
       <description>Using mapping diagrams to understand functions, composition, and inverses.</description>
     </item>
     <item>
-      <title>Channels (Probability Theory)</title>
+      <title>Channels (Functional Probability)</title>
       <link>https://mll.bio/series/probability-theory/channels</link>
       <guid isPermaLink="true">https://mll.bio/series/probability-theory/channels</guid>
       <pubDate>Mon, 11 Dec 2023 21:57:00 GMT</pubDate>

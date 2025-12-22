@@ -89,9 +89,11 @@ function SubscribeSection() {
     )
   }
 
+  const showBorder = siteConfig.homepage.subscribeBorder
+
   return (
-    <div className="mx-auto p-5 rounded-md border border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/50 max-w-md text-center">
-      <h3 className="text-base font-semibold mb-3">Subscribe</h3>
+    <div className={`mx-auto p-5 rounded-md bg-stone-50/50 dark:bg-stone-900/50 max-w-md text-center ${showBorder ? 'border border-stone-200 dark:border-stone-700' : ''}`}>
+      <h3 className="text-xl font-semibold mb-3 font-heading">Subscribe</h3>
       <div className="space-y-3">
         <div>
           <p className="text-sm text-muted-foreground mb-2">Get new posts by email:</p>

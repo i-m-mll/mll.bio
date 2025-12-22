@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { UiConfigProvider } from "@/components/ui-config-provider"
+import { ScrollDirectionProvider } from "@/lib/contexts/scroll-direction"
+import { SeriesHeaderProvider } from "@/lib/contexts/series-header"
 import { CodeThemeStyles } from "@/components/CodeThemeStyles"
 import { siteConfig } from "@/lib/config/site"
 import { inter, roboto, roboto_mono, source_serif, fira_sans } from "@/lib/fonts"
@@ -49,15 +51,19 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-body">
         <ThemeProvider>
-          <UiConfigProvider />
-          {/* Inject highlight.js themes at build time */}
-          <CodeThemeStyles />
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-            {process.env.NODE_ENV !== 'production' && uiConfig.devTools.fontSwitcher && <DevFontSwitcher />}
-          </div>
+          <ScrollDirectionProvider>
+            <SeriesHeaderProvider>
+              <UiConfigProvider />
+              {/* Inject highlight.js themes at build time */}
+              <CodeThemeStyles />
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+                {process.env.NODE_ENV !== 'production' && uiConfig.devTools.fontSwitcher && <DevFontSwitcher />}
+              </div>
+            </SeriesHeaderProvider>
+          </ScrollDirectionProvider>
         </ThemeProvider>
       </body>
     </html>

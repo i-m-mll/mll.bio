@@ -80,3 +80,10 @@ Uses Tailwind breakpoints defined in `tailwind.config.ts`:
 ## COMMIT_MSG.txt Usage
 
 Add entries to `COMMIT_MSG.txt` describing high-level changes in present active voice (e.g., "Refactor sidenotes for mobile responsiveness"). Focus on features/goals achieved, not intermediate debugging steps.
+
+## Dev Browser Usage
+
+When reviewing the site with the dev-browser plugin:
+- Use `getAISnapshot()` first to check content and page structure (more efficient)
+- Only use screenshots when visual verification is needed (design, layout, colors, animations)
+- ARIA snapshots are sufficient for verifying text content, element presence, and navigation structure

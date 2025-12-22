@@ -5,7 +5,7 @@ import { getSection } from "@/lib/sections"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: `Verse | ${siteConfig.name}`,
+  title: "Verse",
   description: "A collection of verse",
 }
 

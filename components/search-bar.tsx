@@ -55,6 +55,8 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
   const [results, setResults] = useState<DisplayResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const [indexLoaded, setIndexLoaded] = useState(false)
+  const [indexError, setIndexError] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
   const lunrIndexRef = useRef<any>(null)
   const lunrRef = useRef<any>(null)
   const storeRef = useRef<Record<string, StoredDoc>>({})
@@ -69,12 +71,24 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
   // Load Lunr + index.json lazily
   const loadIndex = useCallback(async () => {
     if (indexLoaded) return
+    setIndexError(null)
     try {
-      const [{ default: lunrModule }, { default: hljsModule }, data] = await Promise.all([
+      const [{ default: lunrModule }, { default: hljsModule }, response] = await Promise.all([
         import("lunr"),
         import("highlight.js"),
-        fetch("/search/index.json").then((r) => r.json()),
+        fetch("/search/index.json"),
       ])
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch search index: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.index || !data.store) {
+        throw new Error("Invalid search index format")
+      }
+
       const hljs = (hljsModule as any).default ?? hljsModule
       hljsRef.current = hljs
       setHljsLoaded(true)
@@ -85,6 +99,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
       setIndexLoaded(true)
     } catch (err) {
       console.error("Failed to load search index", err)
+      setIndexError(err instanceof Error ? err.message : "Failed to load search")
     }
   }, [indexLoaded])
 
@@ -245,9 +260,18 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
     const trimmed = debouncedQuery.trim()
     if (trimmed.length === 0) {
       setResults([])
+      setIsSearching(false)
       return
     }
-    setResults(computeResults(trimmed))
+    if (trimmed.length < 2) {
+      setResults([])
+      setIsSearching(false)
+      return
+    }
+    setIsSearching(true)
+    const newResults = computeResults(trimmed)
+    setResults(newResults)
+    setIsSearching(false)
   }, [debouncedQuery, computeResults])
 
   const buildHref = (url: string, blockIdx?: number) => {
@@ -331,6 +355,32 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
         )}
         autoFocus={variant === "overlay"}
       />
+      {/* Error state */}
+      {indexError && debouncedQuery.trim().length >= 2 && (
+        <div className={cn(
+          "mt-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 bg-background",
+          variant === "overlay"
+            ? "border-t border-input"
+            : "absolute right-0 rounded-md border border-input shadow-lg"
+        )}
+        style={variant !== "overlay" ? { width: 'max-content', maxWidth: 'calc(100vw - 1rem)' } : {}}
+        >
+          {indexError}
+        </div>
+      )}
+      {/* No results state */}
+      {!indexError && indexLoaded && results.length === 0 && debouncedQuery.trim().length >= 2 && !isSearching && (
+        <div className={cn(
+          "mt-2 px-3 py-2 text-sm text-muted-foreground bg-background",
+          variant === "overlay"
+            ? "border-t border-input"
+            : "absolute right-0 rounded-md border border-input shadow-lg"
+        )}
+        style={variant !== "overlay" ? { width: 'max-content', maxWidth: 'calc(100vw - 1rem)' } : {}}
+        >
+          No results found
+        </div>
+      )}
       {results.length > 0 && (
         <ul
           ref={listRef}

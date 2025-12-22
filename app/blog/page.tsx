@@ -1,6 +1,8 @@
 import { getPosts } from "@/lib/blog"
 import { getAllSeries } from "@/lib/series"
 import { PostList } from "@/components/post-list"
+import { MDXContent } from "@/components/mdx-content"
+import { getSection } from "@/lib/sections"
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
 import Link from "next/link"
@@ -16,9 +18,10 @@ export default async function BlogPage() {
     notFound()
   }
 
-  const [posts, allSeries] = await Promise.all([
+  const [posts, allSeries, intro] = await Promise.all([
     getPosts(),
     getAllSeries(),
+    getSection("posts-intro"),
   ])
 
   // Convert series posts to the same format as regular posts for the combined list
@@ -48,7 +51,14 @@ export default async function BlogPage() {
 
   return (
     <div className="container max-w-4xl py-10">
-      <h1 className="text-3xl font-bold tracking-tight mb-8 font-heading">Posts</h1>
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight font-heading">Posts</h1>
+        {intro && (
+          <article className="prose dark:prose-invert mt-4">
+            <MDXContent>{intro.content}</MDXContent>
+          </article>
+        )}
+      </header>
 
       {/* Series Section */}
       {allSeries.length > 0 && (

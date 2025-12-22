@@ -5,7 +5,7 @@ import * as runtime from "react/jsx-runtime"
 import { Sidenote, MarginNote } from "@/components/sidenote"
 import { NoteScope } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
-import ResponsiveImage from "@/components/ResponsiveImage"
+import { MdxImage } from "@/components/mdx-image"
 import { SidenoteProvider } from "@/components/sidenote-context"
 import { KatexStyles } from "@/components/KatexStyles"
 import { Tabs, Tab } from "@/components/tabs"
@@ -51,7 +51,7 @@ const mdxComponents = {
   MarginNote,
   NoteScope,
   TableOfContents,
-  img: (props: any) => <ResponsiveImage {...props} />,
+  img: (props: any) => <MdxImage {...props} />,
   Tab,
   Tabs,
   // Collapsible callout components for series posts

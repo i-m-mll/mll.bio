@@ -197,8 +197,10 @@
 }
 
 /* Smooth scrolling for the entire page */
+/* Global font scale applied at html level so rem units scale proportionally */
 html {
   @apply scroll-smooth;
+  font-size: calc(16px * var(--global-font-scale, 1));
 }
 
 /* Footer styles */
@@ -268,4 +270,39 @@ html {
   font-size: 1.25rem;
   color: hsl(var(--muted-foreground) / 0.5);
   letter-spacing: 0.5em;
+}
+
+/* Custom bullet character for unordered lists */
+.prose ul {
+  list-style: none;
+  padding-left: 1.5em;
+}
+
+.prose ul > li {
+  position: relative;
+}
+
+.prose ul > li::before {
+  content: var(--bullet-character, "•");
+  position: absolute;
+  left: -1.25em;
+  color: hsl(var(--muted-foreground) / 0.6);
+  font-size: 0.6em;
+  top: 0.55em;
+}
+
+/* Subtle link styling for prose content */
+.prose a:not(.sidenote-toggle):not(.marginnote-toggle):not([class*="heading-link"]) {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: hsl(var(--muted-foreground) / 0.4);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.prose a:not(.sidenote-toggle):not(.marginnote-toggle):not([class*="heading-link"]):hover {
+  text-decoration-color: hsl(var(--foreground) / 0.6);
+  text-decoration-style: solid;
 } 

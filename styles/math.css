@@ -1,17 +1,24 @@
 /* Math equation styles */
 
-/* Inline math should match body text size */
-.katex {
-  font-size: 1em;
+/* CSS custom properties for math sizing (set by JS from uiConfig) */
+:root {
+  --math-inline-font-scale: 0.92;
+  --math-display-font-scale: 1.0;
 }
 
-/* Display (block) math can be slightly larger for emphasis */
+/* Inline math - override KaTeX's default 1.21em with !important
+   since KaTeX uses the font shorthand which sets font-size */
+.katex {
+  font-size: calc(1em * var(--math-inline-font-scale)) !important;
+}
+
+/* Display (block) math */
 .katex-display {
   @apply text-center my-4;
 }
 
 .katex-display > .katex {
-  font-size: 1.1em;
+  font-size: calc(1em * var(--math-display-font-scale)) !important;
 }
 
 /* Ensure math renders properly in dark mode */

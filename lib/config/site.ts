@@ -37,6 +37,10 @@ export const siteConfig = {
       "subscribe",
       "recent-posts",
     ] as const,
+    // Show border around the subscribe box
+    subscribeBorder: true,
+    // Show border around the social links box
+    socialLinksBorder: true,
   },
 
   // Header navigation options
@@ -58,11 +62,18 @@ export const siteConfig = {
     // If true, search collapses on click-away even when there's content entered
     // If false, search only collapses on click-away when empty
     collapseSearchOnClickAway: false,
+    // Path to logo image shown next to site name (set to empty string to disable)
+    logo: "/egg1.png",
+    // Logo size in pixels
+    logoSize: 32,
+    // Gap between logo and name in pixels
+    logoGap: 12,
   },
 
   // Social links
   social: {
     email: "mll@mll.bio",
+    substack: "https://substack.com/@robustenough",
     discord: "https://discord.gg/robustenough",
     github: "https://github.com/i-m-mll",
     manifold: "https://manifold.markets/MLL",

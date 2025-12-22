@@ -33,6 +33,10 @@ export const uiConfig = {
     },
     // Default font to use
     defaultFont: 'sans' as 'sans' | 'sans-alt' | 'mono' | 'serif',
+    // Bullet character for unordered lists (Unicode)
+    // Examples: '•' (default), '·' (cdot), '✦' (star), '✧' (outline star),
+    //           '⁕' (flower), '∗' (asterisk), '‣' (triangle), '⋄' (diamond)
+    bulletCharacter: '✦',
   },
   
   // Theme settings
@@ -110,6 +114,36 @@ export const uiConfig = {
     fontSwitcher: false,
   },
 
+  // Math/KaTeX configuration
+  math: {
+    // Font size for inline math relative to surrounding text (1 = same size)
+    // KaTeX default is 1.21, which often looks too large
+    inlineFontScale: 0.92,
+    // Font size for display (block) math relative to text
+    displayFontScale: 1.0,
+  },
+
+  // Series post configuration
+  series: {
+    // Alignment of the series breadcrumb indicator ('left' | 'center')
+    // 'left': Aligns with other metadata (Published, Updated dates)
+    // 'center': Centers within the content column
+    breadcrumbAlignment: 'left' as 'left' | 'center',
+    // Series header configuration
+    header: {
+      // 'follow-main': shows/hides with main header when scrolling
+      // 'always-visible': always sticky at top, doesn't hide on scroll
+      stickyMode: 'follow-main' as 'follow-main' | 'always-visible',
+      // Animation mode for showing/hiding the series header
+      // 'complex': both headers move together as one unit
+      // 'fade': main header slides, then series header fades in/out after
+      animationMode: 'fade' as 'complex' | 'fade',
+      // Background color for series header (only applies to content columns, not TOC column)
+      // Set to null/undefined for transparent, or use Tailwind color class like 'bg-stone-75'
+      backgroundColor: null as string | null,
+    },
+  },
+
   // Search configuration
   search: {
     // Enable or disable the site-wide search feature
@@ -174,14 +208,40 @@ export function applyCodeBlockConfig() {
 }
 
 // Utility function to apply header configuration to CSS custom properties
+// Utility function to apply typography configuration
+export function applyTypographyConfig() {
+  if (typeof window !== 'undefined') {
+    const root = document.documentElement
+    const { typography } = uiConfig
+
+    // Set bullet character
+    if (typography.bulletCharacter) {
+      root.style.setProperty('--bullet-character', `"${typography.bulletCharacter}"`)
+    }
+  }
+}
+
+// Utility function to apply math configuration to CSS custom properties
+export function applyMathConfig() {
+  if (typeof window !== 'undefined') {
+    const root = document.documentElement
+    const { math } = uiConfig
+
+    root.style.setProperty('--math-inline-font-scale', math.inlineFontScale.toString())
+    root.style.setProperty('--math-display-font-scale', math.displayFontScale.toString())
+  }
+}
+
 // Combined function to apply all UI configurations
 export function applyUIConfig() {
   applySidenoteConfig()
   applyCodeBlockConfig()
+  applyTypographyConfig()
+  applyMathConfig()
   if (typeof window !== 'undefined') {
     const root = document.documentElement
     const { header } = uiConfig
-    
+
     // Set header icon size
     if (header.themeToggleSizeRem !== undefined) {
       root.style.setProperty('--header-icon-size', `${header.themeToggleSizeRem}rem`)

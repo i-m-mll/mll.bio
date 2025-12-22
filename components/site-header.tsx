@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
 import { cn } from "@/lib/utils"
-import { useScrollDirection } from "@/lib/hooks"
+import { useScrollDirectionContext } from "@/lib/contexts/scroll-direction"
+import { useSeriesHeader } from "@/lib/contexts/series-header"
 import { ModeToggle } from "@/components/mode-toggle"
 import dynamic from "next/dynamic"
 
@@ -111,7 +112,6 @@ function AnimatedName({ isHome }: { isHome: boolean }) {
               animate={{
                 opacity: showFullName ? 1 : 0,
                 width: showFullName ? "auto" : 0,
-                filter: showFullName ? "blur(0px)" : "blur(4px)",
               }}
               transition={{
                 duration: duration * 0.7,
@@ -213,13 +213,16 @@ function CollapsibleSearch() {
 
 export function SiteHeader() {
   const pathname = usePathname()
-  const scrollDirection = useScrollDirection(uiConfig.header.scrollThreshold)
+  const { scrollDirection } = useScrollDirectionContext()
+  const { data: seriesHeaderData } = useSeriesHeader()
   const isHome = pathname === "/"
   const { navAlignRight, showHomeLink } = siteConfig.header
 
+  const isVisible = scrollDirection !== "down"
+
   return (
     <header className={cn(
-      "sticky top-0 z-40 w-full border-b bg-background transition-all duration-300 ease-in-out overflow-visible",
+      "sticky top-0 z-40 w-full bg-background transition-all duration-300 ease-in-out overflow-visible",
       scrollDirection === "down" ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
     )}>
       <div className={cn(
@@ -228,7 +231,28 @@ export function SiteHeader() {
       )}>
         {/* Site name / logo */}
         <div className={navAlignRight ? "" : "mr-8"}>
-          <Link href="/" className="flex items-center">
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+            onClick={() => {
+              // Scroll to top immediately when navigating home to prevent animation glitch
+              if (window.scrollY > 0) {
+                window.scrollTo({ top: 0, behavior: 'instant' })
+              }
+            }}
+          >
+            {siteConfig.header.logo && (
+              <img
+                src={siteConfig.header.logo}
+                alt=""
+                className="rounded-full"
+                style={{
+                  width: siteConfig.header.logoSize,
+                  height: siteConfig.header.logoSize,
+                  marginRight: siteConfig.header.logoGap,
+                }}
+              />
+            )}
             <AnimatedName isHome={isHome} />
           </Link>
         </div>
@@ -249,6 +273,11 @@ export function SiteHeader() {
                   "site-nav-link transition-colors hover:text-foreground/80",
                   pathname === "/" ? "text-foreground" : "text-foreground/60",
                 )}
+                onClick={() => {
+                  if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'instant' })
+                  }
+                }}
               >
                 Home
               </Link>
@@ -297,6 +326,102 @@ export function SiteHeader() {
           </div>
         </div>
       </div>
+
+      {/* Main header bottom border */}
+      <div className="border-b" />
+
+      {/* Series header - absolutely positioned so it doesn't create space in TOC column */}
+      {seriesHeaderData && (
+        <div
+          className={cn(
+            "hidden tablet:block",
+            "absolute left-0 right-0",
+            "transition-opacity duration-150 ease-in-out",
+            isVisible ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            // Position at bottom of header, flush with border
+            top: '100%',
+          }}
+        >
+          {/* Series header content - offset to align with content column */}
+          <div
+            className={cn(
+              "relative",
+              uiConfig.series.header?.backgroundColor || "bg-background"
+            )}
+            style={{
+              // Offset from left: page padding (1rem on tablet) + TOC width (250px) + gap (2rem)
+              marginLeft: 'calc(1rem + 250px + 2rem)',
+              // Right margin matches page padding
+              marginRight: '1rem',
+            }}
+          >
+            {/* Border line - extends from TOC right edge to page right edge */}
+            <div
+              className="absolute bottom-0 h-px bg-border pointer-events-none"
+              style={{
+                // Extend left into the gap to align with TOC's right border
+                left: '-2rem',
+                // Extend right to page edge
+                right: '-1rem',
+              }}
+            />
+            {/* Nav content - aligned with prose width (48rem) */}
+            <nav
+              className="flex items-center justify-between py-1.5 text-sm max-w-[48rem]"
+              aria-label="Series navigation"
+            >
+              {/* Previous link */}
+              <div className="flex-1 min-w-0">
+                {seriesHeaderData.prevPost ? (
+                  <Link
+                    href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.prevPost.slug}`}
+                    className="group inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
+                  >
+                    <span aria-hidden="true">←</span>
+                    <span className="hidden sm:inline truncate max-w-[150px]">
+                      {seriesHeaderData.prevPost.frontmatter.title}
+                    </span>
+                    <span className="sm:hidden">Prev</span>
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground/40">←</span>
+                )}
+              </div>
+
+              {/* Center: Series info */}
+              <div className="flex-shrink-0 text-center px-4">
+                <Link
+                  href={`/series/${seriesHeaderData.series.slug}`}
+                  className="hover:text-foreground transition-colors no-underline"
+                >
+                  <span className="text-muted-foreground">Part {seriesHeaderData.currentIndex + 1} of </span>
+                  <span className="font-medium text-foreground">{seriesHeaderData.series.title}</span>
+                </Link>
+              </div>
+
+              {/* Next link */}
+              <div className="flex-1 min-w-0 text-right">
+                {seriesHeaderData.nextPost ? (
+                  <Link
+                    href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.nextPost.slug}`}
+                    className="group inline-flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
+                  >
+                    <span className="hidden sm:inline truncate max-w-[150px]">
+                      {seriesHeaderData.nextPost.frontmatter.title}
+                    </span>
+                    <span className="sm:hidden">Next</span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground/40">→</span>
+                )}
+              </div>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

@@ -6,13 +6,16 @@
     "dev": "next dev",
     "predev": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs && node scripts/generate-rss.mjs",
     "build": "next build",
-    "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs && node scripts/generate-rss.mjs",
+    "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs && node scripts/generate-rss.mjs && node scripts/maybe-render-diagrams.mjs",
     "start": "next start",
     "lint": "next lint",
     "serve": "npm run build && npx serve out -p 3000",
     "serve-only": "npx serve out -p 3000",
     "dev-fonts": "node scripts/gen-font-variants.mjs",
-    "gen-images": "node scripts/gen-images.mjs"
+    "gen-images": "node scripts/gen-images.mjs",
+    "render-diagrams": "node scripts/render-diagrams.mjs",
+    "render-diagrams:dark": "node scripts/render-diagrams.mjs --dark",
+    "render-diagrams:all": "node scripts/render-diagrams.mjs --all"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.0",

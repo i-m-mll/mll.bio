@@ -1,6 +1,6 @@
 ---
 title: "Solstice 2025"
-created: 2025-01-01
+created: 2025-12-13
 order: 1
 layout: half
 ---

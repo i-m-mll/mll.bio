@@ -56,6 +56,10 @@ export function SocialLinks() {
       label: "Manifold",
       src: "/manifold.svg"
     },
+    substack: {
+      src: "https://cdn.simpleicons.org/substack/000000",
+      label: "Substack"
+    },
     X: {
       src: "https://cdn.simpleicons.org/x/000000",
       label: "X"
@@ -97,9 +101,11 @@ export function SocialLinks() {
     }
   }
 
+  const showBorder = siteConfig.homepage.socialLinksBorder
+
   return (
     <div
-      className="mx-auto w-full p-4 rounded-md bg-stone-75 dark:bg-stone-925 flex flex-wrap justify-evenly"
+      className={`mx-auto w-full p-4 rounded-md bg-stone-75 dark:bg-stone-925 flex flex-wrap justify-evenly ${showBorder ? 'border border-stone-200 dark:border-stone-700' : ''}`}
       style={{ maxWidth: 'var(--content-width)' }}
     >
       {Object.entries(siteConfig.social).map(([key, url]) => {
