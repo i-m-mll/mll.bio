@@ -407,6 +407,14 @@ function extractTextContent(node: any): string {
       const linkText = node.children ? node.children.map(extractTextContent).join('') : ''
       const href = node.url || ''
       return `[${linkText}](${href})`
+    case 'emphasis':
+      // Preserve italic syntax
+      const emText = node.children ? node.children.map(extractTextContent).join('') : ''
+      return `*${emText}*`
+    case 'strong':
+      // Preserve bold syntax
+      const strongText = node.children ? node.children.map(extractTextContent).join('') : ''
+      return `**${strongText}**`
     default:
       if (node.children) {
         return node.children.map(extractTextContent).join('')

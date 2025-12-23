@@ -134,13 +134,17 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
         )}
         
         <div className="toc-container">
-          <button 
+          <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex items-center gap-3 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
+            className="flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
           >
-            <span className={`toc-toggle-icon transform transition-transform text-xs ${isCollapsed ? '' : 'rotate-90'}`}>
-              ▸
-            </span>
+            <svg
+              className={`toc-toggle-icon w-2 h-2 transition-transform duration-150 ${isCollapsed ? '' : 'rotate-90'}`}
+              viewBox="0 0 6 6"
+              fill="currentColor"
+            >
+              <path d="M1 0.5 L5 3 L1 5.5 Z" />
+            </svg>
             <span className="font-semibold text-foreground font-heading">Contents</span>
           </button>
           

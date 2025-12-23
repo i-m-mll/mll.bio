@@ -11,6 +11,18 @@ import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown, stripMarkdown } from "@/lib/utils"
 import SearchHighlighter from "@/components/search-highlighter"
+import { getDiffData } from "@/lib/diff-utils"
+import { DiffToolbar } from "@/components/diff-toolbar"
+
+// Check if diff mode is enabled
+const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
+
+// Force dynamic rendering when diff mode is enabled (searchParams requires it)
+export const dynamic = enableDiff ? 'force-dynamic' : 'auto'
+
+interface SearchParams {
+  diff?: string
+}
 
 export async function generateStaticParams() {
   // Only generate pages for published posts if blog is enabled
@@ -39,7 +51,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<SearchParams>
+}) {
   // Check if blog is enabled in config
   if (!siteConfig.pages.blog) {
     notFound()
@@ -50,6 +68,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   if (!post) {
     notFound()
+  }
+
+  // Get diff data if diff mode is enabled
+  let diffData = null
+  if (enableDiff && post.filePath) {
+    const resolvedSearchParams = await searchParams
+    const diffSha = resolvedSearchParams.diff
+    diffData = getDiffData(post.filePath, diffSha || undefined)
   }
 
   return (
@@ -119,13 +145,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         )}
         
         <article className="prose dark:prose-invert mx-auto relative">
-          <MDXContent>{post.content}</MDXContent>
+          <MDXContent comparisonContent={diffData?.oldContent ?? undefined}>{post.content}</MDXContent>
           <Suspense fallback={null}>
             <SearchHighlighter />
           </Suspense>
           <Footnotes content={post.content} />
         </article>
       </div>
+
+      {/* Diff toolbar - only shown when diff mode is enabled */}
+      {enableDiff && diffData && post.filePath && (
+        <DiffToolbar
+          commits={diffData.commits}
+          currentSha={diffData.comparisonSha}
+          hasUncommittedChanges={diffData.hasUncommittedChanges}
+          filePath={post.filePath}
+          diffLines={diffData.diffLines}
+        />
+      )}
     </div>
   )
 }

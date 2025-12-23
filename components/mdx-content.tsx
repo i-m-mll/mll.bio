@@ -26,6 +26,8 @@ import { remarkImgAttrs } from "@/lib/remark-img-attrs"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import rehypeCallouts from "rehype-callouts"
+import { DiffAdd, DiffDel, DiffAddBlock, DiffDelBlock } from "@/components/diff-markers"
+import { constructDiffMdx } from "@/lib/construct-diff-mdx"
 
 // Global KaTeX macros for probability theory series and general use
 const katexMacros: Record<string, string> = {
@@ -62,15 +64,26 @@ const mdxComponents = {
   CaptionCallout,
   // Figure with margin-aligned caption
   Figure,
+  // Diff marker components
+  DiffAdd,
+  DiffDel,
+  DiffAddBlock,
+  DiffDelBlock,
 }
 
 interface MDXContentProps {
   children: string // raw MDX source
+  comparisonContent?: string // Old content to diff against (for diff mode)
 }
 
 // Server Component: pre-compiles MDX during build/static generation
-export async function MDXContent({ children }: MDXContentProps) {
-  const compiled = await compile(children, {
+export async function MDXContent({ children, comparisonContent }: MDXContentProps) {
+  // If comparison content is provided, construct diff-marked MDX
+  const sourceToRender = comparisonContent
+    ? constructDiffMdx(comparisonContent, children)
+    : children
+
+  const compiled = await compile(sourceToRender, {
     outputFormat: "function-body",
     remarkPlugins: [
       [remarkGfm, { singleTilde: false }],

@@ -5,6 +5,7 @@ import matter from "gray-matter"
 export interface Post {
   slug: string
   content: string
+  filePath?: string // Relative path to the file (for diff tools)
   frontmatter: {
     title: string
     published: string
@@ -146,9 +147,13 @@ export async function getPost(slug: string): Promise<Post | null> {
     const updatedRaw = updatedDate ? new Date(updatedDate).toISOString() : undefined
     const tags = parseTags(data.tags)
 
+    // Get relative file path from project root for diff tools
+    const relativeFilePath = path.relative(process.cwd(), fullPath)
+
     return {
       slug,
       content,
+      filePath: relativeFilePath,
       frontmatter: {
         title: data.title || slug,
         published: formatDate(publishedDate),

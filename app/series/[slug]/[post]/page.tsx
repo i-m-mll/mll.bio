@@ -10,10 +10,22 @@ import { notFound } from "next/navigation"
 import { uiConfig } from "@/lib/config/ui"
 import SearchHighlighter from "@/components/search-highlighter"
 import { SeriesHeaderSetter } from "@/components/series-header-setter"
+import { getDiffData } from "@/lib/diff-utils"
+import { DiffToolbar } from "@/components/diff-toolbar"
+
+// Check if diff mode is enabled
+const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
+
+// Force dynamic rendering when diff mode is enabled (searchParams requires it)
+export const dynamic = enableDiff ? 'force-dynamic' : 'auto'
 
 interface PageParams {
   slug: string
   post: string
+}
+
+interface SearchParams {
+  diff?: string
 }
 
 export async function generateStaticParams() {
@@ -45,7 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   }
 }
 
-export default async function SeriesPostPage({ params }: { params: Promise<PageParams> }) {
+export default async function SeriesPostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<PageParams>
+  searchParams: Promise<SearchParams>
+}) {
   const { slug, post: postSlug } = await params
   const post = await getSeriesPost(slug, postSlug)
   const series = await getSeries(slug)
@@ -58,6 +76,15 @@ export default async function SeriesPostPage({ params }: { params: Promise<PageP
   const currentIndex = series.posts.findIndex(p => p.slug === postSlug)
   const prevPost = currentIndex > 0 ? series.posts[currentIndex - 1] : null
   const nextPost = currentIndex < series.posts.length - 1 ? series.posts[currentIndex + 1] : null
+
+  // Get diff data if diff mode is enabled
+  // Only access searchParams when diff mode is enabled to preserve static generation otherwise
+  let diffData = null
+  if (enableDiff && post.filePath) {
+    const resolvedSearchParams = await searchParams
+    const diffSha = resolvedSearchParams.diff
+    diffData = getDiffData(post.filePath, diffSha || undefined)
+  }
 
   return (
     <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_18vw] gap-8 max-w-full px-2 tablet:px-4">
@@ -93,13 +120,24 @@ export default async function SeriesPostPage({ params }: { params: Promise<PageP
         )}
 
         <article className="prose dark:prose-invert mx-auto relative">
-          <MDXContent>{post.content}</MDXContent>
+          <MDXContent comparisonContent={diffData?.oldContent ?? undefined}>{post.content}</MDXContent>
           <Suspense fallback={null}>
             <SearchHighlighter />
           </Suspense>
           <Footnotes content={post.content} />
         </article>
       </div>
+
+      {/* Diff toolbar - only shown when diff mode is enabled */}
+      {enableDiff && diffData && post.filePath && (
+        <DiffToolbar
+          commits={diffData.commits}
+          currentSha={diffData.comparisonSha}
+          hasUncommittedChanges={diffData.hasUncommittedChanges}
+          filePath={post.filePath}
+          diffLines={diffData.diffLines}
+        />
+      )}
     </div>
   )
 }

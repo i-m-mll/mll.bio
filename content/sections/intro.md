@@ -2,6 +2,9 @@
 title: "Intro"
 ---
 
-Hi
+Hi.
 
-I'm a [your profession] specializing in [your specialty]. This is my personal corner of the internet where I share my thoughts, projects, and experiences.
+I'm a PhD candidate in computational neuroscience. 
+
+
+

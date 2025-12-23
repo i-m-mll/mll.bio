@@ -6,6 +6,18 @@
   --math-display-font-scale: 1.0;
 }
 
+/* Hide KaTeX MathML (for accessibility only, not visual display)
+   This is a fallback in case the katex.min.css doesn't load properly */
+.katex-mathml {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
 /* Inline math - override KaTeX's default 1.21em with !important
    since KaTeX uses the font shorthand which sets font-size */
 .katex {

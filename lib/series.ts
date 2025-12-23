@@ -5,6 +5,7 @@ import matter from "gray-matter"
 export interface SeriesPost {
   slug: string
   content: string
+  filePath?: string // Relative path to the file (for diff tools)
   frontmatter: {
     title: string
     order: number
@@ -170,9 +171,13 @@ export async function getSeriesPost(seriesSlug: string, postSlug: string): Promi
     const createdRaw = data.created ? new Date(data.created).toISOString() : undefined
     const updatedRaw = data.updated ? new Date(data.updated).toISOString() : undefined
 
+    // Get relative file path from project root for diff tools
+    const relativeFilePath = path.relative(process.cwd(), fullPath)
+
     return {
       slug: postSlug,
       content,
+      filePath: relativeFilePath,
       frontmatter: {
         title: data.title || postSlug,
         order: data.order ?? 999,

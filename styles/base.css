@@ -305,4 +305,137 @@ html {
 .prose a:not(.sidenote-toggle):not(.marginnote-toggle):not([class*="heading-link"]):hover {
   text-decoration-color: hsl(var(--foreground) / 0.6);
   text-decoration-style: solid;
+}
+
+/* Diff visualization styles */
+
+/* ========== Inline diff markers (word/phrase level) ========== */
+
+/* Inline addition - subtle green highlight */
+.diff-inline-add {
+  background: rgba(46, 160, 67, 0.2);
+  border-radius: 2px;
+  padding: 0.1em 0.2em;
+  margin: 0 -0.1em;
+}
+
+/* Inline deletion - red with strikethrough */
+.diff-inline-del {
+  background: rgba(248, 81, 73, 0.15);
+  color: hsl(var(--muted-foreground));
+  text-decoration: line-through;
+  border-radius: 2px;
+  padding: 0.1em 0.2em;
+  margin: 0 -0.1em;
+}
+
+/* Dark mode inline adjustments */
+.dark .diff-inline-add {
+  background: rgba(46, 160, 67, 0.3);
+}
+
+.dark .diff-inline-del {
+  background: rgba(248, 81, 73, 0.25);
+}
+
+/* ========== Block-level diff markers (paragraph level) ========== */
+
+/* Block addition - green left border */
+.diff-block-add {
+  border-left: 3px solid rgba(46, 160, 67, 0.7);
+  padding-left: 1rem;
+  margin-left: -1rem;
+  background: rgba(46, 160, 67, 0.05);
+}
+
+/* Block deletion - red left border with muted text */
+.diff-block-del {
+  border-left: 3px solid rgba(248, 81, 73, 0.6);
+  padding-left: 1rem;
+  margin-left: -1rem;
+  background: rgba(248, 81, 73, 0.05);
+  opacity: 0.7;
+}
+
+.diff-block-del del {
+  text-decoration: line-through;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Dark mode block adjustments */
+.dark .diff-block-add {
+  background: rgba(46, 160, 67, 0.08);
+  border-left-color: rgba(46, 160, 67, 0.8);
+}
+
+.dark .diff-block-del {
+  background: rgba(248, 81, 73, 0.08);
+  border-left-color: rgba(248, 81, 73, 0.7);
+}
+
+/* ========== Legacy styles (for toolbar/modal) ========== */
+
+/* Added content - inline highlighting */
+.diff-added {
+  background: rgba(46, 160, 67, 0.15);
+  border-radius: 2px;
+  padding: 0 2px;
+  margin: 0 -2px;
+}
+
+/* Dark mode adjustment */
+.dark .diff-added {
+  background: rgba(46, 160, 67, 0.25);
+}
+
+/* Legacy line-level diff styles (for modal/toolbar display) */
+.diff-add {
+  background: rgba(46, 160, 67, 0.15);
+  border-left: 3px solid rgba(46, 160, 67, 0.6);
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+.diff-del {
+  background: rgba(248, 81, 73, 0.15);
+  border-left: 3px solid rgba(248, 81, 73, 0.6);
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Dark mode adjustments for legacy diff */
+.dark .diff-add {
+  background: rgba(46, 160, 67, 0.2);
+  border-left-color: rgba(46, 160, 67, 0.7);
+}
+
+.dark .diff-del {
+  background: rgba(248, 81, 73, 0.2);
+  border-left-color: rgba(248, 81, 73, 0.7);
+}
+
+/* ========== Diff visibility toggle ========== */
+/* When diff is hidden via toggle, remove all visual markers */
+
+body.diff-hidden .diff-inline-add {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.diff-hidden .diff-inline-del {
+  display: none;
+}
+
+body.diff-hidden .diff-block-add {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
+  background: none;
+}
+
+body.diff-hidden .diff-block-del {
+  display: none;
 } 
