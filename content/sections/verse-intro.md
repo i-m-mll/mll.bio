@@ -4,11 +4,9 @@ title: "Verse Intro"
 
 Here are a few of the poems I've written. 
 
-For me, poetry is foremost a kind of half-sacred, half-silly game of syllables. A kind of music.  
+For me, poetry is foremost a kind of music. A half-silly, half-sacred game of syllables.  
 
 It's for reverence and irreverence both, which I may not express elsewhere. 
-It might not be ultimately coherent. 
-I recommend you *not* assume that any irony, metaphor, cynicism, etcetera you encounter here represents 
-my more typical or serious thoughts.
-
-I am open to commissions.
+I hope no-one will mistake that any metaphor, irony, cynicism, or incoherence encountered here 
+represents my more usual thoughts.
+(Still I expect a mistake or two.)

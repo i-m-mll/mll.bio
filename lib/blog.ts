@@ -1,11 +1,13 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import { siteConfig } from "@/lib/config/site"
 
 export interface Post {
   slug: string
   content: string
   filePath?: string // Relative path to the file (for diff tools)
+  readingTime: string // Computed reading time (e.g., "5 min read")
   frontmatter: {
     title: string
     published: string
@@ -44,19 +46,29 @@ function formatDate(dateInput: string | Date): string {
 // Helper function to parse tags from frontmatter
 function parseTags(tagsInput: string | string[] | undefined): string[] | undefined {
   if (!tagsInput) return undefined
-  
+
   if (Array.isArray(tagsInput)) {
     return tagsInput.map(tag => tag.trim()).filter(tag => tag.length > 0)
   }
-  
+
   if (typeof tagsInput === 'string') {
     return tagsInput
       .split(',')
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0)
   }
-  
+
   return undefined
+}
+
+// Helper function to calculate reading time (excludes code blocks)
+function calculateReadingTime(content: string): string {
+  const { wordsPerMinute } = siteConfig.readingTime
+  // Remove fenced code blocks before counting words
+  const proseOnly = content.replace(/```[\s\S]*?```/g, '')
+  const words = proseOnly.trim().split(/\s+/).length
+  const minutes = Math.ceil(words / wordsPerMinute)
+  return `${minutes} min read`
 }
 
 export async function getPosts(): Promise<Post[]> {
@@ -90,6 +102,7 @@ export async function getPosts(): Promise<Post[]> {
       return {
         slug,
         content,
+        readingTime: calculateReadingTime(content),
         frontmatter: {
           title: data.title || slug,
           published: formatDate(publishedDate),
@@ -154,6 +167,7 @@ export async function getPost(slug: string): Promise<Post | null> {
       slug,
       content,
       filePath: relativeFilePath,
+      readingTime: calculateReadingTime(content),
       frontmatter: {
         title: data.title || slug,
         published: formatDate(publishedDate),

@@ -1,11 +1,13 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import { siteConfig } from "@/lib/config/site"
 
 export interface SeriesPost {
   slug: string
   content: string
   filePath?: string // Relative path to the file (for diff tools)
+  readingTime: string // Computed reading time (e.g., "5 min read")
   frontmatter: {
     title: string
     order: number
@@ -46,6 +48,16 @@ export interface SeriesConfig {
 }
 
 const seriesDirectory = path.join(process.cwd(), "content/series")
+
+// Helper function to calculate reading time (excludes code blocks)
+function calculateReadingTime(content: string): string {
+  const { wordsPerMinute } = siteConfig.readingTime
+  // Remove fenced code blocks before counting words
+  const proseOnly = content.replace(/```[\s\S]*?```/g, '')
+  const words = proseOnly.trim().split(/\s+/).length
+  const minutes = Math.ceil(words / wordsPerMinute)
+  return `${minutes} min read`
+}
 
 // Helper function to format date to "24 May 2025"
 function formatDate(dateInput: string | Date): string {
@@ -124,6 +136,7 @@ export async function getSeriesPosts(seriesSlug: string): Promise<SeriesPost[]> 
       return {
         slug,
         content,
+        readingTime: calculateReadingTime(content),
         frontmatter: {
           title: data.title || slug,
           order: data.order ?? 999,
@@ -178,6 +191,7 @@ export async function getSeriesPost(seriesSlug: string, postSlug: string): Promi
       slug: postSlug,
       content,
       filePath: relativeFilePath,
+      readingTime: calculateReadingTime(content),
       frontmatter: {
         title: data.title || postSlug,
         order: data.order ?? 999,

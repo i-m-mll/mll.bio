@@ -27,6 +27,7 @@ export const siteConfig = {
     //                     "background", "go-ahead", "subscribe", "recent-posts"
     // "projects" shows the projects list from lib/config/projects.ts
     // "background" is typically omitted when about is on homepage (to avoid redundancy)
+    // Note: go-ahead section can include subscribe box via frontmatter (includeSubscribe: true)
     sections: [
       "intro",
       "social-links",
@@ -34,7 +35,6 @@ export const siteConfig = {
       "projects",
       // "background", // Uncomment if about page is separate
       "go-ahead",
-      "subscribe",
       "recent-posts",
     ] as const,
     // Show border around the subscribe box
@@ -81,6 +81,19 @@ export const siteConfig = {
     bluesky: "https://bsky.app/profile/robustenough",
     mastodon: "https://mastodon.social/@robustenough",
     linkedin: "https://linkedin.com/in/mll",
+  },
+
+  // Reading time configuration
+  readingTime: {
+    // Words per minute for reading time calculation
+    wordsPerMinute: 200,
+  },
+
+  // Blog page configuration
+  blog: {
+    // Default state for showing series posts in "All Posts" section
+    // Users can toggle this on the page
+    showSeriesPostsByDefault: false,
   },
 
   // Comments configuration

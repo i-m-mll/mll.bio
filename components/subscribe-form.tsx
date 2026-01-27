@@ -59,7 +59,7 @@ export function SubscribeForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+    <form onSubmit={handleSubmit} className="flex flex-row flex-wrap gap-2 justify-center items-center">
       <input
         type="email"
         value={email}
@@ -67,17 +67,17 @@ export function SubscribeForm({
         placeholder={placeholder}
         required
         disabled={status === "loading"}
-        className="px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:opacity-50"
+        className="flex-1 min-w-[160px] max-w-[220px] px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:opacity-50"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors disabled:opacity-50"
+        className="px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors disabled:opacity-50 whitespace-nowrap"
       >
         {status === "loading" ? "..." : buttonText}
       </button>
       {status === "error" && (
-        <span className="text-sm text-red-500">{message}</span>
+        <span className="basis-full text-sm text-red-500 text-center">{message}</span>
       )}
     </form>
   )

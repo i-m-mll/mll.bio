@@ -24,6 +24,7 @@ export default async function VersePage() {
           {poems.map((poem) => (
             <PoemCard
               key={poem.slug}
+              slug={poem.slug}
               title={poem.frontmatter.title}
               content={poem.content}
               created={poem.frontmatter.created}
@@ -61,6 +62,7 @@ export default async function VersePage() {
             {halfPoems.map((poem) => (
               <PoemCard
                 key={poem.slug}
+                slug={poem.slug}
                 title={poem.frontmatter.title}
                 content={poem.content}
                 created={poem.frontmatter.created}
@@ -78,6 +80,7 @@ export default async function VersePage() {
         elements.push(
           <PoemCard
             key={poem.slug}
+            slug={poem.slug}
             title={poem.frontmatter.title}
             content={poem.content}
             created={poem.frontmatter.created}
@@ -113,6 +116,7 @@ export default async function VersePage() {
 }
 
 interface PoemCardProps {
+  slug: string
   title: string
   content: string
   created?: string
@@ -120,15 +124,25 @@ interface PoemCardProps {
   dateConfig: typeof poemsConfig.dates
 }
 
-async function PoemCard({ title, content, created, updated, dateConfig }: PoemCardProps) {
+async function PoemCard({ slug, title, content, created, updated, dateConfig }: PoemCardProps) {
   const createdDate = dateConfig.showCreated ? formatPoemDate(created, dateConfig.format) : null
   const updatedDate = dateConfig.showUpdated ? formatPoemDate(updated, dateConfig.format) : null
   // Only show updated if it's different from created
   const showUpdated = updatedDate && updatedDate !== createdDate
 
   return (
-    <article className="poem-card flex flex-col items-start">
-      <h2 className="mb-2 text-xl font-semibold tracking-tight">{title}</h2>
+    <article id={slug} className="poem-card flex flex-col items-start group/poem">
+      <h2 className="mb-2 text-xl font-semibold tracking-tight">
+        <a
+          href={`#${slug}`}
+          className="hover:underline decoration-muted-foreground/50 underline-offset-2"
+        >
+          {title}
+          <span className="ml-2 text-muted-foreground/0 group-hover/poem:text-muted-foreground/60 transition-colors text-base">
+            #
+          </span>
+        </a>
+      </h2>
       {(createdDate || showUpdated) && (
         <div className="mb-4 text-sm text-muted-foreground">
           {createdDate && <span>{createdDate}</span>}

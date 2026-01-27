@@ -1,10 +1,11 @@
 import { getPosts } from "@/lib/blog"
 import { getAllSeries } from "@/lib/series"
-import { PostList } from "@/components/post-list"
+import { FilterablePostList } from "@/components/filterable-post-list"
 import { MDXContent } from "@/components/mdx-content"
 import { getSection } from "@/lib/sections"
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
+import { SubscribeBox } from "@/components/subscribe-box"
 import Link from "next/link"
 
 export const metadata = {
@@ -24,11 +25,12 @@ export default async function BlogPage() {
     getSection("posts-intro"),
   ])
 
-  // Convert series posts to the same format as regular posts for the combined list
+  // Convert series posts to the same format as regular posts
   const seriesPosts = allSeries.flatMap(series =>
     series.posts.map(post => ({
       slug: `series/${series.slug}/${post.slug}`,
       content: post.content,
+      readingTime: post.readingTime,
       frontmatter: {
         title: post.frontmatter.title,
         published: post.frontmatter.created || "",
@@ -42,8 +44,8 @@ export default async function BlogPage() {
     }))
   )
 
-  // Combine and sort all posts by date
-  const allPosts = [...posts, ...seriesPosts].sort((a, b) => {
+  // Sort regular posts by date
+  const sortedPosts = [...posts].sort((a, b) => {
     const dateA = new Date(a.frontmatter.publishedRaw || "").getTime() || 0
     const dateB = new Date(b.frontmatter.publishedRaw || "").getTime() || 0
     return dateB - dateA
@@ -58,6 +60,9 @@ export default async function BlogPage() {
             <MDXContent>{intro.content}</MDXContent>
           </article>
         )}
+        <div className="mt-6 flex justify-center">
+          <SubscribeBox />
+        </div>
       </header>
 
       {/* Series Section */}
@@ -84,14 +89,13 @@ export default async function BlogPage() {
         </section>
       )}
 
-      {/* All Posts (including series posts) */}
+      {/* All Posts */}
       <section>
-        <h2 className="text-2xl font-semibold tracking-tight mb-4">All Posts</h2>
-        {allPosts.length > 0 ? (
-          <PostList posts={allPosts} />
-        ) : (
-          <p className="text-muted-foreground">No posts published yet.</p>
-        )}
+        <FilterablePostList
+          posts={sortedPosts}
+          seriesPosts={seriesPosts}
+          showSeriesByDefault={siteConfig.blog.showSeriesPostsByDefault}
+        />
       </section>
     </div>
   )

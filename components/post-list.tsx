@@ -22,6 +22,12 @@ export function PostList({ posts }: { posts: ExtendedPost[] }) {
             <Link href={href} className="space-y-2 block">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <time>{post.frontmatter.published}</time>
+                {post.readingTime && (
+                  <>
+                    <span>·</span>
+                    <span>{post.readingTime}</span>
+                  </>
+                )}
                 {post.frontmatter.series && (
                   <>
                     <span>·</span>

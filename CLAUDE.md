@@ -66,6 +66,11 @@ Uses Tailwind breakpoints defined in `tailwind.config.ts`:
 - Create CSS variables for reused values
 - Store UI parameters in `lib/config/ui.ts` rather than component props
 
+### Avoiding Layout Shifts
+- When toggling UI elements (checkmarks, icons, indicators), use opacity changes instead of conditional rendering to prevent layout shifts
+- Always keep toggled elements in the DOM with consistent dimensions; toggle visibility via `opacity-0`/`opacity-100` classes
+- This prevents subtle 1-2px jumps when elements are added/removed from the DOM
+
 ### Content Creation
 - Add blog posts as `.md` or `.mdx` files in `content/posts/`
 - Use proper frontmatter with `published` date (not `date`) 

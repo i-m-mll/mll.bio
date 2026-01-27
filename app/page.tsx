@@ -2,12 +2,11 @@ import { MDXContent } from "@/components/mdx-content"
 import { PostList } from "@/components/post-list"
 import { getPosts } from "@/lib/blog"
 import { SocialLinks } from "@/components/social-links"
-import { SubscribeForm } from "@/components/subscribe-form"
+import { SubscribeBox } from "@/components/subscribe-box"
 import { siteConfig } from "@/lib/config/site"
 import { getSection } from "@/lib/sections"
 import { projects } from "@/lib/config/projects"
 import { ProjectList } from "@/components/project-card"
-import Link from "next/link"
 
 // Section components for dynamic rendering
 async function IntroSection() {
@@ -68,6 +67,29 @@ async function GoAheadSection() {
   const section = await getSection("go-ahead")
   if (!section) return null
 
+  const includeSubscribe = section.frontmatter.includeSubscribe
+
+  // Two-column layout when includeSubscribe is true: 1/3 text + 2/3 subscribe
+  if (includeSubscribe) {
+    return (
+      <div className="grid grid-cols-1 tablet:grid-cols-3 gap-8 tablet:gap-10 items-center">
+        {/* Left 1/3: Go ahead content */}
+        <article className="prose dark:prose-invert tablet:col-span-1">
+          {section.frontmatter.showHeading && (
+            <h2 className="text-3xl font-bold tracking-tight mb-4 font-heading">{section.frontmatter.title}</h2>
+          )}
+          <MDXContent>{section.content}</MDXContent>
+        </article>
+
+        {/* Right 2/3: Subscribe centered */}
+        <div className="tablet:col-span-2 flex items-center justify-center">
+          <SubscribeBox />
+        </div>
+      </div>
+    )
+  }
+
+  // Single-column layout (default)
   return (
     <article className="prose dark:prose-invert">
       {section.frontmatter.showHeading && (
@@ -79,32 +101,7 @@ async function GoAheadSection() {
 }
 
 function SubscribeSection() {
-  if (!siteConfig.newsletter.buttondownUsername) {
-    return (
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground">
-          Subscribe via <Link href="/feed.xml" className="underline hover:text-foreground">RSS</Link>.
-        </p>
-      </div>
-    )
-  }
-
-  const showBorder = siteConfig.homepage.subscribeBorder
-
-  return (
-    <div className={`mx-auto p-5 rounded-md bg-stone-50/50 dark:bg-stone-900/50 max-w-md text-center ${showBorder ? 'border border-stone-200 dark:border-stone-700' : ''}`}>
-      <h3 className="text-xl font-semibold mb-3 font-heading">Subscribe</h3>
-      <div className="space-y-3">
-        <div>
-          <p className="text-sm text-muted-foreground mb-2">Get new posts by email:</p>
-          <SubscribeForm buttondownUsername={siteConfig.newsletter.buttondownUsername} />
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Or via <Link href="/feed.xml" className="underline hover:text-foreground">RSS</Link>.
-        </p>
-      </div>
-    </div>
-  )
+  return <SubscribeBox className="mx-auto max-w-md" />
 }
 
 async function RecentPostsSection() {

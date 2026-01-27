@@ -89,6 +89,7 @@ export default async function BlogPostPage({
       <div className="container min-w-0 pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
           <div className="text-muted-foreground text-sm mb-6 space-y-0.5">
+            <div>{post.readingTime}</div>
             <div>Published: {post.frontmatter.published}</div>
             {post.frontmatter.updated && (
               <div>Updated: {post.frontmatter.updated}</div>

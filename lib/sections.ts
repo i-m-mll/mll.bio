@@ -8,6 +8,7 @@ export interface Section {
   frontmatter: {
     title: string
     showHeading?: boolean
+    includeSubscribe?: boolean
   }
 }
 
@@ -33,6 +34,7 @@ export async function getSection(slug: string): Promise<Section | null> {
       frontmatter: {
         title: data.title || slug,
         showHeading: data.showHeading ?? false,
+        includeSubscribe: data.includeSubscribe ?? false,
       },
     }
   } catch {

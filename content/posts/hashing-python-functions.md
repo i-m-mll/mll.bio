@@ -2,13 +2,12 @@
 title: Hashing functions by what they select
 published: 2025-06-16
 updated: 2025-06-16
-description: When identity isn't enough
 abstract: |
     It is [impossible](https://en.wikipedia.org/wiki/Rice%27s_theorem) in general to verify the
     equivalence of [functions](https://en.wikipedia.org/wiki/Computable_function) in terms of
     their input-output behaviour, or *semantics*. For different practical reasons, many programming
     languages, including Python, also don't evaluate functions' equivalence in terms of their code
-    structure, or *syntax*. Instead, Python computes hashes and equivalence (or, uniqueness)
+    structure, or *syntax*. Instead, Python computes hashes and equivalence
     of functions based solely on their memory address.
     So it doesn't make sense to use a `dict` to map directly from subtree selectors to some respective node data,
     and expect the uniqueness of keys to be decided by what subtree they select.
@@ -31,10 +30,9 @@ over different types of tree-structured inputs in a unified way.
 
 ## Subtree selectors
 
-A *subtree selector function*[^1] takes a PyTree, selects one or more nodes, and composes them into some tree which it returns.
+A *subtree selector function*[^1] takes a PyTree, selects one or more nodes, and composes them into some tree to return.
 
-
-One use case is to edit the nodes of a PyTree out-of-place. Suppose we have an instance of some data type:
+One use case for subtree selectors is to edit the nodes of a PyTree out-of-place. Suppose we have an instance of some data type:
 
 <NoteScope>
 
@@ -129,7 +127,7 @@ init_state_spec: dict[Callable, Array] = {
 }
 
 # Update the default state with the custom init states
-initial_state = replace_nodes(default_state, init_state_spec)
+initial_state = replace_leaves(default_state, init_state_spec)
 ```
 
 This does work, but all is not what it seems. We'll encounter some strange behaviour if we assume
@@ -137,10 +135,10 @@ that `init_state_spec` treats its selector keys as unique, *because they pick ou
 leaves*.
 
 For example, if in some other context we want to determine which data will be used to initialize
-`states.some_substate.part`, we might try to access it like so:
+`state.some_substate.part`, we might try to access it like so:
 
 ```python
-init_state_mapping[lambda states: states.some_substate.part]
+init_state_mapping[lambda state: state.some_substate.part]
 ```
 
 But this doesn't return `some_part_init_data`! It actually raises a `KeyError`.
@@ -149,7 +147,7 @@ Likewise, if we already have some `init_state_spec` and want to update it to use
 for part of the state, we might try this:
 
 ```python
-init_state_mapping[lambda states: states.some_substate.part] = some_new_init_data
+init_state_mapping[lambda state: state.some_substate.part] = some_new_init_data
 ```
 
 But this actually adds a *new* entry to the mapping, rather than replacing the old one.
@@ -160,7 +158,7 @@ once naively hoped, when the key happens to be a function.
 
 ## What's in a function?
 
-Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^1] can be used as a key in a `dict`.
+Any Python object that can be [hashed](https://docs.python.org/3/library/functions.html#hash)[^2] can be used as a key in a `dict`.
 While a Python function *is* hashable, its hash is based on its *object identity*, which in
 CPython (i.e. for almost all Python users) is just its memory address. For example, **all** of the following
 expressions evaluate to `False`:
@@ -199,15 +197,16 @@ Semantics? That's easy. And by "easy", of course I mean *impossible*: it's a wel
 fact](https://en.wikipedia.org/wiki/Rice%27s_theorem) that there's *no* general method by which we can test
 whether any two functions will always behave the same way, for all inputs. So if programming language designers want
 tools like `hash` and `==` operators to be general-purpose, and useful for comparing *any* two functions their
-users might write, then those tools can't be based on semantic comparison which are necessarily *not* general.
+users might write, then those tools can't be based on semantic comparisons which are necessarily *not* general.
 
 We could also try to evaluate equivalence in terms of *syntax*, which is the structure of the
 function's code. This is at least possible, when we have access to the code. But for arbitrary functions 
-it can get expensive: parsing source, building ASTs, and normalizing for trivial differences like variable 
-names. Perhaps it's enough most of the time to know that two functions aren't literally identical in memory. Anyway, that's what Python assumes!
+it can get expensive: parsing source, building ASTs, and normalizing for trivial differences such as variable 
+names. Perhaps it's enough most of the time to know that two functions aren't literally identical in memory,
+which is what we test with a direct `hash` comparison.
 
 Since `dict` uses `hash` to determine the uniqueness of keys, and the `hash` of a selector
-is not determined by what it picks out, `dict` cannot see our selectors the way we see them.
+is not determined by what it picks out, `dict` cannot see our selectors the way we see them...
 
 ## Using selectors as `dict` keys
 
@@ -278,7 +277,7 @@ def func_without_spaces(x):
     return x+1
 ```
 
-#### Also won't work well: abstract syntax tree
+#### Also not great: abstract syntax tree
 
 An [**Abstract syntax tree**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST) is a data
 structure specifically intended to represent the syntax of a program. Python's
@@ -298,13 +297,16 @@ compare_ast("lambda x: x", "lambda y: y")  # False; the only difference is a bou
 
 There are good reasons why we'd want to preserve bound variable names in ASTs, but when testing
 for the syntactic equivalence of functions, we generally admit [alpha
-equivalence](https://en.wikipedia.org/wiki/Lambda_calculus#Alpha_equivalence), and normalizing our
+equivalence](https://en.wikipedia.org/wiki/Lambda_calculus#Alpha_equivalence). Normalizing our
 ASTs to an alpha-equivalent form can require a little work when dealing with arbitrarily complex
 functions with nested scopes of bound variables.
 
-In any case, generating ASTs may be kind of expensive, especially if we don't know beforehand how complex
-the things we want to compare will be, as is the case when a language designer is implementing a
-general operator like `==`.
+When a programming language designer implements an operator like `==` for arbitrary comparisons, 
+they don't know how complex the objects to be compared will be. If they base the comparison on 
+structure, then in certain cases a very large amount of work may be implied. 
+Instead, it makes sense to base comparisons on unique ID (e.g. memory address) so that we can tell whether two 
+references are to the same object, while leaving more complex structural comparisons to be  
+implemented by developers on top of the language base. 
 
 ### First actual attempt: from bytecode
 
@@ -312,8 +314,8 @@ Once Python has parsed the literal source code, it encodes the program as a sequ
 instructions for the interpreter to run. Therefore, bytecode is language-dependent;
 bytecode in Python looks different than bytecode for a different interpreted language. Parsing does
 involve some semantic interpretation, and unlike an AST, bytecode is not mainly intended as a
-representation of syntax. But we can imagine the syntax *of* the resulting bytecode as a practically
-abstracted form of the syntax of our source code.
+representation of syntax. But we can imagine the syntax *of* the resulting bytecode as a practical 
+substitute for our source syntax.
 
 So in some cases, it might make sense to compare the bytecode of two functions, to test for some
 kind of equivalence.

@@ -104,7 +104,8 @@ export default async function SeriesPostPage({
       {/* Content container - extra top padding on tablet+ for spacing below series header */}
       <div className="container min-w-0 pt-2 pb-6 tablet:pt-12 tablet:pb-10 desktop:pt-12 desktop:pb-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
-          <div className="text-muted-foreground text-sm mb-6">
+          <div className="text-muted-foreground text-sm mb-6 space-y-0.5">
+            <div>{post.readingTime}</div>
             {post.frontmatter.created && (
               <div>Published: {post.frontmatter.created}</div>
             )}
