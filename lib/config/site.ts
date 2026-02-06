@@ -80,7 +80,8 @@ export const siteConfig = {
     X: "https://twitter.com/robustenough",
     bluesky: "https://bsky.app/profile/robustenough",
     mastodon: "https://mastodon.social/@robustenough",
-    linkedin: "https://linkedin.com/in/mll",
+    // youtube: "https://youtube.com/@i-m-mll",
+    // linkedin: "https://linkedin.com/in/",
   },
 
   // Reading time configuration
@@ -99,7 +100,7 @@ export const siteConfig = {
   // Comments configuration
   comments: {
     // Set to 'giscus' to enable, or false to disable
-    provider: false as 'giscus' | false,
+    provider: false as "giscus" | false,
 
     // Giscus configuration
     giscus: {
@@ -123,7 +124,7 @@ export const siteConfig = {
       lang: "en",
     },
   },
-}
+};
 
 // Responsive breakpoints configuration
 // These should match the values in tailwind.config.ts
@@ -132,4 +133,4 @@ export const breakpoints = {
   desktop: 1051,
   // When TOC becomes mobile (matches 'tablet' in tailwind)
   mobile: 701,
-} as const 
+} as const;

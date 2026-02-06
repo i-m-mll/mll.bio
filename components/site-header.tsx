@@ -64,8 +64,8 @@ function AnimatedName({ isHome }: { isHome: boolean }) {
   // Show full name only on homepage AND when viewport is wide enough
   const showFullName = isHome && !isNarrow
 
-  // If animation is disabled, just show the appropriate name
-  if (!animateName) {
+  // If animation is disabled or there's nothing to animate (fullName === shortName), just show the name
+  if (!animateName || fullName === shortName) {
     return (
       <span
         className="font-semibold leading-none text-title"

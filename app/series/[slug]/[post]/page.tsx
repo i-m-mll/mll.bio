@@ -89,7 +89,11 @@ export default async function SeriesPostPage({
   return (
     <div className="grid grid-cols-1 tablet:grid-cols-[250px_1fr] desktop:grid-cols-[250px_1fr_18vw] gap-8 max-w-full px-2 tablet:px-4">
       <SidenoteSelection />
-      <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
+      {/^#{2,6}\s+/m.test(post.content) ? (
+        <TableOfContents content={post.content} postTitle={post.frontmatter.title} />
+      ) : (
+        <StickyTitle title={post.frontmatter.title} />
+      )}
 
       {/* Set series header data for rendering in site header */}
       <SeriesHeaderSetter
