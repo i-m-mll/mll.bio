@@ -1,8 +1,6 @@
 ---
 title: "Solstice 2025"
 created: 2025-12-13
-order: 1
-layout: half
 ---
 
 Here's how things sit: that plasma-fusing sphere

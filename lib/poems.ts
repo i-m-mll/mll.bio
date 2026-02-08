@@ -9,10 +9,6 @@ export interface Poem {
     title: string
     created?: string
     updated?: string
-    // Layout: "full" for single column, "half" for side-by-side pairing
-    layout?: "full" | "half"
-    // Order for sorting poems
-    order?: number
   }
 }
 
@@ -66,17 +62,15 @@ export async function getAllPoems(): Promise<Poem[]> {
         title: data.title || slug.replace(/-/g, " "),
         created: data.created,
         updated: data.updated,
-        layout: data.layout || "full",
-        order: data.order ?? 999,
       },
     })
   }
 
-  // Sort by order, then by title
+  // Sort by created date (newest first), then by title
   poems.sort((a, b) => {
-    if (a.frontmatter.order !== b.frontmatter.order) {
-      return (a.frontmatter.order ?? 999) - (b.frontmatter.order ?? 999)
-    }
+    const dateA = a.frontmatter.created ? new Date(a.frontmatter.created).getTime() : 0
+    const dateB = b.frontmatter.created ? new Date(b.frontmatter.created).getTime() : 0
+    if (dateA !== dateB) return dateB - dateA
     return a.frontmatter.title.localeCompare(b.frontmatter.title)
   })
 
@@ -85,23 +79,15 @@ export async function getAllPoems(): Promise<Poem[]> {
 
 // Poems layout configuration
 export interface PoemsConfig {
-  // "side-by-side" pairs adjacent half-width poems horizontally on desktop
-  // "single-column" displays all poems in a single column
-  layout: "side-by-side" | "single-column"
   // Date display options
   dates: {
-    // Show created date
     showCreated: boolean
-    // Show updated date
     showUpdated: boolean
-    // Format: "full" for "December 18, 2025", "short" for "Dec 18, 2025", "iso" for "2025-12-18"
     format: "full" | "short" | "iso"
   }
 }
 
-// Default configuration - can be overridden via environment or config file
 export const poemsConfig: PoemsConfig = {
-  layout: "side-by-side",
   dates: {
     showCreated: true,
     showUpdated: true,

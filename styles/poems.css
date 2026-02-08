@@ -28,30 +28,61 @@
   margin-bottom: 0.75em !important;
 }
 
+/* Blockquotes in poems: not italic, tighter spacing.
+ *
+ * The key issue is margin collapsing: the <p> inside the blockquote inherits
+ * margin-bottom: 0.75em from ".poem-content p". Because the blockquote has no
+ * bottom padding or border, that inner margin collapses *through* the
+ * blockquote and merges with the gap below it, creating a full stanza-sized
+ * break between the quote and its attribution. Zeroing the inner <p> margins
+ * and using the blockquote's own margin-bottom prevents this. */
+.poem-content blockquote {
+  font-style: normal !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.poem-content blockquote p {
+  font-style: normal !important;
+  /* Prevent this margin from collapsing through the blockquote */
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-block: 0 !important;
+}
+
+/* Remove open/close quote marks that prose adds to blockquotes */
+.poem-content blockquote p::before,
+.poem-content blockquote p::after {
+  content: none !important;
+}
+
+/* Attribution line immediately after a blockquote */
+.poem-content.prose blockquote + p,
+.poem-content blockquote + p {
+  margin-top: -0.45em !important;
+  margin-block-start: -0.45em !important;
+}
+
 /* Poem card styling */
 .poem-card {
-  /* Subtle visual separation */
-  padding: 1rem 0;
-  /* Prevent flex item from overflowing container - allows child scroll to work */
+  padding: 0.5rem 0;
   min-width: 0;
-  /* Prevent card from being split across columns */
-  break-inside: avoid;
-  /* Allow horizontal scroll within card if poem is wider than column */
   overflow-x: auto;
 }
 
-/* CSS columns container for masonry-like layout */
-.poems-columns {
-  /* Single column on mobile */
-  columns: 1;
-  column-gap: 3rem;
+/* CSS grid for two-column layout with row-first ordering */
+.poems-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
 }
 
-/* Two columns only on wide viewports where there's enough room */
-/* 900px ensures each column has ~400px which fits most poems */
+/* Two columns on wide viewports */
 @media (min-width: 900px) {
-  .poems-columns {
-    columns: 2;
+  .poems-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 3rem;
   }
 }
 
@@ -59,6 +90,6 @@
 @media (max-width: 700px) {
   .poem-card + .poem-card {
     border-top: 1px solid hsl(var(--border) / 0.4);
-    padding-top: 1.5rem;
+    padding-top: 1rem;
   }
 }

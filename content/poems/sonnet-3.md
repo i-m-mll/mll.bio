@@ -2,8 +2,6 @@
 title: "Sonnet 3"
 created: 2021-09-21
 updated: 2024-01-10
-order: 3
-layout: half
 ---
 
 I fight, to place in you a piece of me
