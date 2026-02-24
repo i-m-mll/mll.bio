@@ -1,0 +1,332 @@
+/* ==========================================================================
+   Chat Log Components
+   Styles for displaying AI chat conversations in blog posts.
+   Aesthetic: literate programming transcript, not chat bubbles.
+   ========================================================================== */
+
+/* ---------- CSS Variables ---------- */
+
+:root {
+  --chat-user-border: #3b82f6;         /* blue-500 */
+  --chat-user-bg: #eff6ff;             /* blue-50 */
+  --chat-assistant-border: #a8a29e;    /* stone-400 */
+  --chat-assistant-bg: #ffffff;        /* white */
+  --chat-thinking-border: #fbbf24;     /* amber-400 */
+  --chat-thinking-bg: rgba(255, 251, 235, 0.5);  /* amber-50/50 */
+  --chat-tool-border: #22c55e;         /* green-500 */
+  --chat-tool-bg: rgba(240, 253, 244, 0.5);      /* green-50/50 */
+  --chat-source-dot: #a8a29e;          /* stone-400 */
+}
+
+.dark {
+  --chat-user-border: #60a5fa;         /* blue-400 */
+  --chat-user-bg: rgba(30, 58, 138, 0.15);
+  --chat-assistant-border: #78716c;    /* stone-500 */
+  --chat-assistant-bg: rgba(28, 25, 23, 0.6);    /* stone-900/60 */
+  --chat-thinking-border: #f59e0b;     /* amber-500 */
+  --chat-thinking-bg: rgba(120, 53, 15, 0.1);
+  --chat-tool-border: #16a34a;         /* green-600 */
+  --chat-tool-bg: rgba(20, 83, 45, 0.1);
+  --chat-source-dot: #78716c;          /* stone-500 */
+}
+
+/* ---------- ChatLog Wrapper ---------- */
+
+.chat-log {
+  margin: 1.5rem 0;
+}
+
+.chat-log-embedded {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.dark .chat-log-embedded {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chat-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.chat-log-source-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--chat-source-dot);
+}
+
+.chat-log-title {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.chat-log-date {
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+}
+
+.chat-log-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ---------- ChatMessage ---------- */
+
+.chat-message {
+  border-left: 3px solid;
+  padding: 0.75rem 1rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.chat-message-user {
+  border-left-color: var(--chat-user-border);
+  background: var(--chat-user-bg);
+}
+
+.chat-message-assistant {
+  border-left-color: var(--chat-assistant-border);
+  background: var(--chat-assistant-bg);
+}
+
+.chat-message-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-role {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.chat-message-model-badge {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.02em;
+}
+
+.chat-message-content {
+  font-family: var(--font-body);
+}
+
+/* ---------- ThinkingBlock ---------- */
+
+.thinking-block {
+  border-left: 3px solid var(--chat-thinking-border);
+  background: var(--chat-thinking-bg);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.thinking-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.thinking-block-header:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.dark .thinking-block-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.thinking-block-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.thinking-block-label-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+
+.thinking-block-duration {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.1rem 0.35rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309; /* amber-700 */
+}
+
+.dark .thinking-block-duration {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24; /* amber-400 */
+}
+
+.thinking-block-content {
+  padding: 0 1rem 0.75rem;
+  font-style: italic;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* ---------- ToolUse Block ---------- */
+
+.tool-use-block {
+  border-left: 3px solid var(--chat-tool-border);
+  background: var(--chat-tool-bg);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.tool-use-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.tool-use-header:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.dark .tool-use-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tool-use-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tool-use-name-badge {
+  font-family: 'Iosevka', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.1rem 0.45rem;
+  border-radius: 0.25rem;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d; /* green-700 */
+}
+
+.dark .tool-use-name-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80; /* green-400 */
+}
+
+.tool-use-content-wrapper {
+  position: relative;
+}
+
+.tool-use-content {
+  padding: 0 1rem 0.75rem;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tool-use-content-truncated {
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.tool-use-show-more {
+  display: block;
+  width: 100%;
+  padding: 0.35rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  text-align: center;
+  transition: color 0.15s ease;
+}
+
+.tool-use-show-more:hover {
+  color: hsl(var(--foreground));
+}
+
+/* ---------- Responsive (mobile) ---------- */
+
+@media (max-width: 700px) {
+  .chat-message {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .chat-log-embedded {
+    padding: 0.75rem;
+  }
+
+  .thinking-block-header,
+  .tool-use-header {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .thinking-block-content,
+  .tool-use-content {
+    padding: 0 0.75rem 0.5rem;
+  }
+}
+
+/* ---------- Print styles ---------- */
+
+@media print {
+  .thinking-block-content,
+  .tool-use-content {
+    /* Always expanded when printing */
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  .tool-use-show-more {
+    display: none !important;
+  }
+
+  /* Show chevrons as expanded */
+  .thinking-block-header svg,
+  .tool-use-header svg {
+    transform: rotate(180deg) !important;
+  }
+
+  .chat-log-embedded {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

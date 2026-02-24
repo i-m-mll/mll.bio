@@ -27,6 +27,10 @@ import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import rehypeCallouts from "rehype-callouts"
 import { DiffAdd, DiffDel, DiffAddBlock, DiffDelBlock } from "@/components/diff-markers"
+import ChatLog from "@/components/chat-log"
+import ChatMessage from "@/components/chat-message"
+import ThinkingBlock from "@/components/thinking-block"
+import { ToolUse } from "@/components/tool-use-block"
 import { constructDiffMdx } from "@/lib/construct-diff-mdx"
 
 // Global KaTeX macros for probability theory series and general use
@@ -69,6 +73,11 @@ const mdxComponents = {
   DiffDel,
   DiffAddBlock,
   DiffDelBlock,
+  // Chat log components
+  ChatLog,
+  ChatMessage,
+  ThinkingBlock,
+  ToolUse,
 }
 
 interface MDXContentProps {
