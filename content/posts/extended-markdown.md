@@ -115,19 +115,19 @@ You can add sidenotes[^1] to provide additional context without interrupting the
 
 ## Tabs
 
-<Tabs>
-  <Tab label="React">
-  Babbo of the babbo
-    ```js
-    // React example
-    ```
-  </Tab>
-  <Tab label="Vue">
-    ```js
-    // Vue example
-    ```
-  </Tab>
-</Tabs>
+::::tabs
+:::tab{label="React"}
+Babbo of the babbo
+```js
+// React example
+```
+:::
+:::tab{label="Vue"}
+```js
+// Vue example
+```
+:::
+::::
 
 ## Links
 

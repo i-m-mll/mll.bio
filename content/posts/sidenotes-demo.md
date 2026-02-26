@@ -5,11 +5,11 @@ draft: true
 description: "Demonstrating both Tufte-style sidenotes and margin notes"
 ---
 
-This is a simple test to verify parsing. <MarginNote>Simple test without any markdown</MarginNote>
+This is a simple test to verify parsing. :margin-note[Simple test without any markdown]
 
-This post demonstrates how to use both Tufte-style sidenotes[^1] and margin notes in your blog posts. <MarginNote>Margin notes are unnumbered and appear without any superscript in the main text.</MarginNote>
+This post demonstrates how to use both Tufte-style sidenotes[^1] and margin notes in your blog posts. :margin-note[Margin notes are unnumbered and appear without any superscript in the main text.]
 
-Sidenotes use standard footnote syntax and are numbered sequentially[^2], while margin notes use a different syntax and appear without numbers. <MarginNote>They're perfect for brief clarifications that don't need explicit referencing. You can even include **bold text**, *italic text*, `inline code`, and [markdown links](https://example.com) within them!</MarginNote>
+Sidenotes use standard footnote syntax and are numbered sequentially[^2], while margin notes use a different syntax and appear without numbers. :margin-note[They're perfect for brief clarifications that don't need explicit referencing. You can even include **bold text**, *italic text*, `inline code`, and [markdown links](https://example.com) within them!]
 
 ## About Tufte-Style Sidenotes
 
@@ -19,7 +19,7 @@ The implementation follows the principles outlined in Tufte CSS[^4], providing a
 
 ## Margin Notes vs Sidenotes
 
-Margin notes are different from sidenotes in several ways: <MarginNote>Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes. Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes.</MarginNote>
+Margin notes are different from sidenotes in several ways: :margin-note[Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes. Notice how this margin note doesn't interrupt the numbering sequence of the sidenotes.]
 
 - **Sidenotes**: Numbered, referenced with superscript numbers in the text
 - **Margin notes**: Unnumbered, inserted inline without visible markers
@@ -29,7 +29,7 @@ the main text. Reptoids are coming for me.
 
 ## Responsive Design
 
-On mobile devices, both sidenotes and margin notes become toggleable - tap the sidenote number to show or hide the note content. <MarginNote>This margin note demonstrates **markdown support** with [links](https://tufte-css.github.io/tufte-css/)!</MarginNote>
+On mobile devices, both sidenotes and margin notes become toggleable - tap the sidenote number to show or hide the note content. :margin-note[This margin note demonstrates **markdown support** with [links](https://tufte-css.github.io/tufte-css/)!]
 
 ## How to Use
 
@@ -37,26 +37,30 @@ On mobile devices, both sidenotes and margin notes become toggleable - tap the s
 - `[^1]` for the reference in your text
 - `[^1]: Your sidenote content` for the definition
 
-**For margin notes**, use the simple MDX component syntax:
-- `<MarginNote>Your margin note content</MarginNote>` placed inline in text <MarginNote>This margin note demonstrates the NEW MDX component syntax - it's clean, simple, and supports **formatting** and [links](https://example.com)!</MarginNote>
+**For margin notes**, use the directive syntax:
+- `:margin-note[Your margin note content]` placed inline in text :margin-note[This margin note demonstrates the directive syntax - it's clean, simple, and supports **formatting** and [links](https://example.com)!]
 
-> **Note**: Margin notes now use `<MarginNote>content</MarginNote>` MDX components. The content supports full markdown including **bold**, *italic*, `code`, and [links](url)!
+> **Note**: Margin notes use `:margin-note[content]` directive syntax. The content supports full markdown including **bold**, *italic*, `code`, and [links](url)!
 
 ### Positioned Margin Notes
 
-<NoteScope>
-<MarginNote top="1.5rem">This is a **positioned** margin note, anchored to the following code block. Its position is set using `top="0.5rem"`.</MarginNote>
+::::note-scope
+:::margin-note{top="1.5rem"}
+This is a **positioned** margin note, anchored to the following code block. Its position is set using `top="0.5rem"`.
+:::
 ```python
 # This is a demonstration
 def hello_world():
   print("Hello from a positioned note!")
 ```
-</NoteScope>
+::::
 
 You can also align a margin note to a specific line of code.
 
-<NoteScope>
-<MarginNote>This note is aligned with line 5 of the code block.</MarginNote>
+::::note-scope
+:::margin-note
+This note is aligned with line 5 of the code block.
+:::
 ```python
 # line 1
 # line 2
@@ -66,7 +70,7 @@ def a_very_important_function(): # line 5
   # This function is very important.
   pass # line 7
 ```
-</NoteScope>
+::::
 
 [^1]: This is your first sidenote! It appears in the right margin with a number that corresponds to the superscript in the text.
 [^2]: Here's the second numbered sidenote, showing how they maintain sequential numbering.
