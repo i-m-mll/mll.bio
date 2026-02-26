@@ -73,9 +73,30 @@ Uses Tailwind breakpoints defined in `tailwind.config.ts`:
 
 ### Content Creation
 - Add blog posts as `.md` or `.mdx` files in `content/posts/`
-- Use proper frontmatter with `published` date (not `date`) 
+- Use proper frontmatter with `published` date (not `date`)
 - Set `draft: true` to hide posts
 - Sidenotes use custom markdown syntax processed by `lib/remark-sidenotes.ts`
+
+### Custom Components (Directive Syntax)
+Use [remark-directive](https://github.com/remarkjs/remark-directive) syntax instead of JSX tags for custom components. The `lib/remark-directives-to-jsx.ts` plugin transforms directives into JSX AST nodes for the existing component registry.
+
+**Inline directives** (text-level): `:name[content]{key="value"}`
+- `:margin-note[short note]{target="fn1"}` — inline margin note
+- `:diff-add[added text]` / `:diff-del[removed text]` — inline diff markers
+
+**Leaf directives** (self-closing block): `::name{key="value"}`
+- `::figure{src="/img/photo.jpg" alt="desc" caption="Caption text"}`
+
+**Container directives** (block with children): `:::name{key="value"}\ncontent\n:::`
+- `:::note-scope` — wraps content with margin note targets
+- `:::margin-note{target="fn1"}` — block-level margin note
+- `:::tabs` with nested `:::tab{label="Label"}` children
+- `:::chat-log{source="..." date="..." title="..."}` with nested `:::chat-message{role="..." model="..."}`
+- `:::thinking-block{title="..." duration="..."}`, `:::tool-use{name="..."}`
+- `:::diff-add-block` / `:::diff-del-block` — block-level diff markers
+- `:::collapsible-callout[Title]`, `:::info-callout[Title]`, etc. — callout variants
+
+**Nesting rule**: Outer containers need more colons than inner ones (e.g., `::::note-scope` wrapping `:::margin-note`).
 
 ### Theme Development
 - Code syntax themes auto-downloaded from highlight.js CDN

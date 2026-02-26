@@ -18,15 +18,17 @@ abstract: |
 tags: python, jax, equinox, hashing, machine learning
 ---
 
-<NoteScope>
+::::note-scope
 For the past two years, I've developed my machine learning projects with [JAX](https://jax.readthedocs.io/) and [Equinox](https://docs.kidger.site/equinox/).
 The basis of JAX's power is how flexibly we can compose our computation graphs by writing in a
 [functional](https://en.wikipedia.org/wiki/Functional_programming) paradigm, using transformations
 like [`grad`](https://jax.readthedocs.io/en/latest/_autosummary/jax.grad.html), [`vmap`](https://jax.readthedocs.io/en/latest/_autosummary/jax.vmap.html), and [`jit`](https://jax.readthedocs.io/en/latest/_autosummary/jax.jit.html). But the *substance* of its power is
 [PyTrees](https://jax.readthedocs.io/en/latest/pytrees.html), or the ability to transform
 over different types of tree-structured inputs in a unified way.
-<MarginNote target="PyTree">To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX knows how to treat like any other tree because it's been told how to flatten and unflatten the nodes". Technically every Python object is a PyTree, even if it is treated as just a single leaf.</MarginNote>
-</NoteScope>
+:::margin-note{target="PyTree"}
+To be clear: "a PyTree" is code for "some nested composition of nodes, which JAX knows how to treat like any other tree because it's been told how to flatten and unflatten the nodes". Technically every Python object is a PyTree, even if it is treated as just a single leaf.
+:::
+::::
 
 ## Subtree selectors
 
@@ -34,7 +36,7 @@ A *subtree selector function*[^1] takes a PyTree, selects one or more nodes, and
 
 One use case for subtree selectors is to edit the nodes of a PyTree out-of-place. Suppose we have an instance of some data type:
 
-<NoteScope>
+::::note-scope
 
 ```python
 import jax
@@ -55,8 +57,10 @@ tree = Foo(
     (3.14, 2.718)
 )
 ```
-<MarginNote target="(Module)">An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.</MarginNote>
-</NoteScope>
+:::margin-note{target="(Module)"}
+An Equinox `Module` is a type of Python [dataclass](https://docs.python.org/3/library/dataclasses.html), which JAX can manipulate as a PyTree.
+:::
+::::
 
 A selector lets us specify the nodes whose values will be replaced:
 
@@ -74,10 +78,12 @@ updated_tree
 >> Foo(bar={'a': 5, 'b': 2}, baz=(6.28, 1.618))
 ```
 
-<NoteScope>
+::::note-scope
 Similarly, we can use selectors to specify partial initializations of model states. When working with JAX, we typically compose models as trees of Equinox `Module` objects. Each module node may have leaves which are its parameters; it may also be callable, and specify a transformation of the model state. But to keep the model purely functional, state cannot live inside the modules themselves—it must be passed around separately.
-<MarginNote>This is the approach I used when designing [Feedbax](https://github.com/i-m-mll/feedbax).</MarginNote>
-</NoteScope>
+:::margin-note
+This is the approach I used when designing [Feedbax](https://github.com/i-m-mll/feedbax).
+:::
+::::
 
 States typically have default initializations, but users may want to provide custom initializations for some part(s) of the state, without needing to construct the entire PyTree themselves. We might provide the custom initializations as a mapping from selectors — which specify the part(s) of the state to initialize — to the respective data to initialize with.
 
@@ -467,7 +473,9 @@ uses selectors as keys. The implementation is in the appendix, since it's less a
 ## Serialisation of selectors
 
 Another common use case for a subtree selector is to define the parts of a model which will be trained:
-<MarginNote>Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our selector assumes that our model possesses whichever nodes it refers to.</MarginNote>
+:::margin-note
+Our model objects are typically PyTrees whose nodes are of type `eqx.Module`. In this case, our selector assumes that our model possesses whichever nodes it refers to.
+:::
 ```python
 where_train = lambda model: (
     model.layer1,
