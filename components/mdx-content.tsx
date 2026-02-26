@@ -19,11 +19,13 @@ import {
 import { Figure } from "@/components/figure"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
+import { remarkDirectivesToJsx } from "@/lib/remark-directives-to-jsx"
 import { rehypeHeadingIds } from "@/lib/rehype-heading-ids"
 import rehypeHighlight from "rehype-highlight"
 import remarkGfm from "remark-gfm"
 import { remarkImgAttrs } from "@/lib/remark-img-attrs"
 import remarkMath from "remark-math"
+import remarkDirective from "remark-directive"
 import rehypeKatex from "rehype-katex"
 import rehypeCallouts from "rehype-callouts"
 import { DiffAdd, DiffDel, DiffAddBlock, DiffDelBlock } from "@/components/diff-markers"
@@ -97,6 +99,8 @@ export async function MDXContent({ children, comparisonContent }: MDXContentProp
     remarkPlugins: [
       [remarkGfm, { singleTilde: false }],
       remarkMath,
+      remarkDirective,
+      remarkDirectivesToJsx,
       remarkSidenotes,
       remarkImgAttrs,
     ],
