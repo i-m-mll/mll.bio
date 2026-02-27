@@ -78,16 +78,31 @@ export async function getPosts(): Promise<Post[]> {
     return []
   }
 
-  const fileNames = fs.readdirSync(postsDirectory)
+  const entries = fs.readdirSync(postsDirectory, { withFileTypes: true })
 
-  const posts = fileNames
-    .filter((fileName) => {
-      // Only include .md and .mdx files
-      return fileName.endsWith(".md") || fileName.endsWith(".mdx")
-    })
-    .map((fileName) => {
-      const slug = fileName.replace(/\.mdx?$/, "")
-      const fullPath = path.join(postsDirectory, fileName)
+  // Collect [slug, fullPath] pairs for flat files and folder-based posts
+  const postFiles: Array<{ slug: string; fullPath: string }> = []
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      // Folder-based post: content/posts/<dir>/<dir>.mdx or <dir>.md
+      const dirName = entry.name
+      const mdxPath = path.join(postsDirectory, dirName, `${dirName}.mdx`)
+      const mdPath = path.join(postsDirectory, dirName, `${dirName}.md`)
+      if (fs.existsSync(mdxPath)) {
+        postFiles.push({ slug: dirName, fullPath: mdxPath })
+      } else if (fs.existsSync(mdPath)) {
+        postFiles.push({ slug: dirName, fullPath: mdPath })
+      }
+    } else if (entry.name.endsWith(".md") || entry.name.endsWith(".mdx")) {
+      postFiles.push({
+        slug: entry.name.replace(/\.mdx?$/, ""),
+        fullPath: path.join(postsDirectory, entry.name),
+      })
+    }
+  }
+
+  const posts = postFiles
+    .map(({ slug, fullPath }) => {
       const fileContents = fs.readFileSync(fullPath, "utf8")
 
       const { data, content } = matter(fileContents)
@@ -135,14 +150,18 @@ export async function getPost(slug: string): Promise<Post | null> {
   try {
     let fullPath = path.join(postsDirectory, `${slug}.mdx`)
 
-    // If .mdx doesn't exist, try .md
+    // If .mdx doesn't exist, try .md, then folder-based variants
     if (!fs.existsSync(fullPath)) {
       fullPath = path.join(postsDirectory, `${slug}.md`)
-
-      // If neither exists, return null
-      if (!fs.existsSync(fullPath)) {
-        return null
-      }
+    }
+    if (!fs.existsSync(fullPath)) {
+      fullPath = path.join(postsDirectory, slug, `${slug}.mdx`)
+    }
+    if (!fs.existsSync(fullPath)) {
+      fullPath = path.join(postsDirectory, slug, `${slug}.md`)
+    }
+    if (!fs.existsSync(fullPath)) {
+      return null
     }
 
     const fileContents = fs.readFileSync(fullPath, "utf8")
