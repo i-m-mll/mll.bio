@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { getSeries, getSeriesPost, getSeriesSlugs, getSeriesPosts } from "@/lib/series"
+import { getSeries, getSeriesPost, getAllSeriesSlugs, getSeriesPosts } from "@/lib/series"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
 import { StickyTitle } from "@/components/sticky-title"
@@ -29,7 +29,7 @@ interface SearchParams {
 }
 
 export async function generateStaticParams() {
-  const seriesSlugs = await getSeriesSlugs()
+  const seriesSlugs = await getAllSeriesSlugs()
   const params: PageParams[] = []
 
   for (const slug of seriesSlugs) {

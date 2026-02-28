@@ -1,11 +1,11 @@
-import { getSeries, getSeriesSlugs } from "@/lib/series"
+import { getSeries, getAllSeriesSlugs } from "@/lib/series"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { renderInlineMarkdown } from "@/lib/utils"
 import { MDXContent } from "@/components/mdx-content"
 
 export async function generateStaticParams() {
-  const slugs = await getSeriesSlugs()
+  const slugs = await getAllSeriesSlugs()
   return slugs.map(slug => ({ slug }))
 }
 
