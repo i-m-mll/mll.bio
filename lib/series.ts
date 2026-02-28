@@ -24,6 +24,7 @@ export interface SeriesPost {
 export interface Series {
   slug: string
   title: string
+  draft?: boolean           // If true, series is hidden from public listings
   excerpt?: string          // Short plain-text/inline-markdown summary (from frontmatter)
   descriptionContent?: string // Full markdown body of _series.md (for rich rendering)
   posts: SeriesPost[]
@@ -39,6 +40,7 @@ export interface Series {
 
 export interface SeriesConfig {
   title: string
+  draft?: boolean           // If true, series is hidden from public listings
   excerpt?: string          // Short plain-text/inline-markdown summary (frontmatter field)
   descriptionContent?: string // Full markdown body of _series.md
   order?: number // For ordering series in a list
@@ -302,6 +304,7 @@ export async function getSeries(seriesSlug: string): Promise<Series | null> {
   return {
     slug: seriesSlug,
     title: config.title,
+    draft: config.draft,
     excerpt: config.excerpt,
     descriptionContent: config.descriptionContent,
     posts,
@@ -315,7 +318,7 @@ export async function getSeries(seriesSlug: string): Promise<Series | null> {
 }
 
 /**
- * Get all series with their configs and posts
+ * Get all series with their configs and posts, excluding drafts
  */
 export async function getAllSeries(): Promise<Series[]> {
   const slugs = await getSeriesSlugs()
@@ -323,10 +326,15 @@ export async function getAllSeries(): Promise<Series[]> {
 
   for (const slug of slugs) {
     const series = await getSeries(slug)
-    if (series) {
+    if (series && !series.draft) {
       seriesList.push(series)
     }
   }
 
   return seriesList
+}
+
+/** All series slugs including drafts — for generateStaticParams only */
+export async function getAllSeriesSlugs(): Promise<string[]> {
+  return getSeriesSlugs() // already returns all dirs regardless of draft status
 }
