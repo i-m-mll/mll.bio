@@ -1,0 +1,1 @@
+{"author":{"id":"2de4467f26c42fb223f4d3ddd5611e7c0513d3daae4c1dc315de039036bc997d"},"ops":[{"type":1,"timestamp":1772314535,"nonce":"GxVZGSfyeucbdorfAOvA1s87M0g=","title":"CollapsibleCallout crashes when type is undefined","message":"Using :::collapsible-callout without {type=\"...\"} passes undefined as type prop, crashing on typeStyles lookup.","files":null}]}
