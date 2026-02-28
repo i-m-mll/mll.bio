@@ -9,21 +9,21 @@ could almost quit psychotically, to spend
 my final wealth alighting to the south.
 
 Down there I'd squat in languid gluttony
-"to help my health", no doubt — and so it could
+"to help my health" no doubt, and so it could
 help, but not the way to saw and nail my mind
 its ship of naught, of ethereal wood.
 
 Now here's a fact: I'll stare into a bulb
 like some damn lizard if it means I'll get
-to hold my act together one day more.
+to hold my bit together one day more.
 For making light, we honour wizards here.
 
 And not just them, but their marketing teams,
 all charm and tact, like used boat salesmen vie
-to foist you lemons — from the horse's mouth
+to foist you lemons. From the horse's mouth
 the unreserved flies, aloft above the truth.
 
-But this bulb is *good*. More day is good! You know,
+But this bulb *is* *good*. More day is good! You know,
 I should remember some products are good.
 I overbuy this fear of sales. You see:
 my dreams were lies until I rose, less woke.
@@ -36,7 +36,7 @@ What silly masts! Pointless rope! Bitter ends.
 And as if nature weren't enough a test
 to see how fast to shit my soul could bend,
 or how much rage I'd hoist against myself—
-our world's *relentless* with its bitter trends.
+the sea’s *relentless* with its bitter trends.
 
 Am I complaining? What's the point? I know
 I've turned a page, and what was once a chore
