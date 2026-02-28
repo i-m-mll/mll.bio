@@ -1,1 +1,1 @@
-{"author":{"id":"2de4467f26c42fb223f4d3ddd5611e7c0513d3daae4c1dc315de039036bc997d"},"ops":[{"type":1,"timestamp":1772248154,"nonce":"QvkA7qSinUoaIXs/Okiv9zkFFY4=","title":"Symlinked directories not discovered in series/posts","message":"Dirent.isDirectory() uses lstat and does not follow symlinks. Use fs.statSync instead.","files":null}]}
+{"author":{"id":"2de4467f26c42fb223f4d3ddd5611e7c0513d3daae4c1dc315de039036bc997d"},"ops":[{"type":5,"timestamp":1772248159,"nonce":"WLo62bAsR0IOvvuz3MVTPGhfUCA=","added":["error"],"removed":null}]}
