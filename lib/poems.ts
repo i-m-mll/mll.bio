@@ -83,7 +83,7 @@ export interface PoemsConfig {
   dates: {
     showCreated: boolean
     showUpdated: boolean
-    format: "full" | "short" | "iso"
+    format: "full" | "short" | "iso" | "month-year"
   }
 }
 
@@ -91,7 +91,7 @@ export const poemsConfig: PoemsConfig = {
   dates: {
     showCreated: true,
     showUpdated: true,
-    format: "short",
+    format: "month-year",
   },
 }
 
@@ -109,6 +109,8 @@ export function formatPoemDate(dateStr: string | undefined, format: PoemsConfig[
       return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
     case "iso":
       return date.toISOString().split("T")[0]
+    case "month-year":
+      return date.toLocaleDateString("en-US", { year: "numeric", month: "long" })
     default:
       return dateStr
   }
