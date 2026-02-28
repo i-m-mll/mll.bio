@@ -90,7 +90,7 @@ export interface PoemsConfig {
 export const poemsConfig: PoemsConfig = {
   dates: {
     showCreated: true,
-    showUpdated: true,
+    showUpdated: false,
     format: "month-year",
   },
 }
