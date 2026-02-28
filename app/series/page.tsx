@@ -1,6 +1,7 @@
 import { getAllSeries } from "@/lib/series"
 import { siteConfig } from "@/lib/config/site"
 import { Metadata } from "next"
+import { renderInlineMarkdown } from "@/lib/utils"
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -25,10 +26,11 @@ export default async function SeriesIndexPage() {
                 <h2 className="text-2xl font-semibold tracking-tight group-hover:text-primary transition-colors">
                   {series.title}
                 </h2>
-                {series.description && (
-                  <p className="mt-2 text-muted-foreground">
-                    {series.description}
-                  </p>
+                {series.excerpt && (
+                  <p
+                    className="mt-2 text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(series.excerpt) }}
+                  />
                 )}
                 <p className="mt-2 text-sm text-muted-foreground">
                   {series.posts.length} {series.posts.length === 1 ? "part" : "parts"}

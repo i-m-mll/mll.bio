@@ -2,6 +2,7 @@ import { getSeries, getSeriesSlugs } from "@/lib/series"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { renderInlineMarkdown } from "@/lib/utils"
+import { MDXContent } from "@/components/mdx-content"
 
 export async function generateStaticParams() {
   const slugs = await getSeriesSlugs()
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return {
     title: series.title,
-    description: series.description,
+    description: series.excerpt ?? "",
   }
 }
 
@@ -34,7 +35,11 @@ export default async function SeriesPage({ params }: { params: Promise<{ slug: s
     <div className="container max-w-4xl py-10">
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight mb-4 font-heading">{series.title}</h1>
-        <p className="text-lg text-muted-foreground mb-4">{series.description}</p>
+        {series.descriptionContent && (
+          <article className="prose dark:prose-invert mb-4">
+            <MDXContent>{series.descriptionContent}</MDXContent>
+          </article>
+        )}
 
         {/* Metadata section */}
         <div className="text-muted-foreground text-sm space-y-0.5">
