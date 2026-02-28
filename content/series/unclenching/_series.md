@@ -4,3 +4,4 @@ excerpt: On robustness, clenching, and the tendency of living systems to lean in
 status: finished
 tags: [neuroscience, meditation, Buddhism, dynamical systems, predictive coding, robustness]
 ---
+Note that post links for this series currently redirect to my Substack. 

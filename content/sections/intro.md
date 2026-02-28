@@ -17,7 +17,7 @@ You can find some of my writing [here](https://mll.bio/posts).
 
 #### I’m an amateur musician.
 
-After 20 years of piano, I recently started to learn and enjoy the much higher-dimensional interface of the Expressive E [Osmose](https://www.expressivee.com/2-osmose). 
+After 20 years of piano, I recently started to learn and enjoy the much higher-dimensional interface of the [Expressive E Osmose](https://www.expressivee.com/2-osmose). 
 
 At times, I’m justifiably possessed by the creations of Schubert, Bach, Chopin, Richard Strauss, Stravinsky, Ravel, Purcell, Wagner, Saint-Saëns, and Leopold Godowsky. 
 

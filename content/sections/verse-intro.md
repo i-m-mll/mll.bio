@@ -8,4 +8,4 @@ Poetry for me is music foremost. Or a tree! A half-silly, half-sacred syllable g
 
 Of course, I do think I should use my words as more than tasteful honking. I do try, and maybe you will find some meaning here or there. Mind you though, this isn’t the page where I try to be strictly coherent, nor exactly represent myself.
 
-Now hear! As from the dais I loudly bid the oft-forgotten deity, Debris: *suffuse this fluff with light!*
+Now hear! As from the dais I bid the oft-neglected deity, Debris: *suffuse this fluff with light!*

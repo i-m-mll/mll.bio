@@ -14,7 +14,7 @@ Will I, no master painter of your sin,
 be damned to pass fresh evidence behind?
 Humility approaches by a pace
 while ego leaps to lust and soon to pain
-so eagerly—will I forget your face,
+so eagerly — will I forget your face,
 idolatrous to plunge within again?
   Oh sacred patience, lead us to the truth
   but let us lose our fear before our youth.
