@@ -149,6 +149,26 @@ export async function getPosts(): Promise<Post[]> {
   return posts
 }
 
+/** All post slugs including drafts — for generateStaticParams only */
+export async function getAllPostSlugs(): Promise<string[]> {
+  if (!fs.existsSync(postsDirectory)) return []
+  const entries = fs.readdirSync(postsDirectory, { withFileTypes: true })
+  const slugs: string[] = []
+  for (const entry of entries) {
+    const isDir = (() => { try { return fs.statSync(path.join(postsDirectory, entry.name)).isDirectory() } catch { return false } })()
+    if (isDir) {
+      const dirName = entry.name
+      if (fs.existsSync(path.join(postsDirectory, dirName, `${dirName}.mdx`)) ||
+          fs.existsSync(path.join(postsDirectory, dirName, `${dirName}.md`))) {
+        slugs.push(dirName)
+      }
+    } else if (entry.name.endsWith(".md") || entry.name.endsWith(".mdx")) {
+      slugs.push(entry.name.replace(/\.mdx?$/, ""))
+    }
+  }
+  return slugs
+}
+
 export async function getPost(slug: string): Promise<Post | null> {
   try {
     let fullPath = path.join(postsDirectory, `${slug}.mdx`)

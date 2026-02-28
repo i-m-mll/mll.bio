@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { getPost, getPosts } from "@/lib/blog"
+import { getPost, getPosts, getAllPostSlugs } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
 import { StickyTitle } from "@/components/sticky-title"
@@ -25,16 +25,11 @@ interface SearchParams {
 }
 
 export async function generateStaticParams() {
-  // Only generate pages for published posts if blog is enabled
-  if (!siteConfig.pages.blog) {
-    return []
-  }
-
-  const posts = await getPosts()
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  if (!siteConfig.pages.blog) return []
+  // Include all slugs (drafts too) so static export always has at least one param
+  // The page component returns notFound() for drafts via getPost()
+  const slugs = await getAllPostSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
