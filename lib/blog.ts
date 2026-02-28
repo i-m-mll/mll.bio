@@ -83,7 +83,10 @@ export async function getPosts(): Promise<Post[]> {
   // Collect [slug, fullPath] pairs for flat files and folder-based posts
   const postFiles: Array<{ slug: string; fullPath: string }> = []
   for (const entry of entries) {
-    if (entry.isDirectory()) {
+    // Use statSync (follows symlinks) instead of entry.isDirectory() (lstat, skips symlinked dirs)
+    // Bug: f886345 — Dirent.isDirectory() does not follow symlinks
+    const isDir = (() => { try { return fs.statSync(path.join(postsDirectory, entry.name)).isDirectory() } catch { return false } })()
+    if (isDir) {
       // Folder-based post: content/posts/<dir>/<dir>.mdx or <dir>.md
       const dirName = entry.name
       const mdxPath = path.join(postsDirectory, dirName, `${dirName}.mdx`)

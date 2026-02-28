@@ -101,7 +101,15 @@ export async function getSeriesSlugs(): Promise<string[]> {
 
   const entries = fs.readdirSync(seriesDirectory, { withFileTypes: true })
   return entries
-    .filter(entry => entry.isDirectory())
+    .filter(entry => {
+      // Use statSync (follows symlinks) instead of entry.isDirectory() (lstat, skips symlinked dirs)
+      // Bug: f886345 — Dirent.isDirectory() does not follow symlinks
+      try {
+        return fs.statSync(path.join(seriesDirectory, entry.name)).isDirectory()
+      } catch {
+        return false
+      }
+    })
     .map(entry => entry.name)
 }
 
