@@ -20,6 +20,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch writing content from monorepo
+        env:
+          MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
+        run: |
+          # Sparse-checkout 20 Writing/ from i-m-mll/main
+          mkdir -p /tmp/main-repo && cd /tmp/main-repo
+          git init -q
+          git remote add origin "https://x-access-token:${MAIN_REPO_TOKEN}@github.com/i-m-mll/main.git"
+          git sparse-checkout init --cone
+          git sparse-checkout set "20 Writing/10 Posts" "20 Writing/15 Series"
+          git pull --depth=1 origin main -q
+
+          cd "$GITHUB_WORKSPACE"
+
+          # Copy posts — skip git-tracked items (committed stubs win)
+          TRACKED_POSTS=$(git ls-files content/posts/ | sed 's|content/posts/||' | cut -d'/' -f1 | sort -u)
+          while IFS= read -r -d '' item; do
+            name=$(basename "$item")
+            if ! echo "$TRACKED_POSTS" | grep -qx "$name"; then
+              cp -r "$item" "content/posts/$name"
+            fi
+          done < <(find "/tmp/main-repo/20 Writing/10 Posts" -mindepth 1 -maxdepth 1 -print0)
+
+          # Copy series — skip git-tracked items
+          TRACKED_SERIES=$(git ls-files content/series/ | sed 's|content/series/||' | cut -d'/' -f1 | sort -u)
+          while IFS= read -r -d '' item; do
+            name=$(basename "$item")
+            if ! echo "$TRACKED_SERIES" | grep -qx "$name"; then
+              cp -r "$item" "content/series/$name"
+            fi
+          done < <(find "/tmp/main-repo/20 Writing/15 Series" -mindepth 1 -maxdepth 1 -print0)
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
