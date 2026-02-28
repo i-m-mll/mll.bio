@@ -6,6 +6,7 @@ import { getSection } from "@/lib/sections"
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
 import { SubscribeBox } from "@/components/subscribe-box"
+import { renderInlineMarkdown } from "@/lib/utils"
 import Link from "next/link"
 
 export const metadata = {
@@ -77,8 +78,11 @@ export default async function BlogPage() {
                 className="block p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
               >
                 <h3 className="font-semibold">{series.title}</h3>
-                {series.description && (
-                  <p className="text-sm text-muted-foreground mt-1">{series.description}</p>
+                {series.excerpt && (
+                  <p
+                    className="text-sm text-muted-foreground mt-1"
+                    dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(series.excerpt) }}
+                  />
                 )}
                 <p className="text-xs text-muted-foreground mt-2">
                   {series.posts.length} {series.posts.length === 1 ? "part" : "parts"}

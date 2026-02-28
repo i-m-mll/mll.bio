@@ -23,7 +23,8 @@ export interface SeriesPost {
 export interface Series {
   slug: string
   title: string
-  description: string
+  excerpt?: string          // Short plain-text/inline-markdown summary (from frontmatter)
+  descriptionContent?: string // Full markdown body of _series.md (for rich rendering)
   posts: SeriesPost[]
   // Metadata - can be specified in config or inferred from posts
   status?: string
@@ -37,7 +38,8 @@ export interface Series {
 
 export interface SeriesConfig {
   title: string
-  description: string
+  excerpt?: string          // Short plain-text/inline-markdown summary (frontmatter field)
+  descriptionContent?: string // Full markdown body of _series.md
   order?: number // For ordering series in a list
   // Optional metadata - if not specified, dates are inferred from posts
   status?: string
@@ -75,17 +77,23 @@ function formatDate(dateInput: string | Date): string {
 }
 
 /**
- * Get the series config from _series.json in the series directory
+ * Get the series config from _series.md in the series directory.
+ * The file uses gray-matter: frontmatter fields map to SeriesConfig,
+ * and the markdown body becomes descriptionContent.
  */
 function getSeriesConfig(seriesSlug: string): SeriesConfig | null {
-  const configPath = path.join(seriesDirectory, seriesSlug, "_series.json")
+  const configPath = path.join(seriesDirectory, seriesSlug, "_series.md")
   if (!fs.existsSync(configPath)) {
     return null
   }
 
   try {
     const configContent = fs.readFileSync(configPath, "utf8")
-    return JSON.parse(configContent) as SeriesConfig
+    const { data, content } = matter(configContent)
+    return {
+      ...(data as Omit<SeriesConfig, "descriptionContent">),
+      descriptionContent: content.trim() || undefined,
+    }
   } catch {
     return null
   }
@@ -127,7 +135,7 @@ export async function getSeriesPosts(seriesSlug: string): Promise<SeriesPost[]> 
 
   const posts = fileNames
     .filter(fileName => {
-      // Only include .md and .mdx files, exclude _series.json
+      // Only include .md and .mdx files, exclude _series.md and other underscore-prefixed files
       return (fileName.endsWith(".md") || fileName.endsWith(".mdx")) && !fileName.startsWith("_")
     })
     .map(fileName => {
@@ -292,7 +300,8 @@ export async function getSeries(seriesSlug: string): Promise<Series | null> {
   return {
     slug: seriesSlug,
     title: config.title,
-    description: config.description,
+    excerpt: config.excerpt,
+    descriptionContent: config.descriptionContent,
     posts,
     // Metadata from config
     status: config.status,
