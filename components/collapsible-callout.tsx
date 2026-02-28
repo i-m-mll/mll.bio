@@ -7,7 +7,7 @@ import tailwindConfig from "../tailwind.config"
 type CalloutType = "info" | "notn1" | "strdiag" | "caption" | "warning" | "error" | "success"
 
 interface CollapsibleCalloutProps {
-  type: CalloutType
+  type?: CalloutType
   title?: string | null  // null = no title, undefined = use default label
   children: ReactNode
   defaultOpen?: boolean
@@ -114,14 +114,14 @@ const typeStyles: Record<CalloutType, { bg: string; border: string; label: strin
 }
 
 export function CollapsibleCallout({
-  type,
+  type = "info" as CalloutType,
   title,
   children,
   defaultOpen = false,
   collapsible = true,
 }: CollapsibleCalloutProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
-  const styles = typeStyles[type]
+  const styles = typeStyles[type] ?? typeStyles.info
 
   // Caption callout renders as a margin note on desktop, inline on mobile
   if (type === "caption") {
