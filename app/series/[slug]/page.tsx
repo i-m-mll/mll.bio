@@ -86,33 +86,50 @@ export default async function SeriesPage({ params }: { params: Promise<{ slug: s
 
       <nav aria-label="Series posts">
         <ol className="space-y-4">
-          {series.posts.map((post, index) => (
-            <li key={post.slug}>
-              <Link
-                href={`/series/${slug}/${post.slug}`}
-                className="group block p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
-                    {index + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="font-heading font-semibold text-lg group-hover:text-primary transition-colors">
-                      {post.frontmatter.title}
-                      <span className="inline-block ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        →
-                      </span>
-                    </h2>
-                    {post.frontmatter.description && (
-                      <p className="text-muted-foreground text-sm mt-1">
-                        {post.frontmatter.description}
-                      </p>
-                    )}
-                  </div>
+          {series.posts.map((post, index) => {
+            const cardClassName = "group block p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+            const cardInner = (
+              <div className="flex items-start gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
+                  {index + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-heading font-semibold text-lg group-hover:text-primary transition-colors">
+                    {post.frontmatter.title}
+                    <span className="inline-block ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      →
+                    </span>
+                  </h2>
+                  {post.frontmatter.description && (
+                    <p className="text-muted-foreground text-sm mt-1">
+                      {post.frontmatter.description}
+                    </p>
+                  )}
                 </div>
-              </Link>
-            </li>
-          ))}
+              </div>
+            )
+            return (
+              <li key={post.slug}>
+                {post.externalUrl ? (
+                  <a
+                    href={post.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cardClassName}
+                  >
+                    {cardInner}
+                  </a>
+                ) : (
+                  <Link
+                    href={`/series/${slug}/${post.slug}`}
+                    className={cardClassName}
+                  >
+                    {cardInner}
+                  </Link>
+                )}
+              </li>
+            )
+          })}
         </ol>
       </nav>
 
