@@ -14,11 +14,8 @@ import SearchHighlighter from "@/components/search-highlighter"
 import { getDiffData } from "@/lib/diff-utils"
 import { DiffToolbar } from "@/components/diff-toolbar"
 
-// Check if diff mode is enabled
+// Check if diff mode is enabled (used at runtime only, not for static config)
 const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
-
-// Force dynamic rendering when diff mode is enabled (searchParams requires it)
-export const dynamic = enableDiff ? 'force-dynamic' : 'auto'
 
 interface SearchParams {
   diff?: string
