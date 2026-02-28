@@ -8,6 +8,7 @@ export interface SeriesPost {
   content: string
   filePath?: string // Relative path to the file (for diff tools)
   readingTime: string // Computed reading time (e.g., "5 min read")
+  externalUrl?: string // If set, post links out to this URL instead of an internal route
   frontmatter: {
     title: string
     order: number
@@ -153,6 +154,7 @@ export async function getSeriesPosts(seriesSlug: string): Promise<SeriesPost[]> 
         slug,
         content,
         readingTime: calculateReadingTime(content),
+        externalUrl: data.externalUrl || undefined,
         frontmatter: {
           title: data.title || slug,
           order: data.order ?? 999,

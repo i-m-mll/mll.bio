@@ -1,0 +1,6 @@
+---
+title: Unclenching
+excerpt: On robustness, clenching, and the tendency of living systems to lean into their behaviour. Exploring muscle clenching, self-fulfilling prophecies, predictive coding, meditation, Buddhism, dynamical systems, neural annealing, and the tradeoff between stubbornness and science.
+status: finished
+tags: [neuroscience, meditation, Buddhism, dynamical systems, predictive coding, robustness]
+---
