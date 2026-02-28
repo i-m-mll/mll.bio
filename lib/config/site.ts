@@ -31,10 +31,10 @@ export const siteConfig = {
     sections: [
       "intro",
       "social-links",
-      "what-i-do",
+      // "what-i-do",
       "projects",
       // "background", // Uncomment if about page is separate
-      "go-ahead",
+      // "go-ahead",
       "recent-posts",
     ] as const,
     // Show border around the subscribe box
