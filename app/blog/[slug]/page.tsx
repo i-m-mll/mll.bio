@@ -17,6 +17,9 @@ import { DiffToolbar } from "@/components/diff-toolbar"
 // Check if diff mode is enabled (used at runtime only, not for static config)
 const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
 
+// Only generate pages for explicitly listed params; anything else is 404
+export const dynamicParams = false
+
 interface SearchParams {
   diff?: string
 }
