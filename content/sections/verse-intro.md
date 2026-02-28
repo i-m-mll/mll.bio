@@ -4,9 +4,8 @@ title: "Verse Intro"
 
 Here are a few of the poems I've written. 
 
-For me, poetry is foremost a kind of music. A half-silly, half-sacred game of syllables.  
+Poetry for me is music foremost. Or a tree! A half-silly, half-sacred syllable game.  
 
-It's for reverence and irreverence both, which I may not express elsewhere. 
-I hope no-one will mistake that any metaphor, irony, cynicism, or incoherence encountered here 
-represents my more usual thoughts.
-(Still I expect a mistake or two.)
+Of course, I do think I should use my words as more than tasteful honking. I do try, and maybe you will find some meaning here or there. Mind you though, this isn’t the page where I try to be strictly coherent, nor exactly represent myself.
+
+Now hear! As from the dais I loudly bid the oft-forgotten deity, Debris: *suffuse this fluff with light!*
