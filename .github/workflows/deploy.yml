@@ -34,23 +34,34 @@ jobs:
 
           cd "$GITHUB_WORKSPACE"
 
-          # Copy posts — skip git-tracked items (committed stubs win)
-          TRACKED_POSTS=$(git ls-files content/posts/ | sed 's|content/posts/||' | cut -d'/' -f1 | sort -u)
-          while IFS= read -r -d '' item; do
-            name=$(basename "$item")
-            if ! echo "$TRACKED_POSTS" | grep -qx "$name"; then
-              cp -r "$item" "content/posts/$name"
-            fi
-          done < <(find "/tmp/main-repo/20 Writing/10 Posts" -mindepth 1 -maxdepth 1 -print0)
+          # Copy only items that are explicitly symlinked in mll.bio (mode 120000 in git index).
+          # This mirrors exactly what Switchboard links locally — no opportunistic copying.
+          # For each symlink, read its target, strip the local prefix to get the monorepo-relative path,
+          # then copy from the sparse checkout.
+          MONO_PREFIX="/Users/mll/Main/"
 
-          # Copy series — skip git-tracked items
-          TRACKED_SERIES=$(git ls-files content/series/ | sed 's|content/series/||' | cut -d'/' -f1 | sort -u)
-          while IFS= read -r -d '' item; do
-            name=$(basename "$item")
-            if ! echo "$TRACKED_SERIES" | grep -qx "$name"; then
-              cp -r "$item" "content/series/$name"
-            fi
-          done < <(find "/tmp/main-repo/20 Writing/15 Series" -mindepth 1 -maxdepth 1 -print0)
+          copy_symlinked() {
+            local content_dir="$1"   # e.g. content/posts
+            git ls-files -s "$content_dir" | awk '$1 == "120000" { print $2, $4 }' | \
+            while read -r blob_hash link_path; do
+              target=$(git cat-file blob "$blob_hash")
+              # Strip local prefix to get monorepo-relative path
+              rel="${target#$MONO_PREFIX}"
+              src="/tmp/main-repo/$rel"
+              dest="$link_path"
+              if [ -e "$src" ] || [ -d "$src" ]; then
+                # Replace the symlink (which CI can't follow) with the real content
+                rm -f "$dest"
+                cp -r "$src" "$dest"
+                echo "Copied: $rel -> $dest"
+              else
+                echo "Warning: symlink target not found in monorepo: $rel"
+              fi
+            done
+          }
+
+          copy_symlinked "content/posts"
+          copy_symlinked "content/series"
 
       - uses: actions/setup-node@v4
         with:
