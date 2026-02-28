@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { getPost, getPosts } from "@/lib/blog"
+import { getPost, getPosts, getAllPostSlugs } from "@/lib/blog"
 import { MDXContent } from "@/components/mdx-content"
 import { TableOfContents } from "@/components/table-of-contents"
 import { StickyTitle } from "@/components/sticky-title"
@@ -14,27 +14,22 @@ import SearchHighlighter from "@/components/search-highlighter"
 import { getDiffData } from "@/lib/diff-utils"
 import { DiffToolbar } from "@/components/diff-toolbar"
 
-// Check if diff mode is enabled
+// Check if diff mode is enabled (used at runtime only, not for static config)
 const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
 
-// Force dynamic rendering when diff mode is enabled (searchParams requires it)
-export const dynamic = enableDiff ? 'force-dynamic' : 'auto'
+// Only generate pages for explicitly listed params; anything else is 404
+export const dynamicParams = false
 
 interface SearchParams {
   diff?: string
 }
 
 export async function generateStaticParams() {
-  // Only generate pages for published posts if blog is enabled
-  if (!siteConfig.pages.blog) {
-    return []
-  }
-
-  const posts = await getPosts()
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  if (!siteConfig.pages.blog) return []
+  // Include all slugs (drafts too) so static export always has at least one param
+  // The page component returns notFound() for drafts via getPost()
+  const slugs = await getAllPostSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
