@@ -74,7 +74,7 @@ export const siteConfig = {
   social: {
     email: "mll@mll.bio",
     substack: "https://substack.com/@robustenough",
-    discord: "https://discord.gg/robustenough",
+    // discord: "https://discord.gg/robustenough",
     github: "https://github.com/i-m-mll",
     manifold: "https://manifold.markets/MLL",
     X: "https://twitter.com/robustenough",
