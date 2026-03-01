@@ -72,33 +72,26 @@ jobs:
             echo "No series-assets.yaml found, skipping"
             exit 0
           fi
-          python3 - <<'EOF'
-import yaml, os, subprocess, shutil, sys
-
-config_path = os.environ["GITHUB_WORKSPACE"] + "/.github/series-assets.yaml"
-token = os.environ["MAIN_REPO_TOKEN"]
-workspace = os.environ["GITHUB_WORKSPACE"]
-
-with open(config_path) as f:
-    entries = yaml.safe_load(f) or {}
-
-for slug, repo_url in entries.items():
-    print(f"Fetching assets for series: {slug} from {repo_url}")
-    auth_url = repo_url.replace("https://github.com/", f"https://x-access-token:{token}@github.com/")
-    clone_dir = f"/tmp/assets-{slug}"
-    subprocess.run(["git", "clone", "--depth=1", "-q", auth_url, clone_dir], check=True)
-    assets_src = os.path.join(clone_dir, "assets")
-    assets_dst = os.path.join(workspace, "public", "series", slug, "assets")
-    if os.path.isdir(assets_src):
-        os.makedirs(os.path.dirname(assets_dst), exist_ok=True)
-        if os.path.exists(assets_dst):
-            shutil.rmtree(assets_dst)
-        shutil.copytree(assets_src, assets_dst)
-        count = sum(len(files) for _, _, files in os.walk(assets_dst))
-        print(f"  Copied {count} files to public/series/{slug}/assets/")
-    else:
-        print(f"  Warning: no assets/ directory found in {repo_url}", file=sys.stderr)
-EOF
+          grep -v '^#' "$config" | grep -v '^[[:space:]]*$' | while IFS= read -r line; do
+            slug=$(echo "$line" | cut -d: -f1 | tr -d ' ')
+            repo_url=$(echo "$line" | sed 's/^[^:]*:[[:space:]]*//')
+            [ -z "$slug" ] && continue
+            [ -z "$repo_url" ] && continue
+            echo "Fetching assets for: $slug from $repo_url"
+            auth_url=$(echo "$repo_url" | sed "s|https://github.com/|https://x-access-token:${MAIN_REPO_TOKEN}@github.com/|")
+            git clone --depth=1 -q "$auth_url" "/tmp/assets-$slug"
+            src="/tmp/assets-$slug/assets"
+            dst="$GITHUB_WORKSPACE/public/series/$slug/assets"
+            if [ -d "$src" ]; then
+              mkdir -p "$(dirname "$dst")"
+              rm -rf "$dst"
+              cp -r "$src" "$dst"
+              count=$(find "$dst" -type f | wc -l | tr -d ' ')
+              echo "  Copied $count files -> public/series/$slug/assets/"
+            else
+              echo "  Warning: no assets/ dir in $repo_url" >&2
+            fi
+          done
 
       - uses: actions/setup-node@v4
         with:
