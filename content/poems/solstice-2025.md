@@ -36,7 +36,7 @@ What silly masts! Pointless rope! Bitter ends.
 And as if nature weren't enough a test
 to see how fast to shit my soul could bend,
 or how much cope I'd hoist against myself—
-the sea’s *relentless* with its bitter trends.
+our world’s *relentless* with its bitter trends.
 
 Am I complaining? What's the point? I know
 I've turned a page, and what was once a chore
