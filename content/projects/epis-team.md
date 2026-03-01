@@ -8,5 +8,4 @@ tags:
   - Multiplayer
 order: 2
 ---
-
-A multiplayer web app for calibration training and forecasting practice. Players estimate numerical answers together and see how their predictions compare to truth and each other.
+Build multiplayer tests of estimation and calibration. Users answer numerical questions together, and see how their answers compare. (LLM players optional.)

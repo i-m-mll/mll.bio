@@ -9,4 +9,4 @@ tags:
 order: 1
 ---
 
-A JAX library for training neural networks to control simulated biomechanical systems. Designed for motor neuroscience research, featuring flexible intervention and perturbation capabilities for studying feedback control.
+A JAX library for training neural networks to control simulated biomechanical systems. Designed for motor neuroscience research. 
