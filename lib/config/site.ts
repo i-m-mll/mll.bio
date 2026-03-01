@@ -25,7 +25,7 @@ export const siteConfig = {
     // Ordered list of sections to display on the homepage
     // Available sections: "intro", "social-links", "what-i-do", "projects",
     //                     "background", "go-ahead", "subscribe", "recent-posts"
-    // "projects" shows the projects list from lib/config/projects.ts
+    // "projects" shows the projects list from content/projects/*.md (via lib/projects.ts)
     // "background" is typically omitted when about is on homepage (to avoid redundancy)
     // Note: go-ahead section can include subscribe box via frontmatter (includeSubscribe: true)
     sections: [
