@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, ReactNode, useEffect } from "react"
+import { useState, ReactNode, useEffect, CSSProperties } from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
 import tailwindConfig from "../tailwind.config"
 
@@ -143,7 +143,7 @@ export function CollapsibleCallout({
             <span>{displayTitle}</span>
           </div>
         )}
-        <div className="px-4 py-3 prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+        <div className="px-4 py-3 prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0" style={{"--callout-padding-right": "1rem"} as CSSProperties}>
           {children}
         </div>
       </div>
@@ -176,7 +176,7 @@ export function CollapsibleCallout({
         </svg>
       </button>
       {isOpen && (
-        <div className="px-4 py-3 border-t border-inherit prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+        <div className="px-4 py-3 border-t border-inherit prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0" style={{"--callout-padding-right": "1rem"} as CSSProperties}>
           {children}
         </div>
       )}
