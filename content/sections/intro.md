@@ -4,7 +4,7 @@ title: "Intro"
 I’m Canadian, I live in Montréal, and my initials happen to be MLL.
 
 #### I’m finishing my PhD this year.
-Here are some keywords: computational neuroscience, motor control, RNNs, robustness, biomechanics, and software engineering.
+Here are some keywords: computational neuroscience, motor control, neural networks, robustness, biomechanics, and software engineering.
 #### I’m shifting my attention to AI safety.
 I’m excited to discover projects or positions that could make good use of my abilities.
 
