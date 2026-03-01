@@ -17,7 +17,8 @@
     "gen-images": "node scripts/gen-images.mjs",
     "render-diagrams": "node scripts/render-diagrams.mjs",
     "render-diagrams:dark": "node scripts/render-diagrams.mjs --dark",
-    "render-diagrams:all": "node scripts/render-diagrams.mjs --all"
+    "render-diagrams:all": "node scripts/render-diagrams.mjs --all",
+    "rebuild": "gh workflow run deploy.yml --repo i-m-mll/mll.bio --ref main"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.0",
