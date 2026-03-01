@@ -10,6 +10,6 @@ tags:
   - predictive coding
   - robustness
 ---
-On robustness, tyranny, sanity, and the tendency of life (and models) to flex harder when confused.
+On robustness, tyranny, sanity, and the tendency of life (and models, perhaps) to flex harder when confused.
 
 Note that post links for this series currently redirect to my Substack. 
