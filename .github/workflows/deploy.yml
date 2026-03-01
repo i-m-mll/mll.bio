@@ -63,6 +63,25 @@ jobs:
           copy_symlinked "content/posts"
           copy_symlinked "content/series"
 
+      - name: Fetch series assets (probability-theory)
+        env:
+          MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
+        run: |
+          # probability-theory assets live in i-m-mll/probability-diagrams (the nested repo).
+          # Clone it and copy assets/ to public/series/probability-theory/assets/
+          # so Next.js static export can serve them.
+          mkdir -p "$GITHUB_WORKSPACE/public/series/probability-theory"
+          git clone --depth=1 -q \
+            "https://x-access-token:${MAIN_REPO_TOKEN}@github.com/i-m-mll/probability-diagrams.git" \
+            /tmp/probability-diagrams
+          if [ -d /tmp/probability-diagrams/assets ]; then
+            cp -r /tmp/probability-diagrams/assets \
+              "$GITHUB_WORKSPACE/public/series/probability-theory/assets"
+            echo "Copied probability-theory assets ($(find /tmp/probability-diagrams/assets -type f | wc -l) files)"
+          else
+            echo "Warning: no assets/ directory in probability-diagrams repo"
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
