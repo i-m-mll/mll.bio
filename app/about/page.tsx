@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/lib/config/site"
-import { projects } from "@/lib/config/projects"
+import { getProjects } from "@/lib/projects"
 import { ProjectList } from "@/components/project-card"
 import { CVSection } from "@/components/cv-section"
 
@@ -14,6 +14,8 @@ export default async function AboutPage() {
   if (!siteConfig.pages.about) {
     notFound()
   }
+
+  const projects = await getProjects()
 
   return (
     <div className="container max-w-4xl py-10">

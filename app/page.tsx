@@ -5,7 +5,7 @@ import { SocialLinks } from "@/components/social-links"
 import { SubscribeBox } from "@/components/subscribe-box"
 import { siteConfig } from "@/lib/config/site"
 import { getSection } from "@/lib/sections"
-import { projects } from "@/lib/config/projects"
+import { getProjects } from "@/lib/projects"
 import { ProjectList } from "@/components/project-card"
 
 // Section components for dynamic rendering
@@ -38,7 +38,8 @@ async function WhatIDoSection() {
   )
 }
 
-function ProjectsSection() {
+async function ProjectsSection() {
+  const projects = await getProjects()
   if (projects.length === 0) return null
 
   return (

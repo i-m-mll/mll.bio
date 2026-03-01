@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export interface Project {
   title: string
-  description: string
+  descriptionHtml: string
   url: string
   tags?: string[]
   icon?: string // Icon key: "brain", "target", "code", "rocket", etc.
@@ -108,9 +108,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
               →
             </span>
           </h3>
-          <p className="text-muted-foreground text-sm mt-1">
-            {project.description}
-          </p>
+          <div
+            className="text-muted-foreground text-sm mt-1 [&>p]:m-0 [&>p+p]:mt-1"
+            dangerouslySetInnerHTML={{ __html: project.descriptionHtml }}
+          />
           {project.tags && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {project.tags.map((tag, index) => (
