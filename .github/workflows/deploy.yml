@@ -63,24 +63,42 @@ jobs:
           copy_symlinked "content/posts"
           copy_symlinked "content/series"
 
-      - name: Fetch series assets (probability-theory)
+      - name: Fetch series assets
         env:
           MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
         run: |
-          # probability-theory assets live in i-m-mll/probability-diagrams (the nested repo).
-          # Clone it and copy assets/ to public/series/probability-theory/assets/
-          # so Next.js static export can serve them.
-          mkdir -p "$GITHUB_WORKSPACE/public/series/probability-theory"
-          git clone --depth=1 -q \
-            "https://x-access-token:${MAIN_REPO_TOKEN}@github.com/i-m-mll/probability-diagrams.git" \
-            /tmp/probability-diagrams
-          if [ -d /tmp/probability-diagrams/assets ]; then
-            cp -r /tmp/probability-diagrams/assets \
-              "$GITHUB_WORKSPACE/public/series/probability-theory/assets"
-            echo "Copied probability-theory assets ($(find /tmp/probability-diagrams/assets -type f | wc -l) files)"
-          else
-            echo "Warning: no assets/ directory in probability-diagrams repo"
+          config="$GITHUB_WORKSPACE/.github/series-assets.yaml"
+          if [ ! -f "$config" ]; then
+            echo "No series-assets.yaml found, skipping"
+            exit 0
           fi
+          python3 - <<'EOF'
+import yaml, os, subprocess, shutil, sys
+
+config_path = os.environ["GITHUB_WORKSPACE"] + "/.github/series-assets.yaml"
+token = os.environ["MAIN_REPO_TOKEN"]
+workspace = os.environ["GITHUB_WORKSPACE"]
+
+with open(config_path) as f:
+    entries = yaml.safe_load(f) or {}
+
+for slug, repo_url in entries.items():
+    print(f"Fetching assets for series: {slug} from {repo_url}")
+    auth_url = repo_url.replace("https://github.com/", f"https://x-access-token:{token}@github.com/")
+    clone_dir = f"/tmp/assets-{slug}"
+    subprocess.run(["git", "clone", "--depth=1", "-q", auth_url, clone_dir], check=True)
+    assets_src = os.path.join(clone_dir, "assets")
+    assets_dst = os.path.join(workspace, "public", "series", slug, "assets")
+    if os.path.isdir(assets_src):
+        os.makedirs(os.path.dirname(assets_dst), exist_ok=True)
+        if os.path.exists(assets_dst):
+            shutil.rmtree(assets_dst)
+        shutil.copytree(assets_src, assets_dst)
+        count = sum(len(files) for _, _, files in os.walk(assets_dst))
+        print(f"  Copied {count} files to public/series/{slug}/assets/")
+    else:
+        print(f"  Warning: no assets/ directory found in {repo_url}", file=sys.stderr)
+EOF
 
       - uses: actions/setup-node@v4
         with:
