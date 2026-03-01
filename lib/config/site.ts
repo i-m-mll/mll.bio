@@ -65,7 +65,7 @@ export const siteConfig = {
     // Path to logo image shown next to site name (set to empty string to disable)
     logo: "/egg1.png",
     // Logo size in pixels
-    logoSize: 32,
+    logoSize: 44,
     // Gap between logo and name in pixels
     logoGap: 12,
   },
