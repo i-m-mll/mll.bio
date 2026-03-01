@@ -1,4 +1,4 @@
 # Maps series slug → GitHub repo URL for asset directories.
 # When a series has an assets_repo here, CI clones that repo
 # and copies its assets/ subdirectory to public/series/<slug>/assets/.
-probability-theory: https://github.com/i-m-mll/probability-diagrams
+# (No entries currently — probability-theory assets are now in the monorepo.)
