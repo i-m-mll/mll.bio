@@ -63,6 +63,36 @@ jobs:
           copy_symlinked "content/posts"
           copy_symlinked "content/series"
 
+      - name: Fetch series assets
+        env:
+          MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
+        run: |
+          config="$GITHUB_WORKSPACE/.github/series-assets.yaml"
+          if [ ! -f "$config" ]; then
+            echo "No series-assets.yaml found, skipping"
+            exit 0
+          fi
+          grep -v '^#' "$config" | grep -v '^[[:space:]]*$' | while IFS= read -r line; do
+            slug=$(echo "$line" | cut -d: -f1 | tr -d ' ')
+            repo_url=$(echo "$line" | sed 's/^[^:]*:[[:space:]]*//')
+            [ -z "$slug" ] && continue
+            [ -z "$repo_url" ] && continue
+            echo "Fetching assets for: $slug from $repo_url"
+            auth_url=$(echo "$repo_url" | sed "s|https://github.com/|https://x-access-token:${MAIN_REPO_TOKEN}@github.com/|")
+            git clone --depth=1 -q "$auth_url" "/tmp/assets-$slug"
+            src="/tmp/assets-$slug/assets"
+            dst="$GITHUB_WORKSPACE/public/series/$slug/assets"
+            if [ -d "$src" ]; then
+              mkdir -p "$(dirname "$dst")"
+              rm -rf "$dst"
+              cp -r "$src" "$dst"
+              count=$(find "$dst" -type f | wc -l | tr -d ' ')
+              echo "  Copied $count files -> public/series/$slug/assets/"
+            else
+              echo "  Warning: no assets/ dir in $repo_url" >&2
+            fi
+          done
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
