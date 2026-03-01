@@ -108,7 +108,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               →
             </span>
           </h3>
-          <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
+          <p className="text-muted-foreground text-sm mt-1">
             {project.description}
           </p>
           {project.tags && project.tags.length > 0 && (
