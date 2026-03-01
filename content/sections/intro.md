@@ -13,7 +13,7 @@ I’m excited to discover projects and positions that will make good use of my a
 
 #### I write.
 
-You can find some of my writing [here](https://mll.bio/posts). 
+You can find some of my writing [here](https://mll.bio/blog). 
 
 #### I’m an amateur musician.
 
