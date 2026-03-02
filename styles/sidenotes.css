@@ -61,7 +61,7 @@
   /* Enhanced positioning - better alignment with anchor points */
   float: right;
   clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
-  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  margin-right: calc(-1 * min(var(--sidenote-area-width), calc(var(--sidenote-max-width) + var(--sidenote-width-offset))) + var(--sidenote-margin-offset));
   margin-top: -1.2em; /* Restore original sidenote positioning for superscript alignment */
   position: relative;
   top: -0.3em; /* Additional fine-tuning for vertical alignment */
@@ -96,8 +96,8 @@
 .marginnote-positioned {
   float: right !important;
   clear: right !important;
-  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
-  
+  margin-right: calc(-1 * min(var(--sidenote-area-width), calc(var(--sidenote-max-width) + var(--sidenote-width-offset))) + var(--sidenote-margin-offset));
+
   /* Show on desktop only - mobile versions handled by .marginnote-mobile */
   @apply desktop:block;
   
@@ -157,7 +157,7 @@
   /* Enhanced positioning - align with inline text */
   float: right;
   clear: right; /* Prevent overlaps by ensuring each note clears the previous one */
-  margin-right: calc(-1 * var(--sidenote-area-width) + var(--sidenote-margin-offset));
+  margin-right: calc(-1 * min(var(--sidenote-area-width), calc(var(--sidenote-max-width) + var(--sidenote-width-offset))) + var(--sidenote-margin-offset));
   /* margin-top handled by specific rule below with !important */
   position: relative;
   top: -0.1em; /* Reduced fine-tuning for more natural positioning */
