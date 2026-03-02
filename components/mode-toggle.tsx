@@ -3,7 +3,11 @@ import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { uiConfig } from "@/lib/config/ui"
 
-export function ModeToggle() {
+interface ModeToggleProps {
+  size?: "sm" | "md"
+}
+
+export function ModeToggle({ size = "md" }: ModeToggleProps) {
   const { setTheme, theme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -34,7 +38,7 @@ export function ModeToggle() {
 
   return (
     <button
-      className="theme-toggle-button inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground js-only"
+      className={`theme-toggle-button inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground js-only${size === "sm" ? " theme-toggle-button--sm" : ""}`}
       onClick={handleThemeToggle}
       disabled={!mounted}
       title={

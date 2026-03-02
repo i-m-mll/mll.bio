@@ -42,6 +42,12 @@
     height: 100%;
     display: block;
   }
+  /* Smaller variant for use in footer */
+  .theme-toggle-button--sm {
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0.25rem;
+  }
 }
 
 /* Search snippet specific tweaks */

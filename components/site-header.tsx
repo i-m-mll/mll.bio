@@ -9,7 +9,6 @@ import { uiConfig } from "@/lib/config/ui"
 import { cn } from "@/lib/utils"
 import { useScrollDirectionContext } from "@/lib/contexts/scroll-direction"
 import { useSeriesHeader } from "@/lib/contexts/series-header"
-import { ModeToggle } from "@/components/mode-toggle"
 import dynamic from "next/dynamic"
 
 const SearchBar = uiConfig.search.enabled
@@ -178,18 +177,7 @@ function CollapsibleSearch() {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="flex items-center gap-2">
-              <SearchBar />
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 rounded hover:bg-accent transition-colors"
-                aria-label="Close search"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+            <SearchBar />
           </motion.div>
         ) : (
           <motion.button
@@ -320,10 +308,7 @@ export function SiteHeader() {
             )}
           </nav>
 
-          <div className="flex items-center space-x-4">
-            <CollapsibleSearch />
-            <ModeToggle />
-          </div>
+          <CollapsibleSearch />
         </div>
       </div>
 
