@@ -68,14 +68,25 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
   // Ref for the whole search component wrapper to detect outside clicks
   const wrapperRef = useRef<HTMLDivElement>(null)
 
+  const loadHighlightJs = useCallback(async () => {
+    if (hljsLoaded || hljsRef.current) return
+    try {
+      const { default: hljsModule } = await import("highlight.js")
+      const hljs = (hljsModule as any).default ?? hljsModule
+      hljsRef.current = hljs
+      setHljsLoaded(true)
+    } catch (err) {
+      console.warn("Failed to load highlight.js", err)
+    }
+  }, [hljsLoaded])
+
   // Load Lunr + index.json lazily
   const loadIndex = useCallback(async () => {
     if (indexLoaded) return
     setIndexError(null)
     try {
-      const [{ default: lunrModule }, { default: hljsModule }, response] = await Promise.all([
+      const [{ default: lunrModule }, response] = await Promise.all([
         import("lunr"),
-        import("highlight.js"),
         fetch("/search/index.json"),
       ])
 
@@ -89,19 +100,17 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
         throw new Error("Invalid search index format")
       }
 
-      const hljs = (hljsModule as any).default ?? hljsModule
-      hljsRef.current = hljs
-      setHljsLoaded(true)
       const lunr = (lunrModule as any).default ?? lunrModule
       lunrRef.current = lunr
       lunrIndexRef.current = lunr.Index.load(data.index)
       storeRef.current = data.store
       setIndexLoaded(true)
+      void loadHighlightJs()
     } catch (err) {
       console.error("Failed to load search index", err)
       setIndexError(err instanceof Error ? err.message : "Failed to load search")
     }
-  }, [indexLoaded])
+  }, [indexLoaded, loadHighlightJs])
 
   // Load index immediately on mount so it's ready when the user starts typing
   useEffect(() => {
@@ -110,7 +119,7 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
 
   // Helper to compute search results for a given trimmed query string
   const computeResults = useCallback((trimmed: string): DisplayResult[] => {
-    if (!indexLoaded || !hljsLoaded || trimmed.length < 2 || !lunrIndexRef.current) return []
+    if (!indexLoaded || trimmed.length < 2 || !lunrIndexRef.current) return []
 
     try {
       const terms = trimmed.split(/\s+/)
