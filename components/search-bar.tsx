@@ -103,6 +103,11 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
     }
   }, [indexLoaded])
 
+  // Load index immediately on mount so it's ready when the user starts typing
+  useEffect(() => {
+    loadIndex()
+  }, [loadIndex])
+
   // Helper to compute search results for a given trimmed query string
   const computeResults = useCallback((trimmed: string): DisplayResult[] => {
     if (!indexLoaded || !hljsLoaded || trimmed.length < 2 || !lunrIndexRef.current) return []
@@ -366,6 +371,19 @@ export default function SearchBar({ variant = "default" }: SearchBarProps) {
         style={variant !== "overlay" ? { width: 'max-content', maxWidth: 'calc(100vw - 1rem)' } : {}}
         >
           {indexError}
+        </div>
+      )}
+      {/* Loading state - shown when index is still loading and user has typed */}
+      {!indexLoaded && debouncedQuery.trim().length >= 2 && !indexError && (
+        <div className={cn(
+          "mt-2 px-3 py-2 text-sm text-muted-foreground bg-background",
+          variant === "overlay"
+            ? "border-t border-input"
+            : "absolute right-0 rounded-md border border-input shadow-lg"
+        )}
+        style={variant !== "overlay" ? { width: 'max-content', maxWidth: 'calc(100vw - 1rem)' } : {}}
+        >
+          Loading…
         </div>
       )}
       {/* No results state */}
