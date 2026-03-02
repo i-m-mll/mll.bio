@@ -201,6 +201,7 @@
 html {
   @apply scroll-smooth;
   font-size: calc(16px * var(--global-font-scale, 1));
+  scrollbar-gutter: stable; /* Prevent layout shift when scrollbar appears/disappears (Linux/Windows) */
 }
 
 /* Footer styles */
