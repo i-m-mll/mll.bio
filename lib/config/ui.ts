@@ -147,7 +147,7 @@ export const uiConfig = {
   // Search configuration
   search: {
     // Enable or disable the site-wide search feature
-    enabled: false,
+    enabled: true,
     // Maximum number of matched positions to keep per document (null = keep all)
     maxSnippetsPerResult: null as number | null,
     // Max lines to display for paragraph snippets in the dropdown
