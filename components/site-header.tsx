@@ -175,7 +175,7 @@ function CollapsibleSearch() {
             animate={{ width: "auto", opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden"
+            className="overflow-visible"
           >
             <SearchBar />
           </motion.div>
