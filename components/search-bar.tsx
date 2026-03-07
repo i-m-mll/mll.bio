@@ -28,6 +28,7 @@ interface DisplayResult {
 // Component props to allow reuse in overlay/mobile variant
 interface SearchBarProps {
   variant?: "default" | "overlay"
+  initialQuery?: string
 }
 
 // Simple debounce implementation (no external dep)
@@ -49,8 +50,8 @@ function highlightTokensInHtml(html: string, tokenRegex: RegExp, markClass: stri
   }).join('')
 }
 
-export default function SearchBar({ variant = "default" }: SearchBarProps) {
-  const [query, setQuery] = useState("")
+export default function SearchBar({ variant = "default", initialQuery = "" }: SearchBarProps) {
+  const [query, setQuery] = useState(initialQuery)
   const debouncedQuery = useDebouncedValue(query, 200)
   const [results, setResults] = useState<DisplayResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)

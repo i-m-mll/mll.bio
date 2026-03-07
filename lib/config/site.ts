@@ -61,7 +61,7 @@ export const siteConfig = {
     collapsibleSearch: true,
     // If true, search collapses on click-away even when there's content entered
     // If false, search only collapses on click-away when empty
-    collapseSearchOnClickAway: false,
+    collapseSearchOnClickAway: true,
     // Path to logo image shown next to site name (set to empty string to disable)
     logo: "/egg1.png",
     // Logo size in pixels
