@@ -131,6 +131,7 @@ function AnimatedName({ isHome }: { isHome: boolean }) {
 function CollapsibleSearch() {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const lastQueryRef = useRef("")
 
   // Handle click outside to collapse
   useEffect(() => {
@@ -144,6 +145,7 @@ function CollapsibleSearch() {
 
         // Collapse if empty, or if config says to always collapse
         if (!currentHasContent || siteConfig.header.collapseSearchOnClickAway) {
+          lastQueryRef.current = input?.value ?? ""
           setIsOpen(false)
         }
       }
@@ -158,6 +160,15 @@ function CollapsibleSearch() {
       clearTimeout(timeoutId)
       document.removeEventListener('mousedown', handleClickOutside)
     }
+  }, [isOpen])
+
+  // Auto-focus the input when search opens (after 220ms animation)
+  useEffect(() => {
+    if (!isOpen) return
+    const timeoutId = setTimeout(() => {
+      containerRef.current?.querySelector('input')?.focus()
+    }, 220)
+    return () => clearTimeout(timeoutId)
   }, [isOpen])
 
   if (!SearchBar) return null
@@ -177,7 +188,7 @@ function CollapsibleSearch() {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="overflow-visible"
           >
-            <SearchBar />
+            <SearchBar initialQuery={lastQueryRef.current} />
           </motion.div>
         ) : (
           <motion.button
