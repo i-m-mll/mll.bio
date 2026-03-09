@@ -133,6 +133,13 @@ function CollapsibleSearch() {
   const containerRef = useRef<HTMLDivElement>(null)
   const lastQueryRef = useRef("")
 
+  // Pre-load SearchBar bundle on mount so first click is instant
+  useEffect(() => {
+    if (SearchBar && 'preload' in SearchBar) {
+      (SearchBar as any).preload()
+    }
+  }, [])
+
   // Handle click outside to collapse
   useEffect(() => {
     if (!isOpen) return
@@ -170,31 +177,37 @@ function CollapsibleSearch() {
 
   return (
     <div className="relative" ref={containerRef}>
+      {/* Magnifying glass — always occupies layout space, fades out when search is open */}
+      <motion.button
+        animate={{ opacity: isOpen ? 0 : 1 }}
+        transition={{ duration: 0.15 }}
+        onClick={() => !isOpen && setIsOpen(true)}
+        style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
+        className="p-2 rounded hover:bg-accent transition-colors"
+        aria-label="Open search"
+        aria-hidden={isOpen}
+        tabIndex={isOpen ? -1 : 0}
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </motion.button>
+
+      {/* Search bar — absolutely positioned so it doesn't affect flex layout of the header */}
       <AnimatePresence>
-        {isOpen ? (
+        {isOpen && (
           <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "auto", opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-visible"
+            key="search-bar"
+            className="absolute right-0 top-1/2 -translate-y-1/2 overflow-visible"
+            initial={{ opacity: 0, scaleX: 0.85 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            exit={{ opacity: 0, scaleX: 0.85 }}
+            style={{ transformOrigin: 'right center' }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
             <SearchBar initialQuery={lastQueryRef.current} focusOnMount />
           </motion.div>
-        ) : (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(true)}
-            className="p-2 rounded hover:bg-accent transition-colors"
-            aria-label="Open search"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-          </motion.button>
         )}
       </AnimatePresence>
     </div>
