@@ -86,6 +86,7 @@ function buildIndex() {
       const raw = fs.readFileSync(fullPath, 'utf8')
       const { data, content } = matter(raw)
       if (data.draft) return
+      if (data.externalUrl) return
       const title = data.title || slug
       // Only index the actual Markdown body (content) – excludes front-matter
       const blocks = getBlocks(content)
@@ -126,6 +127,7 @@ function buildIndex() {
         const raw = fs.readFileSync(fullPath, 'utf8')
         const { data, content } = matter(raw)
         if (data.draft) return
+        if (data.externalUrl) return
 
         const title = data.title || postSlug
         const fullTitle = `${title} (${seriesTitle})`
