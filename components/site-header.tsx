@@ -162,15 +162,6 @@ function CollapsibleSearch() {
     }
   }, [isOpen])
 
-  // Auto-focus the input when search opens (after 220ms animation)
-  useEffect(() => {
-    if (!isOpen) return
-    const timeoutId = setTimeout(() => {
-      containerRef.current?.querySelector('input')?.focus()
-    }, 220)
-    return () => clearTimeout(timeoutId)
-  }, [isOpen])
-
   if (!SearchBar) return null
 
   if (!siteConfig.header.collapsibleSearch) {
@@ -188,7 +179,7 @@ function CollapsibleSearch() {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="overflow-visible"
           >
-            <SearchBar initialQuery={lastQueryRef.current} />
+            <SearchBar initialQuery={lastQueryRef.current} focusOnMount />
           </motion.div>
         ) : (
           <motion.button
