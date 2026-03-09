@@ -8,6 +8,9 @@ import { getSection } from "@/lib/sections"
 import { getProjects } from "@/lib/projects"
 import { ProjectList } from "@/components/project-card"
 
+// Unified size for all homepage section headings — change here to restyle all at once
+const sectionHeadingClass = "text-3xl font-bold tracking-tight font-heading"
+
 // Section components for dynamic rendering
 async function IntroSection() {
   const section = await getSection("intro")
@@ -31,7 +34,7 @@ async function WhatIDoSection() {
   return (
     <article className="prose dark:prose-invert">
       {section.frontmatter.showHeading && (
-        <h2 className="text-3xl font-bold tracking-tight mb-4 font-heading">{section.frontmatter.title}</h2>
+        <h2 className={`${sectionHeadingClass} mb-4`}>{section.frontmatter.title}</h2>
       )}
       <MDXContent>{section.content}</MDXContent>
     </article>
@@ -44,7 +47,7 @@ async function ProjectsSection() {
 
   return (
     <section>
-      <h3 className="text-2xl font-semibold tracking-tight mb-4 font-heading">Projects</h3>
+      <h2 className={`${sectionHeadingClass} mb-4`}>Projects</h2>
       <ProjectList projects={projects} />
     </section>
   )
@@ -57,7 +60,7 @@ async function BackgroundSection() {
   return (
     <article className="prose dark:prose-invert">
       {section.frontmatter.showHeading && (
-        <h2 className="text-3xl font-bold tracking-tight mb-4 font-heading">{section.frontmatter.title}</h2>
+        <h2 className={`${sectionHeadingClass} mb-4`}>{section.frontmatter.title}</h2>
       )}
       <MDXContent>{section.content}</MDXContent>
     </article>
@@ -77,7 +80,7 @@ async function GoAheadSection() {
         {/* Left 1/3: Go ahead content */}
         <article className="prose dark:prose-invert tablet:col-span-1">
           {section.frontmatter.showHeading && (
-            <h2 className="text-3xl font-bold tracking-tight mb-4 font-heading">{section.frontmatter.title}</h2>
+            <h2 className={`${sectionHeadingClass} mb-4`}>{section.frontmatter.title}</h2>
           )}
           <MDXContent>{section.content}</MDXContent>
         </article>
@@ -94,7 +97,7 @@ async function GoAheadSection() {
   return (
     <article className="prose dark:prose-invert">
       {section.frontmatter.showHeading && (
-        <h2 className="text-3xl font-bold tracking-tight mb-4 font-heading">{section.frontmatter.title}</h2>
+        <h2 className={`${sectionHeadingClass} mb-4`}>{section.frontmatter.title}</h2>
       )}
       <MDXContent>{section.content}</MDXContent>
     </article>
@@ -113,7 +116,7 @@ async function RecentPostsSection() {
 
   return (
     <div className="md:grid md:grid-cols-[auto_1fr] md:gap-x-12 md:items-start">
-      <h2 className="text-3xl font-bold tracking-tight mb-8 md:mb-0 font-heading">
+      <h2 className={`${sectionHeadingClass} mb-8 md:mb-0`}>
         Recent Posts
       </h2>
       <PostList posts={recentPosts} />
