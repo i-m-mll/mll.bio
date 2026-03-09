@@ -15,6 +15,22 @@ const outputPath = path.join(outputDir, 'index.json')
 
 const MAX_SNIPPET_LINES = Number(process.env.SNIPPET_CODE_LINES) || 7
 
+/**
+ * Strip remark-directive syntax from a markdown snippet for display/indexing.
+ * Container/leaf directive fence lines (::name, :::name) are removed.
+ * Inline text directives (:name[content]{attrs}) are replaced with just their content.
+ * Block counts and offsets are NOT affected — this is only applied to display text.
+ */
+function stripDirectives(md) {
+  // Remove container/leaf directive fence lines (lines starting with 2+ colons)
+  let result = md.replace(/^:{2,}[^\n]*$/gm, '')
+  // Replace inline text directives :name[content]{attrs} or :name[content] with just content
+  result = result.replace(/:[\w-]+\[([^\]]*)\](?:\{[^}]*\})?/g, '$1')
+  // Remove remaining bare inline directives :name{attrs} or :name
+  result = result.replace(/:[\w-]+(?:\{[^}]*\})?/g, '')
+  return result
+}
+
 function mdToHtml(md) {
   return String(unified().use(remarkParse).use(remarkMdx).use(remarkHtml).processSync(md))
 }
@@ -52,7 +68,10 @@ function getBlocks(markdown) {
       }
       plainForIndex = lines.filter(l => !l.trim().startsWith('```')).join(' ')
     } else {
-      plainForIndex = mdSnippet
+      // For non-code blocks, strip directive syntax before generating display text
+      const cleanSnippet = stripDirectives(mdSnippet)
+      plainForIndex = cleanSnippet
+      mdSnippet = cleanSnippet
     }
 
     let htmlSnippet
