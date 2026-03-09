@@ -29,6 +29,7 @@ interface DisplayResult {
 interface SearchBarProps {
   variant?: "default" | "overlay"
   initialQuery?: string
+  focusOnMount?: boolean
 }
 
 // Simple debounce implementation (no external dep)
@@ -50,7 +51,7 @@ function highlightTokensInHtml(html: string, tokenRegex: RegExp, markClass: stri
   }).join('')
 }
 
-export default function SearchBar({ variant = "default", initialQuery = "" }: SearchBarProps) {
+export default function SearchBar({ variant = "default", initialQuery = "", focusOnMount = false }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
   const debouncedQuery = useDebouncedValue(query, 200)
   const [results, setResults] = useState<DisplayResult[]>([])
@@ -117,6 +118,14 @@ export default function SearchBar({ variant = "default", initialQuery = "" }: Se
   useEffect(() => {
     loadIndex()
   }, [loadIndex])
+
+  // Focus the input on mount when requested (fires after component is ready,
+  // regardless of dynamic import load time)
+  useEffect(() => {
+    if (focusOnMount) {
+      inputRef.current?.focus()
+    }
+  }, []) // intentionally empty deps — only on mount
 
   // Helper to compute search results for a given trimmed query string
   const computeResults = useCallback((trimmed: string): DisplayResult[] => {
@@ -366,7 +375,9 @@ export default function SearchBar({ variant = "default", initialQuery = "" }: Se
         className={cn(
           variant === "overlay"
             ? "h-10 w-full rounded-md border border-input bg-background px-3 text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-accent focus:border-accent focus:outline-none"
-            : "h-8 w-40 rounded-md border border-input bg-muted/30 px-2 text-sm transition-all focus:w-56 focus:border-accent focus:bg-background focus:outline-none"
+            : focusOnMount
+              ? "h-8 w-56 rounded-md border border-input bg-background px-2 text-sm focus:border-accent focus:outline-none"
+              : "h-8 w-40 rounded-md border border-input bg-muted/30 px-2 text-sm transition-all focus:w-56 focus:border-accent focus:bg-background focus:outline-none"
         )}
         autoFocus={variant === "overlay"}
       />
