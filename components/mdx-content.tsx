@@ -60,6 +60,7 @@ const mdxComponents = {
   NoteScope,
   TableOfContents,
   img: (props: any) => <MdxImage {...props} />,
+  hr: () => <div role="separator" className="hr-separator" />,
   Tab,
   Tabs,
   // Collapsible callout components for series posts

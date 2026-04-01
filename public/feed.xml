@@ -5,100 +5,23 @@
     <link>https://mll.bio</link>
     <description>Personal website and blog</description>
     <language>en</language>
-    <lastBuildDate>Mon, 16 Jun 2025 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 01 Apr 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://mll.bio/feed.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>MLL</managingEditor>
     <webMaster>MLL</webMaster>
+    <item>
+      <title>Over the moon</title>
+      <link>https://mll.bio/blog/1-over-the-moon</link>
+      <guid isPermaLink="true">https://mll.bio/blog/1-over-the-moon</guid>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+      <description></description>
+    </item>
     <item>
       <title>Hashing functions by what they select</title>
       <link>https://mll.bio/blog/hashing-python-functions</link>
       <guid isPermaLink="true">https://mll.bio/blog/hashing-python-functions</guid>
       <pubDate>Mon, 16 Jun 2025 00:00:00 GMT</pubDate>
       <description></description>
-    </item>
-    <item>
-      <title>Clenching (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/clenching</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/clenching</guid>
-      <pubDate>Wed, 23 Oct 2024 00:00:00 GMT</pubDate>
-      <description>Epilogue: on the fear of speaking, the trap of originality, and heading back outside.</description>
-    </item>
-    <item>
-      <title>Actually... (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/actually</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/actually</guid>
-      <pubDate>Sat, 21 Sep 2024 00:00:00 GMT</pubDate>
-      <description>Expanding on simplifications: annealing context, thermodynamics, criticality, and vasocomputation.</description>
-    </item>
-    <item>
-      <title>Iron: Your brain (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/iron-your-brain</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/iron-your-brain</guid>
-      <pubDate>Tue, 20 Aug 2024 00:00:00 GMT</pubDate>
-      <description>Neural annealing: how brains escape entrenched patterns through heating, reorganization, and cooling.</description>
-    </item>
-    <item>
-      <title>&quot;Canalization&quot;? (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/canalization</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/canalization</guid>
-      <pubDate>Thu, 01 Aug 2024 00:00:00 GMT</pubDate>
-      <description>On the awkwardness of jargon, and why &apos;clenching&apos; might be the better word.</description>
-    </item>
-    <item>
-      <title>How steep was my valley (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/how-steep-was-my-valley</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/how-steep-was-my-valley</guid>
-      <pubDate>Fri, 26 Jul 2024 00:00:00 GMT</pubDate>
-      <description>Brains, dynamical systems, energy landscapes, and canalization as a general factor of psychopathology.</description>
-    </item>
-    <item>
-      <title>The past year&apos;s poems (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/the-past-years-poems</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/the-past-years-poems</guid>
-      <pubDate>Mon, 01 Apr 2024 00:00:00 GMT</pubDate>
-      <description>Poetry as a way to summon up and speak to different versions of yourself.</description>
-    </item>
-    <item>
-      <title>Who (mis)translates the (mis)translators? (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/who-mistranslates-the-mistranslators</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/who-mistranslates-the-mistranslators</guid>
-      <pubDate>Thu, 07 Sep 2023 00:00:00 GMT</pubDate>
-      <description>Connecting clenching to Buddhist psychology: tanha, upadana, sankhara, dukkha, and nibbana.</description>
-    </item>
-    <item>
-      <title>Interlude: Predictive coding (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/interlude-predictive-coding</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/interlude-predictive-coding</guid>
-      <pubDate>Thu, 31 Aug 2023 00:00:00 GMT</pubDate>
-      <description>How the brain negotiates between top-down predictions and bottom-up sensory data.</description>
-    </item>
-    <item>
-      <title>Practice (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/practice</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/practice</guid>
-      <pubDate>Mon, 14 Aug 2023 00:00:00 GMT</pubDate>
-      <description>Meditation, concentration, insight, and integration practices for escaping mental traps.</description>
-    </item>
-    <item>
-      <title>Fake it &apos;til you make it (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/fake-it-til-you-make-it</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/fake-it-til-you-make-it</guid>
-      <pubDate>Wed, 02 Aug 2023 00:00:00 GMT</pubDate>
-      <description>On the tradeoff between forcing your predictions on the world and letting the world force itself on your predictions.</description>
-    </item>
-    <item>
-      <title>Harder: Better? Faster: Stronger? (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/harder-better-faster-stronger</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/harder-better-faster-stronger</guid>
-      <pubDate>Sun, 30 Jul 2023 00:00:00 GMT</pubDate>
-      <description>How do we control the movements of our bodies when outside forces interfere?</description>
-    </item>
-    <item>
-      <title>Unclenching (Unclenching)</title>
-      <link>https://mll.bio/series/unclenching/unclenching</link>
-      <guid isPermaLink="true">https://mll.bio/series/unclenching/unclenching</guid>
-      <pubDate>Fri, 28 Jul 2023 00:00:00 GMT</pubDate>
-      <description>On robustness, finger traps, and the tendency to lean harder into what we already have.</description>
     </item>
   </channel>
 </rss>

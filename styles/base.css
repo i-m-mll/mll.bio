@@ -259,14 +259,14 @@ html {
   }
 }
 
-/* Elegant three-dot horizontal rule for prose content */
-.prose hr {
+/* Elegant asterism horizontal rule for prose content */
+.prose .hr-separator {
   border: none;
   text-align: center;
-  margin: 2.5rem 0;
+  margin: 1.5rem 0;
 }
 
-.prose hr::before {
+.prose .hr-separator::before {
   content: "⁂";
   font-size: 1.25rem;
   color: hsl(var(--muted-foreground) / 0.5);
