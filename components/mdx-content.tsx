@@ -86,10 +86,11 @@ const mdxComponents = {
 interface MDXContentProps {
   children: string // raw MDX source
   comparisonContent?: string // Old content to diff against (for diff mode)
+  enableSidenotes?: boolean // When false, skip sidenote conversion (default: true)
 }
 
 // Server Component: pre-compiles MDX during build/static generation
-export async function MDXContent({ children, comparisonContent }: MDXContentProps) {
+export async function MDXContent({ children, comparisonContent, enableSidenotes = true }: MDXContentProps) {
   // If comparison content is provided, construct diff-marked MDX
   const sourceToRender = comparisonContent
     ? constructDiffMdx(comparisonContent, children)
@@ -102,7 +103,7 @@ export async function MDXContent({ children, comparisonContent }: MDXContentProp
       remarkMath,
       remarkDirective,
       remarkDirectivesToJsx,
-      remarkSidenotes,
+      ...(enableSidenotes ? [remarkSidenotes] : []),
       remarkImgAttrs,
     ],
     rehypePlugins: [
