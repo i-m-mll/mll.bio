@@ -5,7 +5,7 @@ import * as runtime from "react/jsx-runtime"
 import { Sidenote, MarginNote } from "@/components/sidenote"
 import { NoteScope } from "@/components/note-anchor"
 import { TableOfContents } from "@/components/table-of-contents"
-import { MdxImage } from "@/components/mdx-image"
+import { PostImage } from "@/components/post-image"
 import { SidenoteProvider } from "@/components/sidenote-context"
 import { KatexStyles } from "@/components/KatexStyles"
 import { Tabs, Tab } from "@/components/tabs"
@@ -59,7 +59,7 @@ const mdxComponents = {
   MarginNote,
   NoteScope,
   TableOfContents,
-  img: (props: any) => <MdxImage {...props} />,
+  img: (props: any) => <PostImage {...props} />,
   hr: () => <div role="separator" className="hr-separator" />,
   Tab,
   Tabs,
