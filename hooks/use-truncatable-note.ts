@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown } from "@/lib/utils"
 import React from "react"
@@ -61,6 +61,12 @@ export function useTruncatableNote({
   const [shouldTruncate, setShouldTruncate] = useState(false)
   const [fullText, setFullText] = useState('')
 
+  // hasMounted guards against hydration mismatches: the first render must
+  // match the server (shouldTruncate=false). Truncation may only be enabled
+  // after the initial mount is complete and the ref has been flipped.
+  // We use a ref (not state) so the flip doesn't trigger an extra render.
+  const hasMounted = useRef(false)
+
   // Apply configuration on mount
   useEffect(() => {
     applySidenoteConfig()
@@ -68,6 +74,16 @@ export function useTruncatableNote({
 
   // Check if truncation should be enabled
   useEffect(() => {
+    // On the very first execution of this effect the component has just
+    // mounted. At that point hasMounted is still false, meaning we are in
+    // the hydration-safe window: keep shouldTruncate=false so the client
+    // tree matches the server tree. Flip the ref so all subsequent runs
+    // (triggered by isDesktop or content changes) can enable truncation.
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
+    }
+
     const { maxNoteLength } = uiConfig.sidenotes
 
     // Disable truncation on non-desktop breakpoints – notes are inline there
