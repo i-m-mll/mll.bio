@@ -19,6 +19,7 @@ export interface Post {
     status?: string // Completion status (e.g., "work in progress", "rough draft", "finished")
     epistemic?: string // Epistemic confidence (e.g., "speculative", "confident", "exploratory")
     showtoc?: boolean
+    sidenotes?: boolean
     draft?: boolean
     tags?: string[]
     // Keep 'date' for backward compatibility
@@ -132,6 +133,7 @@ export async function getPosts(): Promise<Post[]> {
           status: data.status || undefined,
           epistemic: data.epistemic || undefined,
           showtoc: data.showtoc !== false,
+          sidenotes: data.sidenotes !== false,
           draft: data.draft || false,
           tags,
           // Keep 'date' for backward compatibility
@@ -221,6 +223,7 @@ export async function getPost(slug: string): Promise<Post | null> {
         status: data.status || undefined,
         epistemic: data.epistemic || undefined,
         showtoc: data.showtoc !== false,
+        sidenotes: data.sidenotes !== false,
         draft: data.draft || false,
         tags,
         // Keep 'date' for backward compatibility
