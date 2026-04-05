@@ -1,25 +1,35 @@
 import { visit, SKIP } from 'unist-util-visit'
 import type { Root, FootnoteDefinition, FootnoteReference, Text, Paragraph } from 'mdast'
+import { uiConfig } from '@/lib/config/ui'
 
 export function remarkSidenotes() {
   return (tree: Root) => {
     const footnoteDefinitions = new Map<string, string>()
     let sidenoteCounter = 0
-    
+    const forceMarker = uiConfig.sidenotes.footnoteForceMarker
+
     // First pass: collect footnote definitions and remove them
     visit(tree, 'footnoteDefinition', (node: FootnoteDefinition, index, parent) => {
       if (parent && index !== undefined) {
         // Extract text content from the definition
         const textContent = extractTextContent(node)
-        
+
         // Skip footnote definitions that are too short or look like code examples
         // This helps avoid processing inline code examples as real footnotes
         if (textContent.length < 15 || isLikelyCodeExample(textContent, node)) {
           return // Don't process this footnote, leave it as-is
         }
-        
+
+        // Check for force-footnote marker at the start of the content
+        if (forceMarker && textContent.trimStart().startsWith(forceMarker)) {
+          // Strip the marker from the first text node in the AST so the marker
+          // character does not appear in the rendered bottom-of-page footnote
+          stripForceMarkerFromNode(node, forceMarker)
+          return // Leave this footnote definition in the AST as a standard footnote
+        }
+
         footnoteDefinitions.set(node.identifier, textContent)
-        
+
         // Remove the footnote definition from the tree
         parent.children.splice(index, 1)
         return index
@@ -392,6 +402,31 @@ function isLikelyCodeExample(content: string, node: any): boolean {
                    trimmedContent.includes('content')
   
   return codePatterns.some(pattern => pattern.test(trimmedContent)) || isGeneric
+}
+
+// Strip the force-footnote marker from the first text node in a footnoteDefinition
+// so that the marker character does not appear in the rendered output.
+function stripForceMarkerFromNode(node: any, marker: string): void {
+  // footnoteDefinition → paragraph → text (typically)
+  const walk = (n: any): boolean => {
+    if (n.type === 'text' && typeof n.value === 'string') {
+      const trimmedStart = n.value.trimStart()
+      if (trimmedStart.startsWith(marker)) {
+        // Remove the marker and any immediately following whitespace
+        const markerIndex = n.value.indexOf(marker)
+        const afterMarker = n.value.slice(markerIndex + marker.length).trimStart()
+        n.value = afterMarker
+        return true // Done — only strip from first occurrence
+      }
+    }
+    if (n.children) {
+      for (const child of n.children) {
+        if (walk(child)) return true
+      }
+    }
+    return false
+  }
+  walk(node)
 }
 
 // Helper function to extract text content from footnote definition nodes

@@ -1,5 +1,6 @@
 // Footnotes rendered at build/runtime without relying on client JS
 import { renderInlineMarkdown } from "@/lib/utils"
+import { uiConfig } from "@/lib/config/ui"
 
 interface FootnotesProps {
   content: string
@@ -70,7 +71,16 @@ export function Footnotes({ content }: FootnotesProps) {
         }
       }
 
-      const footnoteContent = body.trim().replace(/\s+/g, ' ')
+      let footnoteContent = body.trim().replace(/\s+/g, ' ')
+
+      // Strip the force-footnote marker if present so it doesn't appear in output.
+      // Footnotes WITH the marker are kept as standard footnotes (the remark plugin
+      // skips converting them to sidenotes), but the marker itself should be invisible.
+      const forceMarker = uiConfig.sidenotes.footnoteForceMarker
+      if (forceMarker && footnoteContent.startsWith(forceMarker)) {
+        footnoteContent = footnoteContent.slice(forceMarker.length).trimStart()
+      }
+
       if (footnoteContent.length >= 15 && !isLikelyCodeExample(footnoteContent)) {
         items.push({ id, number: counter, content: footnoteContent })
         counter++
