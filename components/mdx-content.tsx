@@ -39,12 +39,12 @@ import { constructDiffMdx } from "@/lib/construct-diff-mdx"
 const katexMacros: Record<string, string> = {
   // Function composition in intuitive order (f then g, not g∘f)
   "\\comp": "\\mathrel{\\circ}",
-  "\\compo": "\\mathrel{\\unicode{x2A3E}}",
+  "\\compo": "\\mathrel{\\text{⨾}}",   // U+2A3E z notation relational composition
   // Arrow variants
-  "\\mapsfrom": "\\mathrel{\\unicode{x21a4}}",
-  "\\klarrow": "\\mathrel{\\unicode{x21F4}}",
+  "\\mapsfrom": "\\mathrel{\\text{↤}}",  // U+21A4 leftwards from bar
+  "\\klarrow": "\\mathrel{\\text{⇴}}",   // U+21F4 right arrow with small circle
   // Other symbols
-  "\\weaken": "\\unicode{xA7FD}",
+  "\\weaken": "\\text{ꟽ}",               // U+A7FD latin epigraphic letter inverted m
   "\\marg": "\\mathsf{M}",
   "\\valid": "\\parallel",
   "\\ccomp": "\\mathrel{\\tiny{\\odot}\\normalsize}",

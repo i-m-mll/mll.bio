@@ -273,6 +273,11 @@ html {
   letter-spacing: 0.5em;
 }
 
+/* Tighten spacing between consecutive image-only paragraphs */
+.prose p:has(> img:only-child) + p:has(> img:only-child) {
+  margin-top: 0.25rem;
+}
+
 /* Custom bullet character for unordered lists */
 .prose ul {
   list-style: none;
