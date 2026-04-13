@@ -51,9 +51,24 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
     return {}
   }
 
+  const title = `${post.frontmatter.title} | ${series.title}`
+  const description = post.frontmatter.description
+  const ogImage = post.frontmatter.ogImage
+
   return {
-    title: `${post.frontmatter.title} | ${series.title}`,
-    description: post.frontmatter.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
   }
 }
 

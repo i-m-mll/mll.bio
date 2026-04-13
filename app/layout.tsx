@@ -14,6 +14,7 @@ import DevFontSwitcher from "@/components/DevFontSwitcher"
 import { uiConfig } from "@/lib/config/ui"
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mll.bio'),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,

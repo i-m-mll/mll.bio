@@ -21,6 +21,7 @@ export interface Post {
     showtoc?: boolean
     draft?: boolean
     tags?: string[]
+    ogImage?: string // Open Graph image URL or path relative to site root
     // Keep 'date' for backward compatibility
     date?: string
   }
@@ -134,6 +135,7 @@ export async function getPosts(): Promise<Post[]> {
           showtoc: data.showtoc !== false,
           draft: data.draft || false,
           tags,
+          ogImage: data.ogImage || undefined,
           // Keep 'date' for backward compatibility
           date: formatDate(publishedDate),
         },
@@ -223,6 +225,7 @@ export async function getPost(slug: string): Promise<Post | null> {
         showtoc: data.showtoc !== false,
         draft: data.draft || false,
         tags,
+        ogImage: data.ogImage || undefined,
         // Keep 'date' for backward compatibility
         date: formatDate(publishedDate),
       },

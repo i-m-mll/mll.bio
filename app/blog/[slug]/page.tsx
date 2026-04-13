@@ -40,9 +40,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {}
   }
 
+  const title = stripMarkdown(post.frontmatter.title)
+  const description = post.frontmatter.description
+  const ogImage = post.frontmatter.ogImage
+
   return {
-    title: stripMarkdown(post.frontmatter.title),
-    description: post.frontmatter.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
   }
 }
 

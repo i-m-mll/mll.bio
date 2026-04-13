@@ -18,6 +18,7 @@ export interface SeriesPost {
     updatedRaw?: string   // ISO date for sorting/inference
     description?: string
     draft?: boolean
+    ogImage?: string      // Open Graph image URL or path relative to site root
   }
 }
 
@@ -166,6 +167,7 @@ export async function getSeriesPosts(seriesSlug: string): Promise<SeriesPost[]> 
           updatedRaw,
           description: data.description || "",
           draft: data.draft || false,
+          ogImage: data.ogImage || undefined,
         },
       }
     })
@@ -221,6 +223,7 @@ export async function getSeriesPost(seriesSlug: string, postSlug: string): Promi
         updatedRaw,
         description: data.description || "",
         draft: data.draft || false,
+        ogImage: data.ogImage || undefined,
       },
     }
   } catch {

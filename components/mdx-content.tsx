@@ -51,6 +51,18 @@ const katexMacros: Record<string, string> = {
   "\\pcomp": "\\mathrel{\\otimes}",
   "\\condindep": "\\perp\\!\\!\\!\\!\\!\\!\\perp",
   "\\conddep": "\\top\\!\\!\\!\\!\\!\\!\\top",
+  // Accent colors (Okabe-Ito palette, matching diagram rendering pipeline)
+  "\\cA": "\\color{#0173b2}",   // blue
+  "\\cB": "\\color{#de8f05}",   // orange
+  "\\cC": "\\color{#029e73}",   // green
+  "\\cD": "\\color{#d55e00}",   // vermillion
+  "\\cE": "\\color{#cc78bc}",   // pink
+  "\\cF": "\\color{#ca9161}",   // brown
+  "\\cG": "\\color{#fbafe4}",   // light pink
+  "\\cH": "\\color{#949494}",   // gray
+  "\\cI": "\\color{#ece133}",   // yellow
+  "\\cJ": "\\color{#56b4e9}",   // light blue
+  "\\cZ": "\\color{black}",     // reset
 }
 
 // Map of components that MDX can render (these have their own "use client" if needed)
