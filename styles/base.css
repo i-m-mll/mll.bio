@@ -7,310 +7,324 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
-    --giscus-border: var(--border);
-    --giscus-background: var(--background);
-    --giscus-text: var(--foreground);
-    
-    /* Font family variables - centralized font control */
-    --font-heading: var(--font-roboto), var(--font-inter), serif;
-    --font-body: et-book, var(--font-inter), serif;
-    
-    /* Layout variables */
-    --toc-width: 250px;
-    --layout-gap: 2rem;
-    --layout-padding: 1rem;
-    --content-width: 48rem;
-    --sidebar-width: 16rem;
-    
-    /* TOC variables */
-    --toc-sticky-top: 4rem;
-    --toc-max-height-offset: 6rem;
-    --toc-padding: 1rem;
-    
-    /* Mobile inline TOC variables */
-    --mobile-toc-width-percent: 70%;
-    --mobile-toc-left-padding: 2rem;
-    
-    /* Sidenote variables */
-    --sidenote-font-size: 0.8rem;
-    --sidenote-line-height: 1.4;
-    --sidenote-min-space-between: 0.5rem;
-    --sidenote-area-width: 22vw; /* Fit within grid third column */
-    --sidenote-width-offset: 1.5rem; /* Provides padding from the edge */
-    --sidenote-margin-offset: 0.75rem; /* Gap between text and note */
-    --sidenote-min-width: 100px;
-    --sidenote-max-width: 400px; /* Allow notes to grow wider */
-    --sidenote-padding: 0.5rem;
-    --sidenote-margin-bottom: 1rem;
-    --sidenote-scroll-margin: 5rem;
-    --code-block-overflow: auto;
-    
-    /* Mobile breakpoint and responsive values */
-    --mobile-content-width: 78vw;
-    --mobile-sidenote-space: 20vw;
-    
-    /* Footer variables */
-    --footer-height: 2.5rem;
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --radius: 0.5rem;
+        --giscus-border: var(--border);
+        --giscus-background: var(--background);
+        --giscus-text: var(--foreground);
 
-    /* Subtle border for horizontal rules / dividers */
-    --border-subtle: 240 5.9% 92%;
+        /* Font family variables - centralized font control */
+        --font-heading: var(--font-roboto), var(--font-inter), serif;
+        --font-body: et-book, var(--font-inter), serif;
 
-    /* Spacing controls for inline notes on mobile */
-    --inline-note-margin-top: 1.25rem; /* Default: 1.25rem (my-5) */
-    --inline-note-margin-bottom: -1.25rem; /* Default: -1.5rem (-mb-6) */
+        /* Layout variables */
+        --toc-width: 250px;
+        --layout-gap: 2rem;
+        --layout-padding: 1rem;
+        --content-width: 48rem;
+        --sidebar-width: 16rem;
 
-    /* New code block variables */
-    --code-block-overflow: auto;
-    --code-block-white-space: pre;
-    --code-block-padding: 1rem;
-    --code-block-border-width: 1px;
-    --code-first-line-leading: calc((var(--code-line-height) - 1) * 0.5em);
-    --code-block-offset: calc(var(--code-block-padding) + var(--code-block-border-width));
+        /* TOC variables */
+        --toc-sticky-top: 4rem;
+        --toc-max-height-offset: 6rem;
+        --toc-padding: 1rem;
 
-    --prose-line-height: 1.6;
-    --code-line-height: 1.7;
+        /* Mobile inline TOC variables */
+        --mobile-toc-width-percent: 70%;
+        --mobile-toc-left-padding: 2rem;
 
-    /* Default title font */
-    --dev-title-font: 'Fira Sans', sans-serif;
+        /* Sidenote variables */
+        --sidenote-font-size: 0.9rem;
+        --sidenote-line-height: 1.4;
+        --sidenote-min-space-between: 0.5rem;
+        --sidenote-area-width: 22vw; /* Fit within grid third column */
+        --sidenote-width-offset: 1.5rem; /* Provides padding from the edge */
+        --sidenote-margin-offset: 0.75rem; /* Gap between text and note */
+        --sidenote-min-width: 100px;
+        --sidenote-max-width: 400px; /* Allow notes to grow wider */
+        --sidenote-padding: 0.5rem;
+        --sidenote-margin-bottom: 1rem;
+        --sidenote-scroll-margin: 5rem;
+        --code-block-overflow: auto;
 
-    /* Light theme highlight opacity variable (fallback 0.25) */
-    --sidenote-highlight-start-opacity-light: 0.25;
-    /* Use light variable by default */
-    --sidenote-highlight-start-opacity: var(--sidenote-highlight-start-opacity-light, 0.25);
+        /* Mobile breakpoint and responsive values */
+        --mobile-content-width: 78vw;
+        --mobile-sidenote-space: 20vw;
 
-    /*
+        /* Footer variables */
+        --footer-height: 2.5rem;
+
+        /* Subtle border for horizontal rules / dividers */
+        --border-subtle: 240 5.9% 92%;
+
+        /* Spacing controls for inline notes on mobile */
+        --inline-note-margin-top: 1.25rem; /* Default: 1.25rem (my-5) */
+        --inline-note-margin-bottom: -1.25rem; /* Default: -1.5rem (-mb-6) */
+
+        /* New code block variables */
+        --code-block-overflow: auto;
+        --code-block-white-space: pre;
+        --code-block-padding: 1rem;
+        --code-block-border-width: 1px;
+        --code-first-line-leading: calc((var(--code-line-height) - 1) * 0.5em);
+        --code-block-offset: calc(
+            var(--code-block-padding) + var(--code-block-border-width)
+        );
+
+        --prose-line-height: 1.6;
+        --code-line-height: 1.7;
+
+        /* Default title font */
+        --dev-title-font: "Fira Sans", sans-serif;
+
+        /* Light theme highlight opacity variable (fallback 0.25) */
+        --sidenote-highlight-start-opacity-light: 0.25;
+        /* Use light variable by default */
+        --sidenote-highlight-start-opacity: var(
+            --sidenote-highlight-start-opacity-light,
+            0.25
+        );
+
+        /*
      * Point to the raw RGB components of the desired Tailwind color.
      * Tailwind automatically generates these `--tw-color-*` variables for
      * its own opacity modifiers (e.g., `bg-blue-500/50`), so we can
      * safely hook into them. This is the canonical way to make a themeable
      * color compatible with dynamic alpha channels.
     */
-    /* Hard-coded RGB triplet for light-theme highlight (Tailwind blue-500) */
-    --sidenote-highlight-rgb: 59 130 246;
-  }
+        /* Hard-coded RGB triplet for light-theme highlight (Tailwind blue-500) */
+        --sidenote-highlight-rgb: 59 130 246;
+    }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --giscus-border: var(--border);
-    --giscus-background: var(--background);
-    --giscus-text: var(--foreground);
-    /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
-    --sidenote-highlight-rgb: 96 165 250;
-    /* Override with dark variable if provided */
-    --sidenote-highlight-start-opacity: var(--sidenote-highlight-start-opacity-dark, 0.35);
-  }
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --giscus-border: var(--border);
+        --giscus-background: var(--background);
+        --giscus-text: var(--foreground);
+        /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
+        --sidenote-highlight-rgb: 96 165 250;
+        /* Override with dark variable if provided */
+        --sidenote-highlight-start-opacity: var(
+            --sidenote-highlight-start-opacity-dark,
+            0.35
+        );
+    }
 
-  /* Automatically use dark palette when user's system prefers dark, but
+    /* Automatically use dark palette when user's system prefers dark, but
      only when the page isn't already explicitly set to light or dark via
      a class. This ensures manual theme toggles (which add .light / .dark)
      always win. */
-  @media (prefers-color-scheme: dark) {
-    html:not(.light):not(.dark) {
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
-      --giscus-border: var(--border);
-      --giscus-background: var(--background);
-      --giscus-text: var(--foreground);
-      /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
-      --sidenote-highlight-rgb: 96 165 250;
+    @media (prefers-color-scheme: dark) {
+        html:not(.light):not(.dark) {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+            --giscus-border: var(--border);
+            --giscus-background: var(--background);
+            --giscus-text: var(--foreground);
+            /* Hard-coded RGB triplet for dark-theme highlight (Tailwind blue-300) */
+            --sidenote-highlight-rgb: 96 165 250;
+        }
     }
-  }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-size: calc(1rem * var(--global-font-scale));
-    /* Minimum width to prevent crushing on very narrow viewports */
-    /* Increased from 320px to accommodate full name in header */
-    min-width: 400px;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-size: calc(1rem * var(--global-font-scale));
+        /* Minimum width to prevent crushing on very narrow viewports */
+        /* Increased from 320px to accommodate full name in header */
+        min-width: 400px;
+    }
 }
 
 /* Smooth scrolling for the entire page */
 /* Global font scale applied at html level so rem units scale proportionally */
 html {
-  @apply scroll-smooth;
-  font-size: calc(16px * var(--global-font-scale, 1));
-  scrollbar-gutter: stable; /* Prevent layout shift when scrollbar appears/disappears (Linux/Windows) */
+    @apply scroll-smooth;
+    font-size: calc(16px * var(--global-font-scale, 1));
+    scrollbar-gutter: stable; /* Prevent layout shift when scrollbar appears/disappears (Linux/Windows) */
 }
 
 /* Footer styles */
 .footer-container {
-  @apply flex items-center py-2.5;
-  min-height: var(--footer-height);
+    @apply flex items-center py-2.5;
+    min-height: var(--footer-height);
 }
 
 /* Fallback: when JS is disabled and OS prefers dark, ensure common elements
    that normally rely on Tailwind `dark:` variants still get an appropriate
    dark background. */
 @media (prefers-color-scheme: dark) {
-  html.no-js pre,
-  html.no-js pre code,
-  html.no-js code.hljs {
-    background-color: #1e1e1e !important;
-    color: #d4d4d4 !important;
-  }
+    html.no-js pre,
+    html.no-js pre code,
+    html.no-js code.hljs {
+        background-color: #1e1e1e !important;
+        color: #d4d4d4 !important;
+    }
 
-  /* Ensure body text uses foreground colour when Tailwind dark: variants are absent */
-  html.no-js body {
-    color: hsl(var(--foreground));
-    background-color: hsl(var(--background));
-  }
+    /* Ensure body text uses foreground colour when Tailwind dark: variants are absent */
+    html.no-js body {
+        color: hsl(var(--foreground));
+        background-color: hsl(var(--background));
+    }
 
-  /* Override light-only abstract boxes (bg-stone-75) to dark palette equivalent */
-  html.no-js .bg-stone-75 {
-    background-color: #141210 !important; /* matches stone-925 */
-    color: hsl(var(--foreground));
-  }
+    /* Override light-only abstract boxes (bg-stone-75) to dark palette equivalent */
+    html.no-js .bg-stone-75 {
+        background-color: #141210 !important; /* matches stone-925 */
+        color: hsl(var(--foreground));
+    }
 
-  /* Typical "abstract" callouts are rendered as blockquotes in MDX */
-  html.no-js blockquote {
-    background-color: hsl(var(--card)) !important;
-  }
+    /* Typical "abstract" callouts are rendered as blockquotes in MDX */
+    html.no-js blockquote {
+        background-color: hsl(var(--card)) !important;
+    }
 
-  /* Ensure typography plugin uses dark palette when .prose lacks the `prose-invert` class */
-  html.no-js .prose {
-    --tw-prose-body: hsl(var(--foreground));
-    --tw-prose-headings: hsl(var(--foreground));
-    --tw-prose-lead: hsl(var(--foreground));
-    --tw-prose-links: hsl(var(--primary));
-    --tw-prose-bold: hsl(var(--foreground));
-    --tw-prose-counters: hsl(var(--muted-foreground));
-    --tw-prose-bullets: hsl(var(--muted-foreground));
-    --tw-prose-hr: hsl(var(--border));
-    --tw-prose-quotes: hsl(var(--foreground));
-    --tw-prose-quote-borders: hsl(var(--border));
-    --tw-prose-captions: hsl(var(--muted-foreground));
-    --tw-prose-code: hsl(var(--foreground));
-    --tw-prose-pre-code: hsl(var(--foreground));
-    --tw-prose-pre-bg: transparent;
-    --tw-prose-th-borders: hsl(var(--border));
-    --tw-prose-td-borders: hsl(var(--border));
-  }
+    /* Ensure typography plugin uses dark palette when .prose lacks the `prose-invert` class */
+    html.no-js .prose {
+        --tw-prose-body: hsl(var(--foreground));
+        --tw-prose-headings: hsl(var(--foreground));
+        --tw-prose-lead: hsl(var(--foreground));
+        --tw-prose-links: hsl(var(--primary));
+        --tw-prose-bold: hsl(var(--foreground));
+        --tw-prose-counters: hsl(var(--muted-foreground));
+        --tw-prose-bullets: hsl(var(--muted-foreground));
+        --tw-prose-hr: hsl(var(--border));
+        --tw-prose-quotes: hsl(var(--foreground));
+        --tw-prose-quote-borders: hsl(var(--border));
+        --tw-prose-captions: hsl(var(--muted-foreground));
+        --tw-prose-code: hsl(var(--foreground));
+        --tw-prose-pre-code: hsl(var(--foreground));
+        --tw-prose-pre-bg: transparent;
+        --tw-prose-th-borders: hsl(var(--border));
+        --tw-prose-td-borders: hsl(var(--border));
+    }
 }
 
 /* Elegant asterism horizontal rule for prose content */
 .prose .hr-separator {
-  border: none;
-  text-align: center;
-  margin: 1.5rem 0;
+    border: none;
+    text-align: center;
+    margin: 1.5rem 0;
 }
 
 .prose .hr-separator::before {
-  content: "⁂";
-  font-size: 1.25rem;
-  color: hsl(var(--muted-foreground) / 0.5);
-  letter-spacing: 0.5em;
+    content: "⁂";
+    font-size: 1.25rem;
+    color: hsl(var(--muted-foreground) / 0.5);
+    letter-spacing: 0.5em;
 }
 
 /* Tighten spacing between consecutive image-only paragraphs */
 .prose p:has(> img:only-child) + p:has(> img:only-child) {
-  margin-top: 0.25rem;
+    margin-top: 0.25rem;
 }
 
 /* Custom bullet character for unordered lists */
 .prose ul {
-  list-style: none;
-  padding-left: 1.5em;
+    list-style: none;
+    padding-left: 1.5em;
 }
 
 .prose ul > li {
-  position: relative;
+    position: relative;
 }
 
 .prose ul > li::before {
-  content: var(--bullet-character, "•");
-  position: absolute;
-  left: -1.25em;
-  color: hsl(var(--muted-foreground) / 0.6);
-  font-size: 0.6em;
-  top: 0.55em;
+    content: var(--bullet-character, "•");
+    position: absolute;
+    left: -1.25em;
+    color: hsl(var(--muted-foreground) / 0.6);
+    font-size: 0.6em;
+    top: 0.55em;
 }
 
 /* Subtle link styling for prose content */
-.prose a:not(.sidenote-toggle):not(.marginnote-toggle):not([class*="heading-link"]) {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: hsl(var(--muted-foreground) / 0.4);
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1.5px;
-  transition: text-decoration-color 0.15s ease;
+.prose
+    a:not(.sidenote-toggle):not(.marginnote-toggle):not(
+        [class*="heading-link"]
+    ) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: hsl(var(--muted-foreground) / 0.4);
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1.5px;
+    transition: text-decoration-color 0.15s ease;
 }
 
-.prose a:not(.sidenote-toggle):not(.marginnote-toggle):not([class*="heading-link"]):hover {
-  text-decoration-color: hsl(var(--foreground) / 0.6);
-  text-decoration-style: solid;
+.prose
+    a:not(.sidenote-toggle):not(.marginnote-toggle):not(
+        [class*="heading-link"]
+    ):hover {
+    text-decoration-color: hsl(var(--foreground) / 0.6);
+    text-decoration-style: solid;
 }
 
 /* Diff visualization styles */
@@ -319,129 +333,129 @@ html {
 
 /* Inline addition - subtle green highlight */
 .diff-inline-add {
-  background: rgba(46, 160, 67, 0.2);
-  border-radius: 2px;
-  padding: 0.1em 0.2em;
-  margin: 0 -0.1em;
+    background: rgba(46, 160, 67, 0.2);
+    border-radius: 2px;
+    padding: 0.1em 0.2em;
+    margin: 0 -0.1em;
 }
 
 /* Inline deletion - red with strikethrough */
 .diff-inline-del {
-  background: rgba(248, 81, 73, 0.15);
-  color: hsl(var(--muted-foreground));
-  text-decoration: line-through;
-  border-radius: 2px;
-  padding: 0.1em 0.2em;
-  margin: 0 -0.1em;
+    background: rgba(248, 81, 73, 0.15);
+    color: hsl(var(--muted-foreground));
+    text-decoration: line-through;
+    border-radius: 2px;
+    padding: 0.1em 0.2em;
+    margin: 0 -0.1em;
 }
 
 /* Dark mode inline adjustments */
 .dark .diff-inline-add {
-  background: rgba(46, 160, 67, 0.3);
+    background: rgba(46, 160, 67, 0.3);
 }
 
 .dark .diff-inline-del {
-  background: rgba(248, 81, 73, 0.25);
+    background: rgba(248, 81, 73, 0.25);
 }
 
 /* ========== Block-level diff markers (paragraph level) ========== */
 
 /* Block addition - green left border */
 .diff-block-add {
-  border-left: 3px solid rgba(46, 160, 67, 0.7);
-  padding-left: 1rem;
-  margin-left: -1rem;
-  background: rgba(46, 160, 67, 0.05);
+    border-left: 3px solid rgba(46, 160, 67, 0.7);
+    padding-left: 1rem;
+    margin-left: -1rem;
+    background: rgba(46, 160, 67, 0.05);
 }
 
 /* Block deletion - red left border with muted text */
 .diff-block-del {
-  border-left: 3px solid rgba(248, 81, 73, 0.6);
-  padding-left: 1rem;
-  margin-left: -1rem;
-  background: rgba(248, 81, 73, 0.05);
-  opacity: 0.7;
+    border-left: 3px solid rgba(248, 81, 73, 0.6);
+    padding-left: 1rem;
+    margin-left: -1rem;
+    background: rgba(248, 81, 73, 0.05);
+    opacity: 0.7;
 }
 
 .diff-block-del del {
-  text-decoration: line-through;
-  color: hsl(var(--muted-foreground));
+    text-decoration: line-through;
+    color: hsl(var(--muted-foreground));
 }
 
 /* Dark mode block adjustments */
 .dark .diff-block-add {
-  background: rgba(46, 160, 67, 0.08);
-  border-left-color: rgba(46, 160, 67, 0.8);
+    background: rgba(46, 160, 67, 0.08);
+    border-left-color: rgba(46, 160, 67, 0.8);
 }
 
 .dark .diff-block-del {
-  background: rgba(248, 81, 73, 0.08);
-  border-left-color: rgba(248, 81, 73, 0.7);
+    background: rgba(248, 81, 73, 0.08);
+    border-left-color: rgba(248, 81, 73, 0.7);
 }
 
 /* ========== Legacy styles (for toolbar/modal) ========== */
 
 /* Added content - inline highlighting */
 .diff-added {
-  background: rgba(46, 160, 67, 0.15);
-  border-radius: 2px;
-  padding: 0 2px;
-  margin: 0 -2px;
+    background: rgba(46, 160, 67, 0.15);
+    border-radius: 2px;
+    padding: 0 2px;
+    margin: 0 -2px;
 }
 
 /* Dark mode adjustment */
 .dark .diff-added {
-  background: rgba(46, 160, 67, 0.25);
+    background: rgba(46, 160, 67, 0.25);
 }
 
 /* Legacy line-level diff styles (for modal/toolbar display) */
 .diff-add {
-  background: rgba(46, 160, 67, 0.15);
-  border-left: 3px solid rgba(46, 160, 67, 0.6);
-  padding-left: 0.5rem;
-  margin-left: -0.5rem;
+    background: rgba(46, 160, 67, 0.15);
+    border-left: 3px solid rgba(46, 160, 67, 0.6);
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
 }
 
 .diff-del {
-  background: rgba(248, 81, 73, 0.15);
-  border-left: 3px solid rgba(248, 81, 73, 0.6);
-  padding-left: 0.5rem;
-  margin-left: -0.5rem;
-  text-decoration: line-through;
-  opacity: 0.7;
+    background: rgba(248, 81, 73, 0.15);
+    border-left: 3px solid rgba(248, 81, 73, 0.6);
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
+    text-decoration: line-through;
+    opacity: 0.7;
 }
 
 /* Dark mode adjustments for legacy diff */
 .dark .diff-add {
-  background: rgba(46, 160, 67, 0.2);
-  border-left-color: rgba(46, 160, 67, 0.7);
+    background: rgba(46, 160, 67, 0.2);
+    border-left-color: rgba(46, 160, 67, 0.7);
 }
 
 .dark .diff-del {
-  background: rgba(248, 81, 73, 0.2);
-  border-left-color: rgba(248, 81, 73, 0.7);
+    background: rgba(248, 81, 73, 0.2);
+    border-left-color: rgba(248, 81, 73, 0.7);
 }
 
 /* ========== Diff visibility toggle ========== */
 /* When diff is hidden via toggle, remove all visual markers */
 
 body.diff-hidden .diff-inline-add {
-  background: none;
-  padding: 0;
-  margin: 0;
+    background: none;
+    padding: 0;
+    margin: 0;
 }
 
 body.diff-hidden .diff-inline-del {
-  display: none;
+    display: none;
 }
 
 body.diff-hidden .diff-block-add {
-  border-left: none;
-  padding-left: 0;
-  margin-left: 0;
-  background: none;
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+    background: none;
 }
 
 body.diff-hidden .diff-block-del {
-  display: none;
-} 
+    display: none;
+}

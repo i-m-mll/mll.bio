@@ -39,7 +39,7 @@ export function Figure({ src, alt = "", caption, children, noDarkVariant }: Figu
       <figure className="my-6 flex flex-col items-center">
         <img src={actualSrc} alt={alt} className="rounded-md" />
         {captionContent && (
-          <figcaption className="mt-4 text-sm text-muted-foreground italic text-left max-w-[calc(100%-3rem)]">
+          <figcaption className="mt-4 text-sm text-left max-w-[calc(100%-3rem)]">
             {captionContent}
           </figcaption>
         )}
@@ -53,7 +53,7 @@ export function Figure({ src, alt = "", caption, children, noDarkVariant }: Figu
       <img src={actualSrc} alt={alt} className="rounded-md" />
       {captionContent && (
         <figcaption
-          className="figure-margin-caption absolute text-muted-foreground italic"
+          className="figure-margin-caption absolute"
           style={{
             right: 'calc(-1 * min(var(--sidenote-area-width), calc(var(--sidenote-max-width) + var(--sidenote-width-offset))) + var(--sidenote-margin-offset) + var(--callout-padding-right, 0px))',
             top: '50%',

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import typography from "@tailwindcss/typography"
 
 const config = {
   darkMode: "class",
@@ -245,7 +246,7 @@ const config = {
     },
   },
   plugins: [
-    require("@tailwindcss/typography"),
+    typography,
     function({ addUtilities }: any) {
       const newUtilities = {
         '.clip-sr-only': {
