@@ -66,6 +66,12 @@ export const uiConfig = {
   
   // Sidenotes configuration
   sidenotes: {
+    // Marker character that forces a footnote to remain as a bottom-of-page footnote
+    // instead of being converted to a sidenote. Place it at the start of the footnote
+    // definition content (e.g. "[^1]: ! This stays as a footnote").
+    // The marker is stripped from the rendered output.
+    footnoteForceMarker: '!',
+
     // Minimum space between consecutive sidenotes in the margin
     minSpaceBetweenNotes: '0rem',
     
