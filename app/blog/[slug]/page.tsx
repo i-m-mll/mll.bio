@@ -156,11 +156,14 @@ export default async function BlogPostPage({
         )}
         
         <article className="prose dark:prose-invert mx-auto relative">
-          <MDXContent comparisonContent={diffData?.oldContent ?? undefined}>{post.content}</MDXContent>
+          <MDXContent
+            comparisonContent={diffData?.oldContent ?? undefined}
+            enableSidenotes={post.frontmatter.sidenotes}
+          >{post.content}</MDXContent>
           <Suspense fallback={null}>
             <SearchHighlighter />
           </Suspense>
-          <Footnotes content={post.content} />
+          {post.frontmatter.sidenotes !== false && <Footnotes content={post.content} />}
         </article>
       </div>
 
