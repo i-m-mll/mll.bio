@@ -1,5 +1,6 @@
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import * as Diff from 'diff'
+import fs from 'fs'
 import * as path from 'path'
 
 export interface CommitInfo {
@@ -17,7 +18,7 @@ function getGitRoot(filePath: string): string {
   const dir = path.dirname(fullPath)
   try {
     // Get the git root for the file's directory
-    return execSync('git rev-parse --show-toplevel', {
+    return execFileSync('git', ['rev-parse', '--show-toplevel'], {
       encoding: 'utf-8',
       cwd: dir
     }).trim()
@@ -41,8 +42,17 @@ export function getCommitList(filePath: string, limit = 10): CommitInfo[] {
   try {
     const gitRoot = getGitRoot(filePath)
     const relativePath = getRelativePath(filePath, gitRoot)
-    const output = execSync(
-      `git log --pretty=format:"%H|%h|%ad|%s" --date=short -n ${limit} -- "${relativePath}"`,
+    const output = execFileSync(
+      'git',
+      [
+        'log',
+        '--pretty=format:%H|%h|%ad|%s',
+        '--date=short',
+        '-n',
+        String(normalizeLimit(limit)),
+        '--',
+        relativePath,
+      ],
       { encoding: 'utf-8', cwd: gitRoot }
     )
 
@@ -66,11 +76,14 @@ export function getCommitList(filePath: string, limit = 10): CommitInfo[] {
  * Get file content at a specific commit
  */
 export function getVersionAtCommit(filePath: string, commitSha: string): string | null {
+  if (!isCommitSha(commitSha)) return null
+
   try {
     const gitRoot = getGitRoot(filePath)
     const relativePath = getRelativePath(filePath, gitRoot)
-    return execSync(
-      `git show ${commitSha}:"${relativePath}"`,
+    return execFileSync(
+      'git',
+      ['show', `${commitSha}:${relativePath}`],
       { encoding: 'utf-8', cwd: gitRoot }
     )
   } catch {
@@ -83,8 +96,6 @@ export function getVersionAtCommit(filePath: string, commitSha: string): string 
  */
 export function getCurrentVersion(filePath: string): string | null {
   try {
-    const fs = require('fs')
-    const path = require('path')
     const fullPath = path.join(process.cwd(), filePath)
     return fs.readFileSync(fullPath, 'utf-8')
   } catch {
@@ -99,14 +110,24 @@ export function hasUncommittedChanges(filePath: string): boolean {
   try {
     const gitRoot = getGitRoot(filePath)
     const relativePath = getRelativePath(filePath, gitRoot)
-    const status = execSync(
-      `git status --porcelain -- "${relativePath}"`,
+    const status = execFileSync(
+      'git',
+      ['status', '--porcelain', '--', relativePath],
       { encoding: 'utf-8', cwd: gitRoot }
     )
     return status.trim().length > 0
   } catch {
     return false
   }
+}
+
+function normalizeLimit(limit: number): number {
+  if (!Number.isFinite(limit)) return 10
+  return Math.max(1, Math.min(Math.floor(limit), 100))
+}
+
+function isCommitSha(value: string): boolean {
+  return /^[0-9a-f]{7,40}$/i.test(value)
 }
 
 export interface DiffLine {

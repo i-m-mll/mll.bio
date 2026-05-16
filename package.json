@@ -10,7 +10,7 @@
     "build": "next build",
     "prebuild": "node scripts/build-themes.mjs && node scripts/gen-images.mjs && node scripts/generate-search-index.mjs && node scripts/generate-rss.mjs && node scripts/maybe-render-diagrams.mjs && node scripts/setup-dev-assets.mjs",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "serve": "npm run build && npx serve out -p 3000",
     "serve-only": "npx serve out -p 3000",
     "dev-fonts": "node scripts/gen-font-variants.mjs",

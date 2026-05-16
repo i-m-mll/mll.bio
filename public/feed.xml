@@ -5,10 +5,17 @@
     <link>https://mll.bio</link>
     <description>Personal website and blog</description>
     <language>en</language>
-    <lastBuildDate>Sat, 04 Apr 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 12 Apr 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://mll.bio/feed.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>MLL</managingEditor>
     <webMaster>MLL</webMaster>
+    <item>
+      <title>States and events (Functional Probability)</title>
+      <link>https://mll.bio/series/probability-theory/events</link>
+      <guid isPermaLink="true">https://mll.bio/series/probability-theory/events</guid>
+      <pubDate>Sun, 12 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Distinguishing two special classes of channels, with opposite flavours.</description>
+    </item>
     <item>
       <title>The Blueberries of Wrath</title>
       <link>https://mll.bio/blog/the-blueberries-of-wrath</link>
@@ -36,6 +43,20 @@
       <guid isPermaLink="true">https://mll.bio/blog/hashing-python-functions</guid>
       <pubDate>Mon, 16 Jun 2025 00:00:00 GMT</pubDate>
       <description></description>
+    </item>
+    <item>
+      <title>Functions (Functional Probability)</title>
+      <link>https://mll.bio/series/probability-theory/functions</link>
+      <guid isPermaLink="true">https://mll.bio/series/probability-theory/functions</guid>
+      <pubDate>Thu, 21 Dec 2023 00:08:00 GMT</pubDate>
+      <description>Using mapping diagrams to understand functions, composition, and inverses.</description>
+    </item>
+    <item>
+      <title>Channels (Functional Probability)</title>
+      <link>https://mll.bio/series/probability-theory/channels</link>
+      <guid isPermaLink="true">https://mll.bio/series/probability-theory/channels</guid>
+      <pubDate>Mon, 11 Dec 2023 21:57:00 GMT</pubDate>
+      <description>Introducing probability distributions and channels as functional models of uncertainty.</description>
     </item>
   </channel>
 </rss>

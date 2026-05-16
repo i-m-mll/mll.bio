@@ -20,7 +20,6 @@ const projectsDirectory = path.join(process.cwd(), "content/projects")
 async function markdownToHtml(markdown: string): Promise<string> {
   // unified's TypeScript overloads don't handle the remark-parse → remark-html pipeline well;
   // the cast to `any` avoids the false-positive type error at the .use() call site.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const processor = (unified() as any).use(remarkParse).use(remarkHtml, { sanitize: false })
   const result = await processor.process(markdown)
   return String(result)
