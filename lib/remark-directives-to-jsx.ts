@@ -1,4 +1,3 @@
-import { visit, SKIP } from "unist-util-visit"
 import type { Plugin } from "unified"
 import type { Root } from "mdast"
 
@@ -40,61 +39,68 @@ const LABEL_PROP_BY_DIRECTIVE: Record<string, string> = {
 
 export const remarkDirectivesToJsx: Plugin<[], Root> = () => {
   return (tree: any) => {
-    visit(tree, (node: any, index: number | undefined, parent: any) => {
-      if (!isDirectiveNode(node) || !parent || index === undefined) return
+    transformChildren(tree)
+  }
+}
 
-      if (node.type === "textDirective") {
-        const componentName = INLINE_COMPONENTS[node.name]
-        if (!componentName) return
+function transformChildren(node: any): void {
+  if (!Array.isArray(node.children)) return
 
-        parent.children[index] = {
-          type: "mdxJsxTextElement",
-          name: componentName,
-          attributes: attributesToMdx(node.attributes),
-          children: node.children ?? [],
-        }
-        return SKIP
+  node.children = node.children.map((child: any) => transformNode(child))
+}
+
+function transformNode(node: any): any {
+  transformChildren(node)
+
+  if (!isDirectiveNode(node)) return node
+
+  if (node.type === "textDirective") {
+    const componentName = INLINE_COMPONENTS[node.name]
+    if (!componentName) return node
+
+    return {
+      type: "mdxJsxTextElement",
+      name: componentName,
+      attributes: attributesToMdx(node.attributes),
+      children: node.children ?? [],
+    }
+  }
+
+  if (node.type === "containerDirective") {
+    const componentName = CONTAINER_COMPONENTS[node.name]
+    if (!componentName) return node
+
+    const children = node.children ?? []
+    const maybeLabel = extractDirectiveLabel(node.name, children)
+    const attributes = attributesToMdx(node.attributes)
+
+    if (maybeLabel && LABEL_PROP_BY_DIRECTIVE[node.name]) {
+      const labelProp = LABEL_PROP_BY_DIRECTIVE[node.name]
+      if (!attributes.some((attr: any) => attr.name === labelProp)) {
+        attributes.push({
+          type: "mdxJsxAttribute",
+          name: labelProp,
+          value: maybeLabel,
+        })
       }
+    }
 
-      if (node.type === "containerDirective") {
-        const componentName = CONTAINER_COMPONENTS[node.name]
-        if (!componentName) return
+    return {
+      type: "mdxJsxFlowElement",
+      name: componentName,
+      attributes,
+      children,
+    }
+  }
 
-        const children = node.children ?? []
-        const maybeLabel = extractDirectiveLabel(node.name, children)
-        const attributes = attributesToMdx(node.attributes)
+  const componentName = LEAF_COMPONENTS[node.name]
+  if (!componentName) return node
 
-        if (maybeLabel && LABEL_PROP_BY_DIRECTIVE[node.name]) {
-          const labelProp = LABEL_PROP_BY_DIRECTIVE[node.name]
-          if (!attributes.some((attr: any) => attr.name === labelProp)) {
-            attributes.push({
-              type: "mdxJsxAttribute",
-              name: labelProp,
-              value: maybeLabel,
-            })
-          }
-        }
-
-        parent.children[index] = {
-          type: "mdxJsxFlowElement",
-          name: componentName,
-          attributes,
-          children,
-        }
-        return SKIP
-      }
-
-      const componentName = LEAF_COMPONENTS[node.name]
-      if (!componentName) return
-
-      parent.children[index] = {
-        type: "mdxJsxFlowElement",
-        name: componentName,
-        attributes: attributesToMdx(node.attributes),
-        children: [],
-      }
-      return SKIP
-    })
+  return {
+    type: "mdxJsxFlowElement",
+    name: componentName,
+    attributes: attributesToMdx(node.attributes),
+    children: [],
   }
 }
 

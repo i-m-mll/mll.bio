@@ -15,6 +15,72 @@ const outputPath = path.join(outputDir, 'index.json')
 
 const MAX_SNIPPET_LINES = Number(process.env.SNIPPET_CODE_LINES) || 7
 
+function isMarkdownFile(fileName) {
+  return fileName.endsWith('.md') || fileName.endsWith('.mdx')
+}
+
+function isDirectory(fullPath) {
+  try {
+    return fs.statSync(fullPath).isDirectory()
+  } catch {
+    return false
+  }
+}
+
+function getBlogPostFiles() {
+  if (!fs.existsSync(postsDirectory)) return []
+
+  const entries = fs.readdirSync(postsDirectory, { withFileTypes: true })
+  const postFiles = []
+
+  entries.forEach((entry) => {
+    const entryPath = path.join(postsDirectory, entry.name)
+    if (isDirectory(entryPath)) {
+      const mdxPath = path.join(entryPath, `${entry.name}.mdx`)
+      const mdPath = path.join(entryPath, `${entry.name}.md`)
+      if (fs.existsSync(mdxPath)) {
+        postFiles.push({ slug: entry.name, fullPath: mdxPath })
+      } else if (fs.existsSync(mdPath)) {
+        postFiles.push({ slug: entry.name, fullPath: mdPath })
+      }
+    } else if (isMarkdownFile(entry.name)) {
+      postFiles.push({
+        slug: entry.name.replace(/\.mdx?$/, ''),
+        fullPath: entryPath,
+      })
+    }
+  })
+
+  return postFiles
+}
+
+function getSeriesSlugs() {
+  if (!fs.existsSync(seriesDirectory)) return []
+
+  return fs.readdirSync(seriesDirectory, { withFileTypes: true })
+    .filter(entry => isDirectory(path.join(seriesDirectory, entry.name)))
+    .map(entry => entry.name)
+}
+
+function readSeriesConfig(seriesPath) {
+  const mdPath = path.join(seriesPath, '_series.md')
+  if (fs.existsSync(mdPath)) {
+    const raw = fs.readFileSync(mdPath, 'utf8')
+    const { data, content } = matter(raw)
+    return {
+      ...data,
+      descriptionContent: content.trim() || undefined,
+    }
+  }
+
+  const jsonPath = path.join(seriesPath, '_series.json')
+  if (fs.existsSync(jsonPath)) {
+    return JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
+  }
+
+  return null
+}
+
 /**
  * Strip remark-directive syntax from a markdown snippet for display/indexing.
  * Container/leaf directive fence lines (::name, :::name) are removed.
@@ -95,72 +161,56 @@ function buildIndex() {
   const store = {}
 
   // Index blog posts
-  if (fs.existsSync(postsDirectory)) {
-    const files = fs.readdirSync(postsDirectory)
+  getBlogPostFiles().forEach(({ slug, fullPath }) => {
+    // Read file and strip YAML front-matter so it does not get indexed as regular text
+    const raw = fs.readFileSync(fullPath, 'utf8')
+    const { data, content } = matter(raw)
+    if (data.draft) return
+    if (data.externalUrl) return
+    const title = data.title || slug
+    // Only index the actual Markdown body (content) – excludes front-matter
+    const blocks = getBlocks(content)
+    blocks.forEach((block, idx) => {
+      const id = `${slug}::${idx}`
+      allDocs.push({ id, title, content: block.plain, slug, url: `/blog/${slug}` })
+      store[id] = { title, slug, url: `/blog/${slug}`, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
+    })
+  })
+
+  // Index series posts
+  getSeriesSlugs().forEach((seriesSlug) => {
+    const seriesPath = path.join(seriesDirectory, seriesSlug)
+
+    // Read series config for the series title
+    let seriesTitle = seriesSlug
+    const config = readSeriesConfig(seriesPath)
+    if (config?.draft) return
+    if (config) seriesTitle = config.title || seriesSlug
+
+    const files = fs.readdirSync(seriesPath)
     files.forEach((fileName) => {
-      if (!fileName.endsWith('.md') && !fileName.endsWith('.mdx')) return
-      const slug = fileName.replace(/\.mdx?$/, '')
-      const fullPath = path.join(postsDirectory, fileName)
-      // Read file and strip YAML front-matter so it does not get indexed as regular text
+      if (!isMarkdownFile(fileName)) return
+      if (fileName.startsWith('_')) return // Skip config files
+
+      const postSlug = fileName.replace(/\.mdx?$/, '')
+      const fullPath = path.join(seriesPath, fileName)
       const raw = fs.readFileSync(fullPath, 'utf8')
       const { data, content } = matter(raw)
       if (data.draft) return
       if (data.externalUrl) return
-      const title = data.title || slug
-      // Only index the actual Markdown body (content) – excludes front-matter
+
+      const title = data.title || postSlug
+      const fullTitle = `${title} (${seriesTitle})`
+      const url = `/series/${seriesSlug}/${postSlug}`
+
       const blocks = getBlocks(content)
       blocks.forEach((block, idx) => {
-        const id = `${slug}::${idx}`
-        allDocs.push({ id, title, content: block.plain, slug, url: `/blog/${slug}` })
-        store[id] = { title, slug, url: `/blog/${slug}`, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
+        const id = `series-${seriesSlug}-${postSlug}::${idx}`
+        allDocs.push({ id, title: fullTitle, content: block.plain, slug: postSlug, url })
+        store[id] = { title: fullTitle, slug: postSlug, url, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
       })
     })
-  }
-
-  // Index series posts
-  if (fs.existsSync(seriesDirectory)) {
-    const seriesFolders = fs.readdirSync(seriesDirectory, { withFileTypes: true })
-      .filter(d => d.isDirectory())
-      .map(d => d.name)
-
-    seriesFolders.forEach((seriesSlug) => {
-      const seriesPath = path.join(seriesDirectory, seriesSlug)
-
-      // Read series config for the series title
-      let seriesTitle = seriesSlug
-      const configPath = path.join(seriesPath, '_series.json')
-      if (fs.existsSync(configPath)) {
-        try {
-          const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-          seriesTitle = config.title || seriesSlug
-        } catch {}
-      }
-
-      const files = fs.readdirSync(seriesPath)
-      files.forEach((fileName) => {
-        if (!fileName.endsWith('.md') && !fileName.endsWith('.mdx')) return
-        if (fileName.startsWith('_')) return // Skip config files
-
-        const postSlug = fileName.replace(/\.mdx?$/, '')
-        const fullPath = path.join(seriesPath, fileName)
-        const raw = fs.readFileSync(fullPath, 'utf8')
-        const { data, content } = matter(raw)
-        if (data.draft) return
-        if (data.externalUrl) return
-
-        const title = data.title || postSlug
-        const fullTitle = `${title} (${seriesTitle})`
-        const url = `/series/${seriesSlug}/${postSlug}`
-
-        const blocks = getBlocks(content)
-        blocks.forEach((block, idx) => {
-          const id = `series-${seriesSlug}-${postSlug}::${idx}`
-          allDocs.push({ id, title: fullTitle, content: block.plain, slug: postSlug, url })
-          store[id] = { title: fullTitle, slug: postSlug, url, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
-        })
-      })
-    })
-  }
+  })
 
   if (allDocs.length === 0) return { index: null, store: {} }
 
@@ -186,4 +236,4 @@ function main() {
   console.log(`Search index generated with ${Object.keys(store).length} snippets`)
 }
 
-main() 
+main()

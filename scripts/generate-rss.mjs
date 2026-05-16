@@ -18,21 +18,83 @@ const POSTS_DIR = path.join(process.cwd(), 'content/posts')
 const SERIES_DIR = path.join(process.cwd(), 'content/series')
 const OUTPUT_PATH = path.join(process.cwd(), 'public/feed.xml')
 
+function isMarkdownFile(fileName) {
+  return fileName.endsWith('.md') || fileName.endsWith('.mdx')
+}
+
+function isDirectory(fullPath) {
+  try {
+    return fs.statSync(fullPath).isDirectory()
+  } catch {
+    return false
+  }
+}
+
+function getBlogPostFiles() {
+  if (!fs.existsSync(POSTS_DIR)) return []
+
+  const entries = fs.readdirSync(POSTS_DIR, { withFileTypes: true })
+  const postFiles = []
+
+  for (const entry of entries) {
+    const entryPath = path.join(POSTS_DIR, entry.name)
+    if (isDirectory(entryPath)) {
+      const mdxPath = path.join(entryPath, `${entry.name}.mdx`)
+      const mdPath = path.join(entryPath, `${entry.name}.md`)
+      if (fs.existsSync(mdxPath)) {
+        postFiles.push({ slug: entry.name, fullPath: mdxPath })
+      } else if (fs.existsSync(mdPath)) {
+        postFiles.push({ slug: entry.name, fullPath: mdPath })
+      }
+    } else if (isMarkdownFile(entry.name)) {
+      postFiles.push({
+        slug: entry.name.replace(/\.mdx?$/, ''),
+        fullPath: entryPath,
+      })
+    }
+  }
+
+  return postFiles
+}
+
+function getSeriesSlugs() {
+  if (!fs.existsSync(SERIES_DIR)) return []
+
+  return fs.readdirSync(SERIES_DIR, { withFileTypes: true })
+    .filter(entry => isDirectory(path.join(SERIES_DIR, entry.name)))
+    .map(entry => entry.name)
+}
+
+function readSeriesConfig(seriesPath) {
+  const mdPath = path.join(seriesPath, '_series.md')
+  if (fs.existsSync(mdPath)) {
+    const raw = fs.readFileSync(mdPath, 'utf-8')
+    const { data, content } = matter(raw)
+    return {
+      ...data,
+      descriptionContent: content.trim() || undefined,
+    }
+  }
+
+  const jsonPath = path.join(seriesPath, '_series.json')
+  if (fs.existsSync(jsonPath)) {
+    return JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+  }
+
+  return null
+}
+
 /**
  * Get all blog posts
  */
 function getBlogPosts() {
-  if (!fs.existsSync(POSTS_DIR)) return []
-
-  const files = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.md') || f.endsWith('.mdx'))
-
-  return files.map(file => {
-    const content = fs.readFileSync(path.join(POSTS_DIR, file), 'utf-8')
+  return getBlogPostFiles().map(({ slug, fullPath }) => {
+    const content = fs.readFileSync(fullPath, 'utf-8')
     const { data } = matter(content)
 
     if (data.draft) return null
+    if (data.externalUrl) return null
 
-    const slug = file.replace(/\.mdx?$/, '')
     const publishedDate = data.published || data.date || new Date().toISOString()
 
     return {
@@ -49,37 +111,36 @@ function getBlogPosts() {
  * Get all series posts
  */
 function getSeriesPosts() {
-  if (!fs.existsSync(SERIES_DIR)) return []
-
-  const seriesDirs = fs.readdirSync(SERIES_DIR, { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name)
-
   const posts = []
 
-  for (const seriesSlug of seriesDirs) {
+  for (const seriesSlug of getSeriesSlugs()) {
     const seriesPath = path.join(SERIES_DIR, seriesSlug)
-    const configPath = path.join(seriesPath, '_series.json')
 
-    if (!fs.existsSync(configPath)) continue
-
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+    const config = readSeriesConfig(seriesPath)
+    if (!config) continue
     if (config.draft) continue
 
-    const files = fs.readdirSync(seriesPath).filter(f => f.endsWith('.md') || f.endsWith('.mdx'))
+    const files = fs.readdirSync(seriesPath)
+      .filter(file => isMarkdownFile(file) && !file.startsWith('_'))
 
     for (const file of files) {
       const content = fs.readFileSync(path.join(seriesPath, file), 'utf-8')
       const { data } = matter(content)
 
       if (data.draft) continue
+      if (data.externalUrl) continue
 
       const slug = file.replace(/\.mdx?$/, '')
-      const createdDate = data.created || new Date().toISOString()
+      const createdDate = data.created
+        || data.published
+        || data.date
+        || config.updated
+        || config.created
+        || new Date().toISOString()
 
       posts.push({
         title: `${data.title || slug} (${config.title})`,
-        description: data.description || config.description || '',
+        description: data.description || config.excerpt || config.description || '',
         url: `${SITE_URL}/series/${seriesSlug}/${slug}`,
         date: new Date(createdDate),
         type: 'series'
