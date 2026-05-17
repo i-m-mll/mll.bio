@@ -17,6 +17,7 @@ import {
   CaptionCallout,
 } from "@/components/collapsible-callout"
 import { Figure } from "@/components/figure"
+import { SpotifyEmbed, YouTubeEmbed } from "@/components/media-embed"
 
 import { remarkSidenotes } from "@/lib/remark-sidenotes"
 import { remarkDirectivesToJsx } from "@/lib/remark-directives-to-jsx"
@@ -83,6 +84,9 @@ const mdxComponents = {
   CaptionCallout,
   // Figure with margin-aligned caption
   Figure,
+  // Media embeds
+  SpotifyEmbed,
+  YouTubeEmbed,
   // Diff marker components
   DiffAdd,
   DiffDel,

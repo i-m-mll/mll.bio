@@ -281,6 +281,20 @@ html {
     letter-spacing: 0.5em;
 }
 
+/* Plain blockquotes: keep the rule, but do not add quotation marks or italics. */
+.prose blockquote {
+    font-style: normal;
+}
+
+.prose blockquote p {
+    font-style: normal;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+    content: none;
+}
+
 /* Tighten spacing between consecutive image-only paragraphs */
 .prose p:has(> img:only-child) + p:has(> img:only-child) {
     margin-top: 0.25rem;
