@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import React from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
 import { useTruncatableNote } from "../hooks/use-truncatable-note"
@@ -94,6 +94,7 @@ export function Sidenote({ id, number, children, content }: SidenoteProps) {
 export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode, dataMobileVersion, dataFollowsCode }: MarginNoteProps) {
   const [generatedId, setGeneratedId] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
+  const normalizedChildren = useMemo(() => normalizeMarginNoteChildren(children), [children])
   const isCodeBlock = dataInCode === 'true'
   const isPositioned = top !== undefined || y !== undefined || line !== undefined || dataTargetPosition !== undefined || dataPositioned === 'true'
   const isMobileVersion = dataMobileVersion === 'true'
@@ -110,7 +111,7 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
 
   // Use shared truncation logic
   const { shouldTruncate, isExpanded, renderContent } = useTruncatableNote({
-    content: children,
+    content: normalizedChildren,
     isDesktop,
   })
 
@@ -193,4 +194,29 @@ export function MarginNote({ id, children, top, y, line, dataTargetPosition, dat
       </span>
     </span>
   )
+}
+
+function normalizeMarginNoteChildren(children: React.ReactNode): React.ReactNode {
+  const normalized = React.Children.toArray(children).flatMap((child, index) => {
+    if (!isParagraphElement(child)) return [child]
+
+    const paragraphChildren = React.Children.toArray(child.props.children)
+    if (index === 0) return paragraphChildren
+
+    return [
+      <React.Fragment key={`margin-note-break-${index}`}>
+        <br />
+        <br />
+      </React.Fragment>,
+      ...paragraphChildren,
+    ]
+  })
+
+  return normalized.length === 1 ? normalized[0] : normalized
+}
+
+function isParagraphElement(
+  child: React.ReactNode
+): child is React.ReactElement<{ children?: React.ReactNode }> {
+  return React.isValidElement(child) && child.type === 'p'
 }
