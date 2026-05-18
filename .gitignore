@@ -47,4 +47,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude-story/
+.playwright-mcp/
 public/series/

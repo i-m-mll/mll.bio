@@ -73,9 +73,9 @@ function formatDate(dateInput: string | Date): string {
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
 
-  const day = date.getDate()
-  const month = months[date.getMonth()]
-  const year = date.getFullYear()
+  const day = date.getUTCDate()
+  const month = months[date.getUTCMonth()]
+  const year = date.getUTCFullYear()
 
   return `${day} ${month} ${year}`
 }

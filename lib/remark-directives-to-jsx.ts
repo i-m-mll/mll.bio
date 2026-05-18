@@ -27,6 +27,8 @@ const CONTAINER_COMPONENTS: Record<string, string> = {
 
 const LEAF_COMPONENTS: Record<string, string> = {
   figure: "Figure",
+  "spotify-embed": "SpotifyEmbed",
+  "youtube-embed": "YouTubeEmbed",
 }
 
 const LABEL_PROP_BY_DIRECTIVE: Record<string, string> = {
