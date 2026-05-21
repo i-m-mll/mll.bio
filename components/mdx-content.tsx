@@ -105,17 +105,35 @@ function Code({
   children,
   ...props
 }: React.ComponentPropsWithoutRef<"code">) {
-  const keyedChildren = React.Children.toArray(children).map((child, index) => {
-    const key = `code-child-${index}`
+  return <code {...props}>{normalizeCodeChildren(children, "code-child")}</code>
+}
 
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { key })
-    }
+function normalizeCodeChildren(
+  children: React.ReactNode,
+  keyPrefix: string
+): React.ReactNode {
+  return React.Children.toArray(children).map((child, index) =>
+    normalizeCodeChild(child, `${keyPrefix}-${index}`)
+  )
+}
 
+function normalizeCodeChild(
+  child: React.ReactNode,
+  key: string
+): React.ReactNode {
+  if (!React.isValidElement<{ children?: React.ReactNode }>(child)) {
     return <React.Fragment key={key}>{child}</React.Fragment>
-  })
+  }
 
-  return <code {...props}>{keyedChildren}</code>
+  const props =
+    child.props.children === undefined
+      ? { key }
+      : {
+          key,
+          children: normalizeCodeChildren(child.props.children, key),
+        }
+
+  return React.cloneElement(child, props)
 }
 
 interface MDXContentProps {
