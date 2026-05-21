@@ -1,5 +1,6 @@
 // Server Component: compiles MDX at build time
 import { compile, run } from "@mdx-js/mdx"
+import React from "react"
 import * as runtime from "react/jsx-runtime"
 
 import { Sidenote, MarginNote } from "@/components/sidenote"
@@ -72,6 +73,7 @@ const mdxComponents = {
   MarginNote,
   NoteScope,
   TableOfContents,
+  code: Code,
   img: (props: any) => <PostImage {...props} />,
   hr: () => <div role="separator" className="hr-separator" />,
   Tab,
@@ -97,6 +99,23 @@ const mdxComponents = {
   ChatMessage,
   ThinkingBlock,
   ToolUse,
+}
+
+function Code({
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<"code">) {
+  const keyedChildren = React.Children.toArray(children).map((child, index) => {
+    const key = `code-child-${index}`
+
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { key })
+    }
+
+    return <React.Fragment key={key}>{child}</React.Fragment>
+  })
+
+  return <code {...props}>{keyedChildren}</code>
 }
 
 interface MDXContentProps {
