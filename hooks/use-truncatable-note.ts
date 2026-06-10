@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { uiConfig, applySidenoteConfig } from "@/lib/config/ui"
+import { useState, useEffect, useMemo, useCallback } from "react"
+import { uiConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown } from "@/lib/utils"
 import React from "react"
 
@@ -58,50 +58,33 @@ export function useTruncatableNote({
   isDesktop,
 }: UseTruncatableNoteOptions): UseTruncatableNoteResult {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [shouldTruncate, setShouldTruncate] = useState(false)
-  const [fullText, setFullText] = useState('')
+  const [hasMounted, setHasMounted] = useState(false)
+  const { maxNoteLength } = uiConfig.sidenotes
 
-  // hasMounted guards against hydration mismatches: the first render must
-  // match the server (shouldTruncate=false). Truncation may only be enabled
-  // after the initial mount is complete and the ref has been flipped.
-  // We use a ref (not state) so the flip doesn't trigger an extra render.
-  const hasMounted = useRef(false)
-
-  // Apply configuration on mount
   useEffect(() => {
-    applySidenoteConfig()
+    setHasMounted(true)
   }, [])
 
-  // Check if truncation should be enabled
+  const fullText = useMemo(() => {
+    if (!hasMounted || !isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
+      return ''
+    }
+
+    return getTextContent(content)
+  }, [content, hasMounted, isDesktop, maxNoteLength])
+
+  const shouldTruncate =
+    hasMounted &&
+    isDesktop &&
+    maxNoteLength !== null &&
+    maxNoteLength !== undefined &&
+    fullText.length > maxNoteLength
+
   useEffect(() => {
-    // On the very first execution of this effect the component has just
-    // mounted. At that point hasMounted is still false, meaning we are in
-    // the hydration-safe window: keep shouldTruncate=false so the client
-    // tree matches the server tree. Flip the ref so all subsequent runs
-    // (triggered by isDesktop or content changes) can enable truncation.
-    if (!hasMounted.current) {
-      hasMounted.current = true
-      return
-    }
-
-    const { maxNoteLength } = uiConfig.sidenotes
-
-    // Disable truncation on non-desktop breakpoints – notes are inline there
-    if (!isDesktop || maxNoteLength === null || maxNoteLength === undefined) {
-      setShouldTruncate(false)
-      return
-    }
-
-    const textContent = getTextContent(content)
-    setFullText(textContent)
-
-    if (textContent.length > maxNoteLength) {
-      setShouldTruncate(true)
+    if (shouldTruncate) {
       setIsExpanded(false)
-    } else {
-      setShouldTruncate(false)
     }
-  }, [content, isDesktop])
+  }, [content, shouldTruncate])
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded(prev => !prev)
@@ -117,7 +100,7 @@ export function useTruncatableNote({
       return typeof content === 'string' ? renderMarkdownSpan(content) : content
     }
 
-    const { maxNoteLength, truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
+    const { truncationSuffix, expandButtonText, collapseButtonText } = uiConfig.sidenotes
 
     if (isExpanded) {
       return React.createElement(React.Fragment, null,
@@ -140,7 +123,7 @@ export function useTruncatableNote({
         }, expandButtonText)
       )
     }
-  }, [shouldTruncate, isExpanded, content, fullText])
+  }, [shouldTruncate, isExpanded, content, fullText, maxNoteLength])
 
   return {
     isExpanded,

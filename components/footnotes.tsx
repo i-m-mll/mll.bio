@@ -1,6 +1,7 @@
 // Footnotes rendered at build/runtime without relying on client JS
 import { renderInlineMarkdown } from "@/lib/utils"
 import { uiConfig } from "@/lib/config/ui"
+import { isLikelySidenoteCodeExample } from "@/lib/sidenote-code-example"
 
 interface FootnotesProps {
   content: string
@@ -10,31 +11,6 @@ interface FootnoteItem {
   id: string
   number: number
   content: string
-}
-
-// Helper function to check if content looks like a code example (copied from remark plugin)
-function isLikelyCodeExample(content: string): boolean {
-  const trimmedContent = content.trim().toLowerCase()
-  
-  // Check for the specific problematic pattern from the demo
-  if (trimmedContent === 'your sidenote content` for the definition') {
-    return true
-  }
-  
-  // Check for other common patterns that indicate this is a code example
-  const codePatterns = [
-    /^your sidenote content/i, // The specific example from the demo
-    /^.*content.*for.*definition/i, // Generic example pattern
-    /^\w+\s+(content|example|text)$/i, // Short placeholder text
-    /content.*definition/i, // Generic pattern
-    /for the definition$/i, // Ends with "for the definition"
-  ]
-  
-  // Also check if the content is very generic/placeholder-like
-  const isGeneric = trimmedContent.includes('your') && 
-                   trimmedContent.includes('content')
-  
-  return codePatterns.some(pattern => pattern.test(trimmedContent)) || isGeneric
 }
 
 export function Footnotes({ content }: FootnotesProps) {
@@ -81,7 +57,7 @@ export function Footnotes({ content }: FootnotesProps) {
         footnoteContent = footnoteContent.slice(forceMarker.length).trimStart()
       }
 
-      if (footnoteContent.length >= 15 && !isLikelyCodeExample(footnoteContent)) {
+      if (footnoteContent.length >= 15 && !isLikelySidenoteCodeExample(footnoteContent)) {
         items.push({ id, number: counter, content: footnoteContent })
         counter++
       }
@@ -115,4 +91,4 @@ export function Footnotes({ content }: FootnotesProps) {
       </ol>
     </div>
   )
-} 
+}
