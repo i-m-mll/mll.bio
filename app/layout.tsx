@@ -42,7 +42,6 @@ export default function RootLayout({
       className={`no-js ${initialThemeClass} ${inter.variable} ${roboto.variable} ${roboto_mono.variable} ${source_serif.variable} ${fira_sans.variable}`}
     >
       <head>
-        <link href="https://iosevka-webfonts.github.io/iosevka/iosevka.css" rel="stylesheet" />
         <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
         <script
           dangerouslySetInnerHTML={{
