@@ -1,19 +1,21 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { renderInlineMarkdown, cn, escapeHtml, sanitizeClassName, sanitizeHtml } from "@/lib/utils"
+import { renderInlineMarkdown, cn } from "@/lib/utils"
 import { uiConfig } from "@/lib/config/ui"
 
 interface StoredDoc {
   title: string
   slug: string
   url?: string
-  snippetHtml: string
-  isCode?: boolean
-  codeText?: string
-  lang?: string
+  blocks: Array<{
+    blockIdx: number
+    snippetText: string
+    isCode?: boolean
+    lang?: string
+  }>
 }
 
 interface DisplayResult {
@@ -22,6 +24,7 @@ interface DisplayResult {
   slug: string
   url: string
   snippetHtml: string
+  isCode?: boolean
   blockIdx?: number
 }
 
@@ -42,22 +45,52 @@ function useDebouncedValue<T>(value: T, delay = 300) {
   return debounced
 }
 
-// Safely wrap matched tokens in <mark> while ignoring HTML tags/attributes
-function highlightTokensInHtml(html: string, tokenRegex: RegExp, markClass: string): string {
-  const segments = html.split(/(<[^>]+?>)/g)
-  return segments.map(seg => {
-    if (seg.startsWith('<')) return seg
-    return seg.replace(tokenRegex, `<mark class="${markClass}" data-search-highlight>$1</mark>`)
-  }).join('')
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 }
 
-function safeSearchSnippetHtml(html: string, tokenRegex?: RegExp): string {
-  const sanitized = sanitizeHtml(html)
-  if (!tokenRegex) return sanitized
-  return sanitizeHtml(highlightTokensInHtml(sanitized, tokenRegex, "bg-yellow-300 dark:bg-yellow-600 text-inherit"))
+function snippetToHtml(block: StoredDoc["blocks"][number]): string {
+  const snippet = escapeHtml(block.snippetText)
+  if (block.isCode) {
+    const languageClass = block.lang ? ` language-${block.lang}` : ""
+    return `<pre class="border rounded-md overflow-hidden"><code class="hljs${languageClass}">${snippet}</code></pre>`
+  }
+  return `<p>${snippet}</p>`
+}
+
+function findBlocksForTerms(doc: StoredDoc, terms: string[], limit: number | null): StoredDoc["blocks"] {
+  const escapedTerms = terms
+    .filter(Boolean)
+    .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+
+  if (escapedTerms.length === 0) {
+    return doc.blocks.slice(0, limit ?? 1)
+  }
+
+  const regex = new RegExp(escapedTerms.join("|"), "i")
+  const matches = doc.blocks.filter((block) => regex.test(block.snippetText))
+  const blocks = matches.length > 0 ? matches : doc.blocks.slice(0, 1)
+
+  if (limit === null || limit < 0) return blocks
+  return blocks.slice(0, Math.max(1, limit))
+}
+
+// Safely wrap matched tokens in <mark> after snippet text has been escaped.
+function highlightTokensInEscapedHtml(html: string, tokenRegex: RegExp, markClass: string): string {
+  const segments = html.split(/(<[^>]+?>)/g)
+  return segments.map((seg) => {
+    if (seg.startsWith("<")) return seg
+    return seg.replace(tokenRegex, `<mark class="${markClass}" data-search-highlight>$1</mark>`)
+  }).join("")
 }
 
 export default function SearchBar({ variant = "default", initialQuery = "", focusOnMount = false }: SearchBarProps) {
+  const searchId = useId()
   const [query, setQuery] = useState(initialQuery)
   const debouncedQuery = useDebouncedValue(query, 200)
   const [results, setResults] = useState<DisplayResult[]>([])
@@ -69,24 +102,13 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
   const lunrRef = useRef<any>(null)
   const storeRef = useRef<Record<string, StoredDoc>>({})
   const inputRef = useRef<HTMLInputElement>(null)
-  const hljsRef = useRef<any>(null)
   const router = useRouter()
-  const [hljsLoaded, setHljsLoaded] = useState(false)
   const listRef = useRef<HTMLUListElement>(null)
   // Ref for the whole search component wrapper to detect outside clicks
   const wrapperRef = useRef<HTMLDivElement>(null)
-
-  const loadHighlightJs = useCallback(async () => {
-    if (hljsLoaded || hljsRef.current) return
-    try {
-      const { default: hljsModule } = await import("highlight.js")
-      const hljs = (hljsModule as any).default ?? hljsModule
-      hljsRef.current = hljs
-      setHljsLoaded(true)
-    } catch (err) {
-      console.warn("Failed to load highlight.js", err)
-    }
-  }, [hljsLoaded])
+  const listboxId = `${searchId}-results`
+  const statusId = `${searchId}-status`
+  const activeOptionId = selectedIndex >= 0 ? `${searchId}-option-${selectedIndex}` : undefined
 
   // Load Lunr + index.json lazily
   const loadIndex = useCallback(async () => {
@@ -113,12 +135,11 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
       lunrIndexRef.current = lunr.Index.load(data.index)
       storeRef.current = data.store
       setIndexLoaded(true)
-      void loadHighlightJs()
     } catch (err) {
       console.error("Failed to load search index", err)
       setIndexError(err instanceof Error ? err.message : "Failed to load search")
     }
-  }, [indexLoaded, loadHighlightJs])
+  }, [indexLoaded])
 
   // Load index immediately on mount so it's ready when the user starts typing
   useEffect(() => {
@@ -131,7 +152,7 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
     if (focusOnMount) {
       inputRef.current?.focus()
     }
-  }, []) // intentionally empty deps — only on mount
+  }, [focusOnMount])
 
   // Helper to compute search results for a given trimmed query string
   const computeResults = useCallback((trimmed: string): DisplayResult[] => {
@@ -175,116 +196,32 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
 
       hits.forEach((h: any) => {
         const doc = storeRef.current[h.ref as string]
-        const blockIdxFromRef = (() => {
-          const parts = (h.ref as string).split("::")
-          return parts.length === 2 ? parseInt(parts[1], 10) : undefined
-        })()
+        if (!doc) return
 
-        const positions: number[][] = []
-        try {
-          const metadata = h.matchData.metadata
-          Object.values(metadata).forEach((fieldMeta: any) => {
-            Object.values(fieldMeta).forEach((v: any) => {
-              if (v.position) positions.push(...(v.position as any[]))
-            })
-          })
-        } catch (_) {}
-
-        positions.sort((a, b) => a[0] - b[0])
-        const posToUse = (maxSnippets === null || maxSnippets < 0) ? positions : positions.slice(0, maxSnippets)
-
-        if (posToUse.length === 0) {
-          const key = doc.snippetHtml
+        const blocks = findBlocksForTerms(doc, terms, maxSnippets)
+        blocks.forEach((block) => {
+          const key = `${doc.url || doc.slug}-${block.blockIdx}`
           if (!processedMap[key]) {
             processedMap[key] = {
-              id: `${doc.slug}-${blockIdxFromRef ?? 'x'}-desc`,
+              id: key,
               title: doc.title,
               slug: doc.slug,
               url: doc.url || `/blog/${doc.slug}`,
-              snippetHtml: doc.snippetHtml,
-              blockIdx: blockIdxFromRef,
-            }
-          }
-          return
-        }
-
-        let lastEndLine = -1
-        posToUse.forEach((p) => {
-          let snippetHtml = doc.snippetHtml
-          if (doc.isCode && doc.codeText) {
-            const codeLines = doc.codeText.split('\n')
-            let cumulative = 0
-            let lineIndex = 0
-            for (let i = 0; i < codeLines.length; i++) {
-              const len = codeLines[i].length + 1 // newline
-              if (cumulative + len > p[0]) { lineIndex = i; break }
-              cumulative += len
-            }
-            if (lineIndex <= lastEndLine) return
-
-            const visibleCount = uiConfig.search.snippetLinesCode
-            const extraBefore = (lineIndex !== 0) ? 1 : 0 // top fade line
-            const startLineSlice = Math.max(0, lineIndex - extraBefore)
-            const atBottomBeforeCalc = (lineIndex + visibleCount >= codeLines.length)
-            const extraAfter = atBottomBeforeCalc ? 0 : 1 // bottom fade line if truncated at bottom
-            const endLineSlice = Math.min(codeLines.length, startLineSlice + visibleCount + extraBefore + extraAfter)
-
-            const snippetLines = codeLines.slice(startLineSlice, endLineSlice).filter(l => !l.trim().startsWith('```'))
-
-            const atTop = startLineSlice === 0
-            const atBottom = endLineSlice === codeLines.length
-            let preClasses = 'border-x relative overflow-hidden'
-            if (atTop) {
-              preClasses += ' border-t rounded-t-md'
-            } else {
-              preClasses += ' fade-top'
-            }
-
-            if (atBottom) {
-              preClasses += ' border-b rounded-b-md'
-            } else {
-              preClasses += ' fade-bottom'
-            }
-
-            const codeSnippet = snippetLines.join('\n')
-            let highlightedCode = escapeHtml(codeSnippet)
-            if (hljsRef.current) {
-              try {
-                if (doc.lang && hljsRef.current.getLanguage(doc.lang)) {
-                  highlightedCode = hljsRef.current.highlight(codeSnippet, { language: doc.lang }).value
-                } else {
-                  highlightedCode = hljsRef.current.highlightAuto(codeSnippet).value
-                }
-              } catch (_) {
-                highlightedCode = hljsRef.current?.escapeHTML ? hljsRef.current.escapeHTML(codeSnippet) : escapeHtml(codeSnippet)
-              }
-            }
-
-            const languageClass = doc.lang ? `language-${sanitizeClassName(doc.lang)}` : ""
-            snippetHtml = `<pre class="${preClasses}"><code class="hljs ${languageClass}">${highlightedCode}</code></pre>`
-
-            lastEndLine = endLineSlice - 1
-          }
-          const key = snippetHtml
-          if (!processedMap[key]) {
-            processedMap[key] = {
-              id: `${doc.slug}-${blockIdxFromRef ?? 'x'}-${p[0]}`,
-              title: doc.title,
-              slug: doc.slug,
-              url: doc.url || `/blog/${doc.slug}`,
-              snippetHtml,
-              blockIdx: blockIdxFromRef,
+              snippetHtml: snippetToHtml(block),
+              isCode: block.isCode,
+              blockIdx: block.blockIdx,
             }
           }
         })
       })
 
-      return Object.values(processedMap).slice(0, 20)
+      const values = Object.values(processedMap)
+      return (maxSnippets === null || maxSnippets < 0) ? values.slice(0, 20) : values.slice(0, 20)
     } catch (err) {
       console.error(err)
       return []
     }
-  }, [indexLoaded, hljsLoaded])
+  }, [indexLoaded])
 
   // Handle searching when debouncedQuery changes
   useEffect(() => {
@@ -302,6 +239,7 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
     setIsSearching(true)
     const newResults = computeResults(trimmed)
     setResults(newResults)
+    setSelectedIndex((current) => current >= newResults.length ? -1 : current)
     setIsSearching(false)
   }, [debouncedQuery, computeResults])
 
@@ -353,6 +291,13 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
         ref={inputRef}
         type="search"
         value={query}
+        role="combobox"
+        aria-label="Search site"
+        aria-autocomplete="list"
+        aria-expanded={results.length > 0}
+        aria-controls={listboxId}
+        aria-activedescendant={activeOptionId}
+        aria-describedby={statusId}
         onFocus={(e) => {
           loadIndex()
           setSelectedIndex(-1)
@@ -376,6 +321,9 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
               const sel = results[selectedIndex]
               router.push(buildHref(sel.url, sel.blockIdx), { scroll: false })
             }
+          } else if (e.key === 'Escape') {
+            setResults([])
+            setSelectedIndex(-1)
           }
         }}
         placeholder="Search…"
@@ -388,6 +336,19 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
         )}
         autoFocus={variant === "overlay"}
       />
+      <div id={statusId} role="status" aria-live="polite" className="sr-only">
+        {indexError && debouncedQuery.trim().length >= 2
+          ? indexError
+          : !indexLoaded && debouncedQuery.trim().length >= 2
+            ? "Loading search results."
+            : results.length > 0
+              ? `${results.length} search result${results.length === 1 ? "" : "s"} available.${
+                  selectedIndex >= 0 ? ` ${results[selectedIndex]?.title ?? ""} selected.` : ""
+                }`
+              : debouncedQuery.trim().length >= 2 && !isSearching
+                ? "No search results found."
+                : ""}
+      </div>
       {/* Error state */}
       {indexError && debouncedQuery.trim().length >= 2 && (
         <div className={cn(
@@ -429,7 +390,10 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
       )}
       {results.length > 0 && (
         <ul
+          id={listboxId}
           ref={listRef}
+          role="listbox"
+          aria-label="Search results"
           className={cn(
             "mt-2 overflow-y-auto bg-background",
             variant === "overlay"
@@ -444,21 +408,26 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
           })()}
         >
           {results.map((r, idx) => (
-            <li key={r.id} className={`border-b last:border-b-0 ${idx === selectedIndex ? 'ring-inset ring-2 ring-stone-200 dark:ring-stone-700' : ''}`}>
+            <li
+              key={r.id}
+              id={`${searchId}-option-${idx}`}
+              role="option"
+              aria-selected={idx === selectedIndex}
+              className={`border-b last:border-b-0 ${idx === selectedIndex ? 'ring-inset ring-2 ring-stone-200 dark:ring-stone-700' : ''}`}
+            >
               <Link href={buildHref(r.url, r.blockIdx)} scroll={false} className="block w-full px-3 py-2 text-left" onClick={() => {setQuery(""); setResults([]) }}>
                 <div className="font-medium text-sm" dangerouslySetInnerHTML={{__html: renderInlineMarkdown(r.title)}} />
                 {r.snippetHtml ? (
                   <div className="text-xs text-muted-foreground search-snippet" style={(() => {
-                    const isCode = r.snippetHtml.startsWith('<pre')
-                    if (isCode) {
+                    if (r.isCode) {
                       return {maxHeight: `${uiConfig.search.snippetLinesCode * 1.4}em`, overflow: 'hidden'}
                     }
                     return {display:'-webkit-box', WebkitBoxOrient:'vertical', overflow:'hidden', WebkitLineClamp: uiConfig.search.snippetLinesParagraph}
                   })()} dangerouslySetInnerHTML={{__html: (() => {
                     const tokens = debouncedQuery.split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-                    if (!tokens.length) return safeSearchSnippetHtml(r.snippetHtml)
+                    if (!tokens.length) return r.snippetHtml
                     const regex = new RegExp(`(${tokens.join('|')})`, 'gi')
-                    return safeSearchSnippetHtml(r.snippetHtml, regex)
+                    return highlightTokensInEscapedHtml(r.snippetHtml, regex, 'bg-yellow-300 dark:bg-yellow-600 text-inherit')
                   })() }} />
                 ) : (
                   <div className="text-xs text-muted-foreground line-clamp-2">

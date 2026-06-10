@@ -9,14 +9,15 @@ interface TocItem {
 }
 
 interface TocListProps {
+  id?: string
   items: TocItem[]
   activeId: string
   onItemClick: (id: string) => void
 }
 
-export function TocList({ items, activeId, onItemClick }: TocListProps) {
+export function TocList({ id, items, activeId, onItemClick }: TocListProps) {
   return (
-    <nav className="text-xs">
+    <nav id={id} className="text-xs" aria-label="Table of contents">
       <ul className="space-y-1 list-none p-0">
         {items.map((item) => {
           const renderedTitle = renderInlineMarkdown(item.title)
@@ -31,6 +32,7 @@ export function TocList({ items, activeId, onItemClick }: TocListProps) {
                     ? 'text-primary font-medium' 
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
+                aria-current={activeId === item.id ? "location" : undefined}
                 dangerouslySetInnerHTML={{ __html: renderedTitle }}
               />
             </li>

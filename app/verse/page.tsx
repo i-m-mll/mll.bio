@@ -2,11 +2,13 @@ import { getAllPoems, poemsConfig, formatPoemDate } from "@/lib/poems"
 import { MDXContent } from "@/components/mdx-content"
 import { getSection } from "@/lib/sections"
 import { Metadata } from "next"
+import { buildPageMetadata } from "@/lib/metadata"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Verse",
   description: "A collection of verse",
-}
+  path: "/verse",
+})
 
 export default async function VersePage() {
   const poems = await getAllPoems()
