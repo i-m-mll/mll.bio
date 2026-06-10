@@ -7,6 +7,7 @@ import remarkMdx from 'remark-mdx'
 import remarkHtml from 'remark-html'
 import { visit } from 'unist-util-visit'
 import lunr from 'lunr'
+import { escapeHtml, sanitizeHtml } from '../lib/html-sanitizer.mjs'
 
 const postsDirectory = path.join(process.cwd(), 'content/posts')
 const seriesDirectory = path.join(process.cwd(), 'content/series')
@@ -98,7 +99,7 @@ function stripDirectives(md) {
 }
 
 function mdToHtml(md) {
-  return String(unified().use(remarkParse).use(remarkMdx).use(remarkHtml).processSync(md))
+  return sanitizeHtml(String(unified().use(remarkParse).use(remarkMdx).use(remarkHtml).processSync(md)))
 }
 
 function getBlocks(markdown) {
@@ -145,7 +146,7 @@ function getBlocks(markdown) {
       htmlSnippet = mdToHtml(mdSnippet)
     } catch {
       // HTML conversion failed, use raw text
-      htmlSnippet = `<p>${mdSnippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+      htmlSnippet = `<p>${escapeHtml(mdSnippet)}</p>`
     }
     const plain = node.type === 'code' ? plainForIndex : htmlSnippet.replace(/<[^>]+>/g, ' ')
     const isCode = node.type === 'code'

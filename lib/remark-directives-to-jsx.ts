@@ -40,25 +40,25 @@ const LABEL_PROP_BY_DIRECTIVE: Record<string, string> = {
 }
 
 export const remarkDirectivesToJsx: Plugin<[], Root> = () => {
-  return (tree: any) => {
-    transformChildren(tree)
+  return (tree: any, file: any) => {
+    transformChildren(tree, file)
   }
 }
 
-function transformChildren(node: any): void {
+function transformChildren(node: any, file: any): void {
   if (!Array.isArray(node.children)) return
 
-  node.children = node.children.map((child: any) => transformNode(child))
+  node.children = node.children.map((child: any) => transformNode(child, file))
 }
 
-function transformNode(node: any): any {
-  transformChildren(node)
+function transformNode(node: any, file: any): any {
+  transformChildren(node, file)
 
   if (!isDirectiveNode(node)) return node
 
   if (node.type === "textDirective") {
     const componentName = INLINE_COMPONENTS[node.name]
-    if (!componentName) return node
+    if (!componentName) return unknownDirectiveElement(node, file)
 
     return {
       type: "mdxJsxTextElement",
@@ -70,10 +70,9 @@ function transformNode(node: any): any {
 
   if (node.type === "containerDirective") {
     const componentName = CONTAINER_COMPONENTS[node.name]
-    if (!componentName) return node
+    if (!componentName) return unknownDirectiveElement(node, file)
 
-    const children = node.children ?? []
-    const maybeLabel = extractDirectiveLabel(node.name, children)
+    const { label: maybeLabel, children } = extractDirectiveLabel(node.name, node.children ?? [])
     const attributes = attributesToMdx(node.attributes)
 
     if (maybeLabel && LABEL_PROP_BY_DIRECTIVE[node.name]) {
@@ -96,7 +95,7 @@ function transformNode(node: any): any {
   }
 
   const componentName = LEAF_COMPONENTS[node.name]
-  if (!componentName) return node
+  if (!componentName) return unknownDirectiveElement(node, file)
 
   return {
     type: "mdxJsxFlowElement",
@@ -116,24 +115,89 @@ function isDirectiveNode(node: any): boolean {
 
 function attributesToMdx(attributes?: Record<string, string | null | undefined>): any[] {
   if (!attributes) return []
-  return Object.entries(attributes).flatMap(([name, value]) => {
-    if (value === undefined || value === null) return []
-    return [{ type: "mdxJsxAttribute", name, value: String(value) }]
+
+  const mdxAttributes: any[] = []
+  Object.entries(attributes).forEach(([name, value]) => {
+    if (value === undefined) return
+    mdxAttributes.push({
+      type: "mdxJsxAttribute",
+      name,
+      value: value === null ? null : String(value),
+    })
   })
+  return mdxAttributes
 }
 
-function extractDirectiveLabel(directiveName: string, children: any[]): string | null {
-  if (!children.length) return null
+function extractDirectiveLabel(directiveName: string, children: any[]): { label: string | null; children: any[] } {
+  if (!children.length) return { label: null, children }
   const firstChild = children[0]
-  if (firstChild.type !== "paragraph" || !firstChild.data?.directiveLabel) return null
-  if (!LABEL_PROP_BY_DIRECTIVE[directiveName]) return null
+  if (firstChild.type !== "paragraph" || !firstChild.data?.directiveLabel) {
+    return { label: null, children }
+  }
+  if (!LABEL_PROP_BY_DIRECTIVE[directiveName]) return { label: null, children }
 
-  children.shift()
-  return textFromNode(firstChild).trim() || null
+  return {
+    label: textFromNode(firstChild).trim() || null,
+    children: children.slice(1),
+  }
 }
 
 function textFromNode(node: any): string {
   if (node.type === "text" || node.type === "inlineCode") return node.value ?? ""
   if (Array.isArray(node.children)) return node.children.map(textFromNode).join("")
   return ""
+}
+
+function unknownDirectiveElement(node: any, file: any): any {
+  warnUnknownDirective(node, file)
+
+  const tagName = node.type === "textDirective" ? "span" : "div"
+  const elementType = node.type === "textDirective" ? "mdxJsxTextElement" : "mdxJsxFlowElement"
+  const children = node.children ?? []
+  const devPlaceholder = process.env.NODE_ENV !== "production"
+    ? unknownDirectiveChildren(node)
+    : []
+
+  return {
+    type: elementType,
+    name: tagName,
+    attributes: [
+      { type: "mdxJsxAttribute", name: "data-unknown-directive", value: node.name },
+    ],
+    children: [...devPlaceholder, ...children],
+  }
+}
+
+function unknownDirectiveChildren(node: any): any[] {
+  const message = `Unknown directive: ${node.name}`
+  if (node.type === "textDirective") {
+    return [{ type: "text", value: message }]
+  }
+
+  return [
+    {
+      type: "paragraph",
+      children: [{ type: "text", value: message }],
+    },
+  ]
+}
+
+function warnUnknownDirective(node: any, file: any): void {
+  const path = file?.path || file?.history?.[0] || "unknown file"
+  const position = node.position?.start
+  const location = position ? `:${position.line}:${position.column}` : ""
+  const known = [...new Set([
+    ...Object.keys(INLINE_COMPONENTS),
+    ...Object.keys(CONTAINER_COMPONENTS),
+    ...Object.keys(LEAF_COMPONENTS),
+  ])].sort().join(", ")
+  const reason = `Unknown markdown directive "${node.name}" in ${path}${location}. Known directives: ${known}.`
+
+  try {
+    file?.message?.(reason, node, "remark-directives-to-jsx:unknown-directive")
+  } catch {
+    // Keep the console warning even if the host file object cannot record messages.
+  }
+
+  console.warn(`[remark-directives-to-jsx] ${reason}`)
 }

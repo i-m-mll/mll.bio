@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { renderInlineMarkdown, cn } from "@/lib/utils"
+import { renderInlineMarkdown, cn, escapeHtml, sanitizeClassName, sanitizeHtml } from "@/lib/utils"
 import { uiConfig } from "@/lib/config/ui"
 
 interface StoredDoc {
@@ -49,6 +49,12 @@ function highlightTokensInHtml(html: string, tokenRegex: RegExp, markClass: stri
     if (seg.startsWith('<')) return seg
     return seg.replace(tokenRegex, `<mark class="${markClass}" data-search-highlight>$1</mark>`)
   }).join('')
+}
+
+function safeSearchSnippetHtml(html: string, tokenRegex?: RegExp): string {
+  const sanitized = sanitizeHtml(html)
+  if (!tokenRegex) return sanitized
+  return sanitizeHtml(highlightTokensInHtml(sanitized, tokenRegex, "bg-yellow-300 dark:bg-yellow-600 text-inherit"))
 }
 
 export default function SearchBar({ variant = "default", initialQuery = "", focusOnMount = false }: SearchBarProps) {
@@ -241,7 +247,7 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
             }
 
             const codeSnippet = snippetLines.join('\n')
-            let highlightedCode = codeSnippet
+            let highlightedCode = escapeHtml(codeSnippet)
             if (hljsRef.current) {
               try {
                 if (doc.lang && hljsRef.current.getLanguage(doc.lang)) {
@@ -250,11 +256,12 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
                   highlightedCode = hljsRef.current.highlightAuto(codeSnippet).value
                 }
               } catch (_) {
-                highlightedCode = hljsRef.current?.escapeHTML ? hljsRef.current.escapeHTML(codeSnippet) : codeSnippet
+                highlightedCode = hljsRef.current?.escapeHTML ? hljsRef.current.escapeHTML(codeSnippet) : escapeHtml(codeSnippet)
               }
             }
 
-            snippetHtml = `<pre class="${preClasses}"><code class="hljs ${doc.lang ? `language-${doc.lang}` : ''}">${highlightedCode}</code></pre>`
+            const languageClass = doc.lang ? `language-${sanitizeClassName(doc.lang)}` : ""
+            snippetHtml = `<pre class="${preClasses}"><code class="hljs ${languageClass}">${highlightedCode}</code></pre>`
 
             lastEndLine = endLineSlice - 1
           }
@@ -449,9 +456,9 @@ export default function SearchBar({ variant = "default", initialQuery = "", focu
                     return {display:'-webkit-box', WebkitBoxOrient:'vertical', overflow:'hidden', WebkitLineClamp: uiConfig.search.snippetLinesParagraph}
                   })()} dangerouslySetInnerHTML={{__html: (() => {
                     const tokens = debouncedQuery.split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-                    if (!tokens.length) return r.snippetHtml
+                    if (!tokens.length) return safeSearchSnippetHtml(r.snippetHtml)
                     const regex = new RegExp(`(${tokens.join('|')})`, 'gi')
-                    return highlightTokensInHtml(r.snippetHtml, regex, 'bg-yellow-300 dark:bg-yellow-600 text-inherit')
+                    return safeSearchSnippetHtml(r.snippetHtml, regex)
                   })() }} />
                 ) : (
                   <div className="text-xs text-muted-foreground line-clamp-2">
