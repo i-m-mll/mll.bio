@@ -1,7 +1,11 @@
 import { visit, SKIP } from 'unist-util-visit'
 import type { Root, FootnoteDefinition, FootnoteReference, Text, Paragraph } from 'mdast'
 import { uiConfig } from '@/lib/config/ui'
-import { isLikelySidenoteCodeExample } from '@/lib/sidenote-code-example'
+import {
+  cleanFootnoteContent,
+  hasForceFootnoteMarker,
+  shouldRenderFootnoteContent,
+} from '@/lib/footnote-model'
 
 export function remarkSidenotes() {
   return (tree: Root) => {
@@ -15,21 +19,19 @@ export function remarkSidenotes() {
         // Extract text content from the definition
         const textContent = extractTextContent(node)
 
-        // Skip footnote definitions that are too short or look like code examples
-        // This helps avoid processing inline code examples as real footnotes
-        if (textContent.length < 15 || isLikelySidenoteCodeExample(textContent)) {
+        if (!shouldRenderFootnoteContent(textContent, forceMarker)) {
           return // Don't process this footnote, leave it as-is
         }
 
         // Check for force-footnote marker at the start of the content
-        if (forceMarker && textContent.trimStart().startsWith(forceMarker)) {
+        if (hasForceFootnoteMarker(textContent, forceMarker)) {
           // Strip the marker from the first text node in the AST so the marker
           // character does not appear in the rendered bottom-of-page footnote
           stripForceMarkerFromNode(node, forceMarker)
           return // Leave this footnote definition in the AST as a standard footnote
         }
 
-        footnoteDefinitions.set(node.identifier, textContent)
+        footnoteDefinitions.set(node.identifier, cleanFootnoteContent(textContent))
 
         // Remove the footnote definition from the tree
         parent.children.splice(index, 1)
@@ -205,97 +207,16 @@ function processNoteScopeTargets(noteScopeNode: any) {
       })
     }
 
-    // For positioned notes, create a duplicate for mobile display
-    const mobileMarginNote = createMobileMarginNote(marginNoteNode, isCodeTarget)
-
-    // Remove the original note from its current position FIRST
-    parent.children.splice(index, 1)
-
-    // Create a clean desktop version (without mobile attributes)
-    const desktopMarginNote = JSON.parse(JSON.stringify(marginNoteNode)) // Clone for desktop
-    desktopMarginNote.attributes = desktopMarginNote.attributes?.filter((attr: any) => attr.name !== 'dataMobileVersion') || []
-
-    // Inject the desktop version inline at the target text location (for non-code targets)
-    if (!isCodeTarget) {
-      injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
-      // Insert mobile version after the containing paragraph
-      insertMobileMarginNoteAfterParagraph(noteScopeNode, mobileMarginNote, targetText)
-    } else {
-      // For code blocks, insert mobile version after the code block
-      insertMobileMarginNoteAfterCodeBlock(noteScopeNode, mobileMarginNote)
-      // Inject desktop version at the target location within the code block
-      injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
-    }
-
-    // Remove the target attribute since we've processed it
+    // Remove the target attribute since we've processed it. Keep one canonical
+    // MarginNote node: CSS decides whether it renders in the desktop margin or
+    // inline on smaller screens.
     marginNoteNode.attributes = marginNoteNode.attributes.filter((attr: any) => attr.name !== 'target')
-  })
-}
 
-// Create a mobile version of a margin note with unique ID
-function createMobileMarginNote(marginNoteNode: any, followsCodeBlock: boolean = false) {
-  const mobileNote = JSON.parse(JSON.stringify(marginNoteNode)) // Deep clone
+    // Remove the original note from its current position first, then inject the
+    // canonical positioned note at the target text/code location.
+    parent.children.splice(index, 1)
+    injectMarginNoteAtTarget(noteScopeNode, marginNoteNode, targetText)
 
-  // Add mobile-specific attributes
-  mobileNote.attributes = mobileNote.attributes || []
-
-  // Add attribute to mark this as mobile version
-  mobileNote.attributes.push({
-    type: 'mdxJsxAttribute',
-    name: 'dataMobileVersion',
-    value: 'true'
-  })
-
-  // Add attribute to indicate if this follows a code block
-  if (followsCodeBlock) {
-    mobileNote.attributes.push({
-      type: 'mdxJsxAttribute',
-      name: 'dataFollowsCode',
-      value: 'true'
-    })
-  }
-
-  // If there's an ID, modify it to prevent conflicts
-  const idAttr = mobileNote.attributes.find((attr: any) => attr.name === 'id')
-  if (idAttr) {
-    idAttr.value = `${idAttr.value}-mobile`
-  }
-
-  return mobileNote
-}
-
-// Insert mobile margin note after the paragraph containing the target text
-function insertMobileMarginNoteAfterParagraph(noteScopeNode: any, mobileMarginNote: any, targetText: string) {
-  let inserted = false
-  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
-    if (inserted || !parent || index === undefined) return
-
-    // Check if this is a paragraph that contains our target text
-    if (node.type === 'paragraph') {
-      const paragraphText = extractAllTextFromNode(node).toLowerCase()
-      if (paragraphText.includes(targetText.toLowerCase())) {
-        // Insert the mobile note after this paragraph
-        parent.children.splice(index + 1, 0, mobileMarginNote)
-        inserted = true
-        return SKIP // Stop traversing once we've found and inserted
-      }
-    }
-  })
-}
-
-// Insert mobile margin note after the code block
-function insertMobileMarginNoteAfterCodeBlock(noteScopeNode: any, mobileMarginNote: any) {
-  let inserted = false
-  visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
-    if (inserted || !parent || index === undefined) return
-
-    // Check if this is a code block
-    if (node.type === 'code') {
-      // Insert the mobile note after this code block
-      parent.children.splice(index + 1, 0, mobileMarginNote)
-      inserted = true
-      return SKIP // Stop traversing once we've found and inserted
-    }
   })
 }
 
