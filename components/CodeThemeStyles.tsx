@@ -1,5 +1,5 @@
 // Server component to inline highlight.js themes without client JS
-import { lightThemeCss, darkThemeCss } from '@/lib/active-code-themes'
+import { getCodeThemeData } from '@/lib/code-theme-data'
 
 // Helper replicates scoping logic from former CodeThemeLoader but at build time
 function scopeCssToDarkMode(css: string): string {
@@ -15,6 +15,7 @@ function scopeCssToDarkMode(css: string): string {
 }
 
 export function CodeThemeStyles() {
+  const { lightThemeCss, darkThemeCss } = getCodeThemeData()
   const darkScoped = scopeCssToDarkMode(darkThemeCss)
   // Provide a fallback for environments without JS: rely on prefers-color-scheme
   const darkMedia = `@media (prefers-color-scheme: dark){${darkThemeCss}}`

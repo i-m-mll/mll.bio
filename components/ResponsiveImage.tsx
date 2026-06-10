@@ -1,14 +1,9 @@
 import React from "react"
 import fs from "node:fs"
 import pathMod from "node:path"
+import { getImageManifest, type ManifestEntry, type SvgEntry } from "@/lib/image-manifest"
 
-// Manifest entry can be either an array of responsive variants (for raster images)
-// or an object with a path property (for SVGs that are inlined)
-type RasterVariant = { w: number; webp: string; avif: string }
-type SvgEntry = { path: string }
-type ManifestEntry = RasterVariant[] | SvgEntry
-
-const manifest: Record<string, ManifestEntry> = require("../generated/image-manifest.json")
+const manifest: Record<string, ManifestEntry> = getImageManifest()
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {}
 

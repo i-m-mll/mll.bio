@@ -1,11 +1,7 @@
 import { MdxImage } from "@/components/mdx-image"
+import { getImageManifest, type ManifestEntry } from "@/lib/image-manifest"
 
-// Manifest entry types (mirrors ResponsiveImage.tsx)
-type RasterVariant = { w: number; webp: string; avif: string }
-type SvgEntry = { path: string }
-type ManifestEntry = RasterVariant[] | SvgEntry
-
-const manifest: Record<string, ManifestEntry> = require("../generated/image-manifest.json")
+const manifest: Record<string, ManifestEntry> = getImageManifest()
 
 interface PostImageProps {
   src?: string

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from 'react'
-import { lightThemeCss, darkThemeCss } from '@/lib/active-code-themes'
 
 /**
  * Prepends '.dark ' to each selector in a CSS string.
@@ -23,7 +22,15 @@ function scopeCssToDarkMode(css: string): string {
   });
 }
 
-export function CodeThemeLoader() {
+interface CodeThemeLoaderProps {
+  lightThemeCss?: string
+  darkThemeCss?: string
+}
+
+export function CodeThemeLoader({
+  lightThemeCss = "",
+  darkThemeCss = "",
+}: CodeThemeLoaderProps) {
   useEffect(() => {
     const scopedDarkThemeCss = scopeCssToDarkMode(darkThemeCss)
 
@@ -48,7 +55,7 @@ export function CodeThemeLoader() {
     }
     darkStyle.innerHTML = scopedDarkThemeCss;
 
-  }, [])
+  }, [darkThemeCss, lightThemeCss])
 
   return null
-} 
+}
