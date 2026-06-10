@@ -6,6 +6,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { collectFiles, hashFiles, outputsExist, pathExists, readJson, writeJson } from './generation-cache.mjs'
 
 // Site configuration
 const SITE_URL = 'https://mll.bio'
@@ -17,6 +18,7 @@ const AUTHOR = 'MLL'
 const POSTS_DIR = path.join(process.cwd(), 'content/posts')
 const SERIES_DIR = path.join(process.cwd(), 'content/series')
 const OUTPUT_PATH = path.join(process.cwd(), 'public/feed.xml')
+const CACHE_PATH = path.join(process.cwd(), 'generated/.cache/rss.json')
 
 function isMarkdownFile(fileName) {
   return fileName.endsWith('.md') || fileName.endsWith('.mdx')
@@ -209,17 +211,51 @@ ${itemsXml}
 </rss>`
 }
 
-// Main
-console.log('Generating RSS feed...')
+async function getRssInputs() {
+  const markdown = (_, fileName) => isMarkdownFile(fileName)
+  const [postFiles, seriesFiles] = await Promise.all([
+    collectFiles(POSTS_DIR, markdown),
+    collectFiles(SERIES_DIR, markdown),
+  ])
+  return [...postFiles, ...seriesFiles]
+}
 
-const blogPosts = getBlogPosts()
-const seriesPosts = getSeriesPosts()
-const allItems = [...blogPosts, ...seriesPosts]
+async function canSkip() {
+  if (!(await pathExists(CACHE_PATH))) return false
 
-console.log(`  Found ${blogPosts.length} blog posts`)
-console.log(`  Found ${seriesPosts.length} series posts`)
+  const inputFiles = await getRssInputs()
+  const signature = await hashFiles(inputFiles, 'rss:v1')
+  const cached = await readJson(CACHE_PATH)
 
-const rss = generateRss(allItems)
-fs.writeFileSync(OUTPUT_PATH, rss)
+  return cached.signature === signature && await outputsExist([OUTPUT_PATH])
+}
 
-console.log(`  Generated ${OUTPUT_PATH}`)
+async function main() {
+  if (await canSkip()) {
+    console.log('RSS feed unchanged; skipping generation')
+    return
+  }
+
+  console.log('Generating RSS feed...')
+
+  const blogPosts = getBlogPosts()
+  const seriesPosts = getSeriesPosts()
+  const allItems = [...blogPosts, ...seriesPosts]
+
+  console.log(`  Found ${blogPosts.length} blog posts`)
+  console.log(`  Found ${seriesPosts.length} series posts`)
+
+  const rss = generateRss(allItems)
+  fs.writeFileSync(OUTPUT_PATH, rss)
+  await writeJson(CACHE_PATH, {
+    signature: await hashFiles(await getRssInputs(), 'rss:v1'),
+    items: allItems.length,
+  })
+
+  console.log(`  Generated ${OUTPUT_PATH}`)
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

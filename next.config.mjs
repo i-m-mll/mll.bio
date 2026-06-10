@@ -13,8 +13,8 @@ const nextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
 
-  // ESLint: disable during builds due to Next.js 15 / ESLint 8 API incompatibility
-  // (useEslintrc + extensions removed in ESLint 9; run `npm run lint` locally instead)
+  // Next's internal build lint hook still passes legacy options that conflict
+  // with this repo's flat ESLint config. The npm build script runs lint first.
   eslint: {
     ignoreDuringBuilds: true,
   },

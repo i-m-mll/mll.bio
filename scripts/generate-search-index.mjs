@@ -7,11 +7,13 @@ import remarkMdx from 'remark-mdx'
 import remarkHtml from 'remark-html'
 import { visit } from 'unist-util-visit'
 import lunr from 'lunr'
+import { collectFiles, hashFiles, outputsExist, pathExists, readJson, writeJson } from './generation-cache.mjs'
 
 const postsDirectory = path.join(process.cwd(), 'content/posts')
 const seriesDirectory = path.join(process.cwd(), 'content/series')
 const outputDir = path.join(process.cwd(), 'public', 'search')
 const outputPath = path.join(outputDir, 'index.json')
+const cachePath = path.join(process.cwd(), 'generated', '.cache', 'search-index.json')
 
 const MAX_SNIPPET_LINES = Number(process.env.SNIPPET_CODE_LINES) || 7
 
@@ -225,7 +227,31 @@ function buildIndex() {
   return { index: idx, store }
 }
 
-function main() {
+async function getSearchInputs() {
+  const markdown = (_, fileName) => isMarkdownFile(fileName)
+  const [postFiles, seriesFiles] = await Promise.all([
+    collectFiles(postsDirectory, markdown),
+    collectFiles(seriesDirectory, markdown),
+  ])
+  return [...postFiles, ...seriesFiles]
+}
+
+async function canSkip() {
+  if (!(await pathExists(cachePath))) return false
+
+  const inputFiles = await getSearchInputs()
+  const signature = await hashFiles(inputFiles, 'search-index:v1')
+  const cached = await readJson(cachePath)
+
+  return cached.signature === signature && await outputsExist([outputPath])
+}
+
+async function main() {
+  if (await canSkip()) {
+    console.log('Search index unchanged; skipping generation')
+    return
+  }
+
   const { index, store } = buildIndex()
   if (!index) {
     console.log('No documents found, skipping index')
@@ -233,7 +259,14 @@ function main() {
   }
   fs.mkdirSync(outputDir, { recursive: true })
   fs.writeFileSync(outputPath, JSON.stringify({ index, store }))
+  await writeJson(cachePath, {
+    signature: await hashFiles(await getSearchInputs(), 'search-index:v1'),
+    snippets: Object.keys(store).length,
+  })
   console.log(`Search index generated with ${Object.keys(store).length} snippets`)
 }
 
-main()
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

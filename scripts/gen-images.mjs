@@ -4,12 +4,14 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
+import { hashFiles, outputsExist, pathExists, readJson, writeJson } from './generation-cache.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
 const contentDir = path.join(projectRoot, 'content')
 const publicDir = path.join(projectRoot, 'public', 'optimized')
 const manifestPath = path.join(projectRoot, 'generated', 'image-manifest.json')
+const cachePath = path.join(projectRoot, 'generated', '.cache', 'gen-images.json')
 const widths = [320, 640, 960, 1280]
 
 async function getAllImages(dir) {
@@ -29,8 +31,43 @@ async function ensureDir(p) {
   await fs.mkdir(p, { recursive: true })
 }
 
+function getManifestOutputPaths(manifest) {
+  const outputPaths = [manifestPath]
+
+  for (const entry of Object.values(manifest)) {
+    if (Array.isArray(entry)) {
+      for (const variant of entry) {
+        outputPaths.push(path.join(projectRoot, 'public', variant.webp))
+        outputPaths.push(path.join(projectRoot, 'public', variant.avif))
+      }
+      continue
+    }
+
+    if (entry?.path) outputPaths.push(path.join(projectRoot, 'public', entry.path))
+  }
+
+  return outputPaths
+}
+
+async function canSkip(images) {
+  if (!(await pathExists(cachePath)) || !(await pathExists(manifestPath))) return false
+
+  const [{ signature }, manifest] = await Promise.all([
+    readJson(cachePath),
+    readJson(manifestPath),
+  ])
+  const currentSignature = await hashFiles(images, `gen-images:${widths.join(',')}`)
+
+  return signature === currentSignature && await outputsExist(getManifestOutputPaths(manifest))
+}
+
 async function build() {
-  const images = await getAllImages(contentDir)
+  const images = (await getAllImages(contentDir)).sort()
+  if (await canSkip(images)) {
+    console.log(`Images unchanged; skipping generation for ${images.length} source images`)
+    return
+  }
+
   const svgs = images.filter((p) => /\.svg$/i.test(p))
   const rasters = images.filter((p) => /\.(jpe?g|png)$/i.test(p))
   const manifest = {}
@@ -72,6 +109,10 @@ async function build() {
   }
   await ensureDir(path.dirname(manifestPath))
   await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+  await writeJson(cachePath, {
+    signature: await hashFiles(images, `gen-images:${widths.join(',')}`),
+    sources: images.length,
+  })
   console.log(`Generated image manifest with ${Object.keys(manifest).length} entries and copied ${svgs.length} SVGs`)
 }
 
