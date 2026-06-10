@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useId, useState } from "react"
 import { useHeadingObserver } from "@/lib/use-heading-observer"
 import { TocList } from "@/components/toc-list"
 import { TocHeader } from "@/components/toc-header"
@@ -30,6 +30,7 @@ function extractHeadings(markdown: string): TocItem[] {
 }
 
 export function MobileToc({ content }: MobileTocProps) {
+  const tocId = useId()
   const [tocItems, setTocItems] = useState<TocItem[]>(() => extractHeadings(content))
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -46,7 +47,8 @@ export function MobileToc({ content }: MobileTocProps) {
   const handleHeadingClick = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      element.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
     }
   }
 
@@ -56,10 +58,12 @@ export function MobileToc({ content }: MobileTocProps) {
         <TocHeader 
           isCollapsed={isCollapsed}
           onToggle={() => setIsCollapsed(!isCollapsed)}
+          controlsId={`${tocId}-inline-list`}
         />
         
         {!isCollapsed && (
           <TocList
+            id={`${tocId}-inline-list`}
             items={tocItems}
             activeId={activeId}
             onItemClick={handleHeadingClick}

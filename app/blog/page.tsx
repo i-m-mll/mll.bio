@@ -8,11 +8,13 @@ import { siteConfig } from "@/lib/config/site"
 import { SubscribeBox } from "@/components/subscribe-box"
 import { renderInlineMarkdown } from "@/lib/utils"
 import Link from "next/link"
+import { buildPageMetadata } from "@/lib/metadata"
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Posts",
-  description: "My thoughts and ideas",
-}
+  description: "Essays, notes, and series from MLL.",
+  path: "/blog",
+})
 
 export default async function BlogPage() {
   // Check if blog is enabled in config

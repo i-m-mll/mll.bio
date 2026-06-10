@@ -1,27 +1,33 @@
 {
   "/content/posts/extended-markdown/test.svg": {
-    "path": "/content/posts/extended-markdown/test.svg"
+    "path": "/content/posts/extended-markdown/test.svg",
+    "width": 192,
+    "height": 137
   },
-  "/content/posts/extended-markdown/me.jpg": [
-    {
-      "w": 320,
-      "webp": "/optimized/mpa70wa1/320.webp",
-      "avif": "/optimized/mpa70wa1/320.avif"
-    },
-    {
-      "w": 640,
-      "webp": "/optimized/mpa70wa1/640.webp",
-      "avif": "/optimized/mpa70wa1/640.avif"
-    },
-    {
-      "w": 960,
-      "webp": "/optimized/mpa70wa1/960.webp",
-      "avif": "/optimized/mpa70wa1/960.avif"
-    },
-    {
-      "w": 1280,
-      "webp": "/optimized/mpa70wa1/1280.webp",
-      "avif": "/optimized/mpa70wa1/1280.avif"
-    }
-  ]
+  "/content/posts/extended-markdown/me.jpg": {
+    "width": 1977,
+    "height": 2637,
+    "variants": [
+      {
+        "w": 320,
+        "webp": "/optimized/2ea053ec/320.webp",
+        "avif": "/optimized/2ea053ec/320.avif"
+      },
+      {
+        "w": 640,
+        "webp": "/optimized/2ea053ec/640.webp",
+        "avif": "/optimized/2ea053ec/640.avif"
+      },
+      {
+        "w": 960,
+        "webp": "/optimized/2ea053ec/960.webp",
+        "avif": "/optimized/2ea053ec/960.avif"
+      },
+      {
+        "w": 1280,
+        "webp": "/optimized/2ea053ec/1280.webp",
+        "avif": "/optimized/2ea053ec/1280.avif"
+      }
+    ]
+  }
 }

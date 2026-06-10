@@ -3,6 +3,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import crypto from 'node:crypto'
 import sharp from 'sharp'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -29,6 +30,11 @@ async function ensureDir(p) {
   await fs.mkdir(p, { recursive: true })
 }
 
+async function contentHash(abs) {
+  const bytes = await fs.readFile(abs)
+  return crypto.createHash('sha256').update(bytes).digest('hex').slice(0, 8)
+}
+
 async function build() {
   const images = await getAllImages(contentDir)
   const svgs = images.filter((p) => /\.svg$/i.test(p))
@@ -45,21 +51,31 @@ async function build() {
     svgContent = svgContent.replace(/<svg([^>]*)(\swidth="[^"]*")([^>]*)/i, '<svg$1$3')
     svgContent = svgContent.replace(/<svg([^>]*)(\sheight="[^"]*")([^>]*)/i, '<svg$1$3')
     await fs.writeFile(dest, svgContent, 'utf8')
-    manifest[`/${rel}`] = { path: `/${rel}` }
+    const viewBox = svgContent.match(/\bviewBox=["']([^"']+)["']/i)?.[1]
+    const viewBoxParts = viewBox?.trim().split(/[\s,]+/).map(Number)
+    const width = viewBoxParts?.length === 4 ? viewBoxParts[2] : undefined
+    const height = viewBoxParts?.length === 4 ? viewBoxParts[3] : undefined
+    manifest[`/${rel}`] = { path: `/${rel}`, width, height }
   }
 
   // Optimise raster images
   for (const abs of rasters) {
     const rel = path.relative(projectRoot, abs).replace(/\\/g, '/')
-    const hash = (await fs.stat(abs)).mtime.getTime().toString(36)
+    const hash = await contentHash(abs)
     const outDir = path.join(publicDir, hash)
     await ensureDir(outDir)
 
-    manifest[`/${rel}`] = []
+    const sourceMetadata = await sharp(abs).metadata()
+    const sourceWidth = sourceMetadata.width
+    const sourceHeight = sourceMetadata.height
+    manifest[`/${rel}`] = {
+      width: sourceWidth,
+      height: sourceHeight,
+      variants: [],
+    }
     for (const w of widths) {
       const img = sharp(abs)
-      const { width } = await img.metadata()
-      if (width && width < w) continue // skip larger than source
+      if (sourceWidth && sourceWidth < w) continue // skip larger than source
 
       const webpName = `${w}.webp`
       const avifName = `${w}.avif`
@@ -67,7 +83,11 @@ async function build() {
         img.resize(w).webp({ quality: 82 }).toFile(path.join(outDir, webpName)),
         img.resize(w).avif({ quality: 50 }).toFile(path.join(outDir, avifName)),
       ])
-      manifest[`/${rel}`].push({ w, webp: `/optimized/${hash}/${webpName}`, avif: `/optimized/${hash}/${avifName}` })
+      manifest[`/${rel}`].variants.push({
+        w,
+        webp: `/optimized/${hash}/${webpName}`,
+        avif: `/optimized/${hash}/${avifName}`,
+      })
     }
   }
   await ensureDir(path.dirname(manifestPath))

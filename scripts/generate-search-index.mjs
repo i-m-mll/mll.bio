@@ -4,7 +4,6 @@ import matter from 'gray-matter'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkMdx from 'remark-mdx'
-import remarkHtml from 'remark-html'
 import { visit } from 'unist-util-visit'
 import lunr from 'lunr'
 
@@ -97,8 +96,21 @@ function stripDirectives(md) {
   return result
 }
 
-function mdToHtml(md) {
-  return String(unified().use(remarkParse).use(remarkMdx).use(remarkHtml).processSync(md))
+function normalizeWhitespace(text) {
+  return text.replace(/\s+/g, ' ').trim()
+}
+
+function markdownToText(md) {
+  return normalizeWhitespace(md
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\[\^.+?\]:?/g, ' ')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^>\s?/gm, '')
+    .replace(/[*_~#>[\](){}:]/g, ' ')
+  )
 }
 
 function getBlocks(markdown) {
@@ -125,33 +137,26 @@ function getBlocks(markdown) {
     const slice = markdown.slice(start.offset, end.offset)
 
     let mdSnippet = slice
-    let plainForIndex
+    let snippetText
 
     if (node.type === 'code') {
       const lines = slice.split('\n')
       if (lines.length > MAX_SNIPPET_LINES) {
         mdSnippet = lines.slice(0, MAX_SNIPPET_LINES).join('\n') + '\n...'
       }
-      plainForIndex = lines.filter(l => !l.trim().startsWith('```')).join(' ')
+      snippetText = lines.filter(l => !l.trim().startsWith('```')).join('\n').trim()
     } else {
       // For non-code blocks, strip directive syntax before generating display text
       const cleanSnippet = stripDirectives(mdSnippet)
-      plainForIndex = cleanSnippet
       mdSnippet = cleanSnippet
+      snippetText = markdownToText(cleanSnippet)
     }
 
-    let htmlSnippet
-    try {
-      htmlSnippet = mdToHtml(mdSnippet)
-    } catch {
-      // HTML conversion failed, use raw text
-      htmlSnippet = `<p>${mdSnippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
-    }
-    const plain = node.type === 'code' ? plainForIndex : htmlSnippet.replace(/<[^>]+>/g, ' ')
+    const plain = node.type === 'code' ? normalizeWhitespace(snippetText) : snippetText
     const isCode = node.type === 'code'
     const lang = isCode ? (node.lang || '') : ''
 
-    blocks.push({ htmlSnippet, plain, isCode, codeText: isCode ? slice : null, lang })
+    blocks.push({ snippetText, plain, isCode, lang })
   })
   return blocks
 }
@@ -170,11 +175,21 @@ function buildIndex() {
     const title = data.title || slug
     // Only index the actual Markdown body (content) – excludes front-matter
     const blocks = getBlocks(content)
-    blocks.forEach((block, idx) => {
-      const id = `${slug}::${idx}`
-      allDocs.push({ id, title, content: block.plain, slug, url: `/blog/${slug}` })
-      store[id] = { title, slug, url: `/blog/${slug}`, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
-    })
+    if (blocks.length === 0) return
+    const id = `blog-${slug}`
+    const url = `/blog/${slug}`
+    allDocs.push({ id, title, content: blocks.map((block) => block.plain).join(' '), slug, url })
+    store[id] = {
+      title,
+      slug,
+      url,
+      blocks: blocks.map((block, idx) => ({
+        blockIdx: idx,
+        snippetText: block.snippetText,
+        isCode: block.isCode,
+        lang: block.lang,
+      })),
+    }
   })
 
   // Index series posts
@@ -204,11 +219,20 @@ function buildIndex() {
       const url = `/series/${seriesSlug}/${postSlug}`
 
       const blocks = getBlocks(content)
-      blocks.forEach((block, idx) => {
-        const id = `series-${seriesSlug}-${postSlug}::${idx}`
-        allDocs.push({ id, title: fullTitle, content: block.plain, slug: postSlug, url })
-        store[id] = { title: fullTitle, slug: postSlug, url, snippetHtml: block.htmlSnippet, isCode: block.isCode, codeText: block.codeText, lang: block.lang }
-      })
+      if (blocks.length === 0) return
+      const id = `series-${seriesSlug}-${postSlug}`
+      allDocs.push({ id, title: fullTitle, content: blocks.map((block) => block.plain).join(' '), slug: postSlug, url })
+      store[id] = {
+        title: fullTitle,
+        slug: postSlug,
+        url,
+        blocks: blocks.map((block, idx) => ({
+          blockIdx: idx,
+          snippetText: block.snippetText,
+          isCode: block.isCode,
+          lang: block.lang,
+        })),
+      }
     })
   })
 
@@ -218,7 +242,6 @@ function buildIndex() {
     this.ref('id')
     this.field('title', { boost: 10 })
     this.field('content')
-    this.metadataWhitelist = ['position']
     allDocs.forEach((d) => this.add(d))
   })
 
@@ -233,7 +256,8 @@ function main() {
   }
   fs.mkdirSync(outputDir, { recursive: true })
   fs.writeFileSync(outputPath, JSON.stringify({ index, store }))
-  console.log(`Search index generated with ${Object.keys(store).length} snippets`)
+  const blockCount = Object.values(store).reduce((total, doc) => total + doc.blocks.length, 0)
+  console.log(`Search index generated with ${Object.keys(store).length} documents and ${blockCount} snippets`)
 }
 
 main()

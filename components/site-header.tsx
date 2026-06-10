@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { siteConfig } from "@/lib/config/site"
 import { uiConfig } from "@/lib/config/ui"
 import { cn } from "@/lib/utils"
@@ -56,6 +56,7 @@ function AnimatedName({ isHome }: { isHome: boolean }) {
   const { animateName, animationDuration, collapseNameWidth } = siteConfig.header
   const duration = animationDuration / 1000
   const isNarrow = useIsNarrowViewport(collapseNameWidth)
+  const shouldReduceMotion = useReducedMotion()
 
   const fullName = siteConfig.fullName || siteConfig.name
   const shortName = siteConfig.name
@@ -64,7 +65,7 @@ function AnimatedName({ isHome }: { isHome: boolean }) {
   const showFullName = isHome && !isNarrow
 
   // If animation is disabled or there's nothing to animate (fullName === shortName), just show the name
-  if (!animateName || fullName === shortName) {
+  if (!animateName || fullName === shortName || shouldReduceMotion) {
     return (
       <span
         className="font-semibold leading-none text-title"
@@ -132,6 +133,7 @@ function CollapsibleSearch() {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const lastQueryRef = useRef("")
+  const shouldReduceMotion = useReducedMotion()
 
   // Pre-load SearchBar bundle on mount so first click is instant
   useEffect(() => {
@@ -180,7 +182,7 @@ function CollapsibleSearch() {
       {/* Magnifying glass — always occupies layout space, fades out when search is open */}
       <motion.button
         animate={{ opacity: isOpen ? 0 : 1 }}
-        transition={{ duration: 0.15 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.15 }}
         onClick={() => !isOpen && setIsOpen(true)}
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
         className="p-2 rounded hover:bg-accent transition-colors"
@@ -200,11 +202,11 @@ function CollapsibleSearch() {
           <motion.div
             key="search-bar"
             className="absolute right-0 top-1/2 -translate-y-1/2 overflow-visible"
-            initial={{ opacity: 0, scaleX: 0.85 }}
+            initial={shouldReduceMotion ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.85 }}
             animate={{ opacity: 1, scaleX: 1 }}
-            exit={{ opacity: 0, scaleX: 0.85 }}
+            exit={shouldReduceMotion ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.85 }}
             style={{ transformOrigin: 'right center' }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: "easeOut" }}
           >
             <SearchBar initialQuery={lastQueryRef.current} focusOnMount />
           </motion.div>
@@ -226,6 +228,7 @@ export function SiteHeader() {
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full bg-background transition-all duration-300 ease-in-out overflow-visible",
+      "motion-reduce:transition-none",
       scrollDirection === "down" ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
     )}>
       <div className={cn(
@@ -265,7 +268,9 @@ export function SiteHeader() {
           "flex items-center",
           navAlignRight ? "gap-6" : "flex-1 justify-between"
         )}>
-          <nav className={cn(
+          <nav
+            aria-label="Primary navigation"
+            className={cn(
             "flex items-center space-x-6 text-nav font-medium",
             !navAlignRight && "flex-1"
           )}>

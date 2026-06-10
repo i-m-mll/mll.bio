@@ -4,12 +4,18 @@ import { getPosts } from "@/lib/blog"
 import { SocialLinks } from "@/components/social-links"
 import { SubscribeBox } from "@/components/subscribe-box"
 import { siteConfig } from "@/lib/config/site"
+import { absoluteUrl, buildPageMetadata, jsonLdScript } from "@/lib/metadata"
 import { getSection } from "@/lib/sections"
 import { getProjects } from "@/lib/projects"
 import { ProjectList } from "@/components/project-card"
 
 // Unified size for all homepage section headings — change here to restyle all at once
 const sectionHeadingClass = "text-3xl font-bold tracking-tight font-heading"
+
+export const metadata = buildPageMetadata({
+  description: siteConfig.description,
+  path: "/",
+})
 
 // Section components for dynamic rendering
 async function IntroSection() {
@@ -141,6 +147,20 @@ export default async function HomePage() {
 
   return (
     <div className="container max-w-4xl py-10 space-y-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: siteConfig.author,
+          url: siteConfig.url,
+          email: `mailto:${siteConfig.social.email}`,
+          sameAs: Object.entries(siteConfig.social)
+            .filter(([key, value]) => key !== "email" && Boolean(value))
+            .map(([, value]) => value),
+          image: absoluteUrl("/egg1.png"),
+        })}
+      />
       {sections.map(async (sectionName, index) => {
         const SectionComponent = sectionComponents[sectionName]
         if (!SectionComponent) return null

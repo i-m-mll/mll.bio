@@ -5,10 +5,19 @@ import pathMod from "node:path"
 // Manifest entry can be either an array of responsive variants (for raster images)
 // or an object with a path property (for SVGs that are inlined)
 type RasterVariant = { w: number; webp: string; avif: string }
-type SvgEntry = { path: string }
-type ManifestEntry = RasterVariant[] | SvgEntry
+type RasterEntry = { width?: number; height?: number; variants: RasterVariant[] }
+type SvgEntry = { path: string; width?: number; height?: number }
+type ManifestEntry = RasterVariant[] | RasterEntry | SvgEntry
 
 const manifest: Record<string, ManifestEntry> = require("../generated/image-manifest.json")
+
+function isRasterEntry(entry: ManifestEntry | undefined): entry is RasterEntry {
+  return Boolean(entry && !Array.isArray(entry) && "variants" in entry)
+}
+
+function isSvgEntry(entry: ManifestEntry | undefined): entry is SvgEntry {
+  return Boolean(entry && !Array.isArray(entry) && "path" in entry)
+}
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
@@ -20,12 +29,16 @@ const ResponsiveImage: React.FC<Props> = ({ src = "", alt = "", ...rest }) => {
     const foundKey = Object.keys(manifest).find((k) => k.endsWith(clean))
     if (foundKey) entry = manifest[foundKey]
   }
-  if (!entry || (Array.isArray(entry) && entry.length === 0)) {
+  const variants = Array.isArray(entry) ? entry : (isRasterEntry(entry) ? entry.variants : [])
+  const width = !Array.isArray(entry) && entry && "width" in entry ? entry.width : undefined
+  const height = !Array.isArray(entry) && entry && "height" in entry ? entry.height : undefined
+
+  if (!entry || (variants.length === 0 && !isSvgEntry(entry))) {
     // Fallback to original
     return <img src={src} alt={alt} loading="lazy" {...rest} />
   }
 
-  if (!Array.isArray(entry)) {
+  if (isSvgEntry(entry)) {
     // SVG entry - inline the SVG so text inside is selectable and stylable
     const svgEntry = entry as SvgEntry
     try {
@@ -41,18 +54,27 @@ const ResponsiveImage: React.FC<Props> = ({ src = "", alt = "", ...rest }) => {
       )
     } catch {
       // Fallback if read fails
-      return <img src={svgEntry.path} alt={alt} loading="lazy" {...rest} />
+      return <img src={svgEntry.path} alt={alt} width={width} height={height} loading="lazy" {...rest} />
     }
   }
 
-  const avifSet = entry.map((e) => `${e.avif} ${e.w}w`).join(", ")
-  const webpSet = entry.map((e) => `${e.webp} ${e.w}w`).join(", ")
-  const fallback = entry[entry.length - 1].webp
+  const avifSet = variants.map((e) => `${e.avif} ${e.w}w`).join(", ")
+  const webpSet = variants.map((e) => `${e.webp} ${e.w}w`).join(", ")
+  const fallback = variants[variants.length - 1].webp
   return (
     <picture>
-      <source type="image/avif" srcSet={avifSet} />
-      <source type="image/webp" srcSet={webpSet} />
-      <img src={fallback} alt={alt} loading="lazy" {...rest} />
+      <source type="image/avif" srcSet={avifSet} sizes="(min-width: 1051px) 48rem, calc(100vw - 2rem)" />
+      <source type="image/webp" srcSet={webpSet} sizes="(min-width: 1051px) 48rem, calc(100vw - 2rem)" />
+      <img
+        src={fallback}
+        alt={alt}
+        width={width}
+        height={height}
+        sizes="(min-width: 1051px) 48rem, calc(100vw - 2rem)"
+        loading="lazy"
+        decoding="async"
+        {...rest}
+      />
     </picture>
   )
 }

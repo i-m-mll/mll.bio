@@ -12,6 +12,7 @@ import { siteConfig } from "@/lib/config/site"
 import { inter, roboto, roboto_mono, source_serif, fira_sans } from "@/lib/fonts"
 import DevFontSwitcher from "@/components/DevFontSwitcher"
 import { uiConfig } from "@/lib/config/ui"
+import { buildPageMetadata } from "@/lib/metadata"
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://mll.bio'),
@@ -20,6 +21,10 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  ...buildPageMetadata({
+    description: siteConfig.description,
+    path: "/",
+  }),
   authors: [
     {
       name: siteConfig.author,

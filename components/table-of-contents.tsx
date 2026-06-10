@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
 import { useHeadingObserver } from "@/lib/use-heading-observer"
 import { uiConfig } from "@/lib/config/ui"
 import { renderInlineMarkdown } from "@/lib/utils"
@@ -35,9 +35,13 @@ function extractHeadings(markdown: string) {
 }
 
 export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
+  const tocId = useId()
   const [tocItems, setTocItems] = useState<TocItem[]>(() => extractHeadings(content))
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showMobileToc, setShowMobileToc] = useState(false)
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null)
+  const mobileDialogRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   // Global observer provides current heading + h1 visibility
   const { activeId, mainTitleOut } = useHeadingObserver()
@@ -48,6 +52,51 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
     setTocItems(extractHeadings(content))
   }, [content])
 
+  useEffect(() => {
+    if (!showMobileToc) return
+
+    const dialog = mobileDialogRef.current
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const trigger = mobileTriggerRef.current
+    closeButtonRef.current?.focus()
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setShowMobileToc(false)
+        return
+      }
+
+      if (event.key !== "Tab" || !dialog) return
+
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      )
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      if (previouslyFocused === trigger || previouslyFocused?.isConnected) {
+        previouslyFocused?.focus()
+      } else {
+        trigger?.focus()
+      }
+    }
+  }, [showMobileToc])
+
   if (tocItems.length === 0) {
     return null
   }
@@ -55,7 +104,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
   const handleHeadingClick = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      element.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
       setShowMobileToc(false)
     }
   }
@@ -81,26 +131,38 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
       {uiConfig.mobileToc.enableFloatingButton && (
         <>
           <button
+            ref={mobileTriggerRef}
             onClick={() => setShowMobileToc(!showMobileToc)}
             className={`js-only fixed ${getButtonPositionClasses()} z-50 bg-background border border-border rounded-md p-2 shadow-lg tablet:hidden`}
+            aria-expanded={showMobileToc}
+            aria-controls={`${tocId}-mobile-dialog`}
           >
             <span className="text-sm font-medium">Contents</span>
           </button>
           
           {showMobileToc && (
             <div className="js-only fixed inset-0 z-40 bg-background/80 backdrop-blur-sm tablet:hidden">
-              <div className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto">
+              <div
+                ref={mobileDialogRef}
+                id={`${tocId}-mobile-dialog`}
+                className="fixed left-0 top-0 h-full w-80 bg-background border-r border-border p-4 overflow-y-auto"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={`${tocId}-mobile-title`}
+              >
                 <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-semibold">Contents</h3>
+                  <h3 id={`${tocId}-mobile-title`} className="font-semibold">Contents</h3>
                   <button
+                    ref={closeButtonRef}
                     onClick={() => setShowMobileToc(false)}
                     className="text-muted-foreground hover:text-foreground"
+                    aria-label="Close contents"
                   >
                     ✕
                   </button>
                 </div>
                 
-                <nav className="toc-nav">
+                <nav className="toc-nav" aria-label="Table of contents">
                   <ul className="space-y-1">
                     {tocItems.map((item) => (
                       <li key={item.id}>
@@ -110,6 +172,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
                           className={`toc-link level-${item.level} ${
                             activeId === item.id ? 'active' : ''
                           }`}
+                          aria-current={activeId === item.id ? "location" : undefined}
                           dangerouslySetInnerHTML={{ __html: item.renderedTitle }}
                         />
                       </li>
@@ -137,6 +200,8 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center gap-2 w-full py-2 border-none bg-transparent cursor-pointer text-sm text-foreground border-b border-border mb-1 hover:text-primary"
+            aria-expanded={!isCollapsed}
+            aria-controls={`${tocId}-desktop-list`}
           >
             <svg
               className={`toc-toggle-icon w-2 h-2 transition-transform duration-150 ${isCollapsed ? '' : 'rotate-90'}`}
@@ -149,7 +214,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
           </button>
           
           {!isCollapsed && (
-            <nav className="toc-nav">
+            <nav id={`${tocId}-desktop-list`} className="toc-nav" aria-label="Table of contents">
               <ul className="space-y-1">
                 {tocItems.map((item) => (
                   <li key={item.id}>
@@ -159,6 +224,7 @@ export function TableOfContents({ content, postTitle }: TableOfContentsProps) {
                       className={`toc-link level-${item.level} ${
                         activeId === item.id ? 'active' : ''
                       }`}
+                      aria-current={activeId === item.id ? "location" : undefined}
                       dangerouslySetInnerHTML={{ __html: item.renderedTitle }}
                     />
                   </li>
