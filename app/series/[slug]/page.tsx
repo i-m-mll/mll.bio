@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const series = await getSeries(slug)
 
-  if (!series) {
+  if (!series || series.draft) {
     return {}
   }
 
@@ -27,7 +27,7 @@ export default async function SeriesPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params
   const series = await getSeries(slug)
 
-  if (!series) {
+  if (!series || series.draft) {
     notFound()
   }
 
