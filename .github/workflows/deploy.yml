@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, feature/fix-ci]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -23,9 +23,20 @@ jobs:
       - name: Fetch writing content from monorepo
         env:
           MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
+          MONO_CHECKOUT_DIR: /tmp/main-repo
+          MONO_PREFIX: /Users/mll/Main/
+          EXPECTED_CONTENT_SYMLINK_COUNT: "4"
         run: |
+          set -euo pipefail
+
+          if [ -z "${MAIN_REPO_TOKEN:-}" ]; then
+            echo "MAIN_REPO_TOKEN is required to fetch writing content" >&2
+            exit 1
+          fi
+
           # Sparse-checkout 20 Writing/ from i-m-mll/main
-          mkdir -p /tmp/main-repo && cd /tmp/main-repo
+          rm -rf "$MONO_CHECKOUT_DIR"
+          mkdir -p "$MONO_CHECKOUT_DIR" && cd "$MONO_CHECKOUT_DIR"
           git init -q
           git remote add origin "https://x-access-token:${MAIN_REPO_TOKEN}@github.com/i-m-mll/main.git"
           git sparse-checkout init --cone
@@ -33,38 +44,12 @@ jobs:
           git pull --depth=1 origin main -q
 
           cd "$GITHUB_WORKSPACE"
-
-          # Copy only items that are explicitly symlinked in mll.bio (mode 120000 in git index).
-          # This mirrors exactly what Switchboard links locally — no opportunistic copying.
-          # For each symlink, read its target, strip the local prefix to get the monorepo-relative path,
-          # then copy from the sparse checkout.
-          MONO_PREFIX="/Users/mll/Main/"
-
-          copy_symlinked() {
-            local content_dir="$1"   # e.g. content/posts
-            git ls-files -s "$content_dir" | awk '$1 == "120000" { print $2, $4 }' | \
-            while read -r blob_hash link_path; do
-              target=$(git cat-file blob "$blob_hash")
-              # Strip local prefix to get monorepo-relative path
-              rel="${target#$MONO_PREFIX}"
-              src="/tmp/main-repo/$rel"
-              dest="$link_path"
-              if [ -e "$src" ] || [ -d "$src" ]; then
-                # Replace the symlink (which CI can't follow) with the real content
-                rm -f "$dest"
-                cp -r "$src" "$dest"
-                echo "Copied: $rel -> $dest"
-              else
-                echo "Warning: symlink target not found in monorepo: $rel"
-              fi
-            done
-          }
-
-          copy_symlinked "content/posts"
-          copy_symlinked "content/series"
+          scripts/resolve-ci-content.sh
 
       - name: Copy series assets to public/
         run: |
+          set -euo pipefail
+
           # Copy assets/ from each series content directory to public/series/<slug>/assets/
           # so Next.js static export can serve them. Assets are now plain files in the monorepo.
           for series_dir in "$GITHUB_WORKSPACE"/content/series/*/; do
