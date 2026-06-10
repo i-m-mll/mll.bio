@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useId, useMemo, useRef } from "react"
 import React from "react"
-import { useMediaQuery } from "../hooks/use-media-query"
+import { useSidenoteNumber } from "./sidenote-context"
 import { useTruncatableNote } from "../hooks/use-truncatable-note"
-import tailwindConfig from "../tailwind.config"
 
 interface SidenoteProps {
   id: string
@@ -29,7 +28,7 @@ interface MarginNoteProps {
 
 export function Sidenote({ id, number, children, content }: SidenoteProps) {
   const contentRef = useRef<HTMLDivElement>(null)
-  const isDesktop = useMediaQuery(`(min-width: ${tailwindConfig.theme.screens.desktop})`)
+  const { isDesktop } = useSidenoteNumber()
 
   // Use content prop if provided, otherwise use children
   const actualContent = content || children
@@ -92,22 +91,16 @@ export function Sidenote({ id, number, children, content }: SidenoteProps) {
 }
 
 export function MarginNote({ id, children, top, y, line, dataTargetPosition, dataPositioned, dataInCode, dataMobileVersion, dataFollowsCode }: MarginNoteProps) {
-  const [generatedId, setGeneratedId] = useState<string>('')
+  const reactId = useId()
+  const generatedIdRef = useRef(`mn-${reactId.replace(/:/g, '')}`)
   const contentRef = useRef<HTMLDivElement>(null)
   const normalizedChildren = useMemo(() => normalizeMarginNoteChildren(children), [children])
   const isCodeBlock = dataInCode === 'true'
   const isPositioned = top !== undefined || y !== undefined || line !== undefined || dataTargetPosition !== undefined || dataPositioned === 'true'
   const isMobileVersion = dataMobileVersion === 'true'
-  const isDesktop = useMediaQuery(`(min-width: ${tailwindConfig.theme.screens.desktop})`)
+  const { isDesktop } = useSidenoteNumber()
 
-  // Generate ID on client side to avoid hydration mismatch
-  useEffect(() => {
-    if (!id && !generatedId) {
-      setGeneratedId(`mn-${Math.random().toString(36).substr(2, 9)}`)
-    }
-  }, [id, generatedId])
-
-  const marginNoteId = id || generatedId || 'temp-id'
+  const marginNoteId = id || generatedIdRef.current
 
   // Use shared truncation logic
   const { shouldTruncate, isExpanded, renderContent } = useTruncatableNote({

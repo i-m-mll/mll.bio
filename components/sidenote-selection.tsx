@@ -4,26 +4,26 @@ import { useEffect } from 'react'
 import { uiConfig } from '@/lib/config/ui'
 
 export function SidenoteSelection() {
-  let isSelectingInNote = false
-  let currentSelectingNote: HTMLElement | null = null
-
   useEffect(() => {
+    let isSelectingInNote = false
+    let currentSelectingNote: HTMLElement | null = null
+
     // Handle mouse down events for note selection
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       const sidenote = target.closest('.sidenote') as HTMLElement
       const marginnote = target.closest('.marginnote') as HTMLElement
-      
+
       // Clear all previous selecting states
       document.querySelectorAll('.sidenote.selecting, .marginnote.selecting').forEach(el => {
         el.classList.remove('selecting')
       })
-      
+
       if (sidenote) {
         isSelectingInNote = true
         currentSelectingNote = sidenote
         sidenote.classList.add('selecting')
-        
+
         // Enable selection for the entire document temporarily
         document.body.style.userSelect = 'text'
         document.body.style.webkitUserSelect = 'text'
@@ -31,21 +31,24 @@ export function SidenoteSelection() {
         isSelectingInNote = true
         currentSelectingNote = marginnote
         marginnote.classList.add('selecting')
-        
+
         // Enable selection for the entire document temporarily
         document.body.style.userSelect = 'text'
         document.body.style.webkitUserSelect = 'text'
       } else {
         isSelectingInNote = false
         currentSelectingNote = null
-        
+
         // Reset document selection
         document.body.style.userSelect = ''
         document.body.style.webkitUserSelect = ''
       }
     }
 
-    const handleSelectionChange = () => {
+    let selectionFrame: number | null = null
+
+    const processSelectionChange = () => {
+      selectionFrame = null
       const selection = window.getSelection()
       if (!selection || selection.rangeCount === 0) {
         return
@@ -57,15 +60,15 @@ export function SidenoteSelection() {
       if (isSelectingInNote && currentSelectingNote) {
         const startContainer = range.startContainer
         const endContainer = range.endContainer
-        
+
         // Check if either the start or end has moved outside the note
         const startInNote = currentSelectingNote.contains(startContainer)
         const endInNote = currentSelectingNote.contains(endContainer)
-        
+
         if (!startInNote || !endInNote) {
           try {
             const newRange = document.createRange()
-            
+
             // If start is outside note, use first text node in note as start
             if (!startInNote) {
               const walker = document.createTreeWalker(
@@ -80,7 +83,7 @@ export function SidenoteSelection() {
             } else {
               newRange.setStart(range.startContainer, range.startOffset)
             }
-            
+
             // If end is outside note, use last text node in note as end
             if (!endInNote) {
               const walker = document.createTreeWalker(
@@ -93,14 +96,14 @@ export function SidenoteSelection() {
               while (node = walker.nextNode()) {
                 lastTextNode = node
               }
-              
+
               if (lastTextNode) {
                 newRange.setEnd(lastTextNode, lastTextNode.textContent?.length || 0)
               }
             } else {
               newRange.setEnd(range.endContainer, range.endOffset)
             }
-            
+
             selection.removeAllRanges()
             selection.addRange(newRange)
           } catch (error) {
@@ -112,13 +115,13 @@ export function SidenoteSelection() {
 
       // If selecting in main text, filter out note content
       const commonAncestor = range.commonAncestorContainer
-      const containerElement = commonAncestor.nodeType === Node.TEXT_NODE 
-        ? commonAncestor.parentElement 
+      const containerElement = commonAncestor.nodeType === Node.TEXT_NODE
+        ? commonAncestor.parentElement
         : commonAncestor as HTMLElement
 
-      if (containerElement && containerElement.querySelector && 
+      if (containerElement && containerElement.querySelector &&
           (containerElement.querySelector('.sidenote') || containerElement.querySelector('.marginnote'))) {
-        
+
         // Selection contains notes, we need to clean it up
         try {
           // Get all text nodes in the selection, excluding those in notes
@@ -132,12 +135,12 @@ export function SidenoteSelection() {
                 if (parent && (parent.closest('.sidenote') || parent.closest('.marginnote'))) {
                   return NodeFilter.FILTER_REJECT
                 }
-                
+
                 // Accept text nodes that are within the selection range
                 if (range.intersectsNode(node)) {
                   return NodeFilter.FILTER_ACCEPT
                 }
-                
+
                 return NodeFilter.FILTER_REJECT
               }
             }
@@ -205,12 +208,18 @@ export function SidenoteSelection() {
       }
     }
 
+    const handleSelectionChange = () => {
+      if (selectionFrame !== null) return
+
+      selectionFrame = window.requestAnimationFrame(processSelectionChange)
+    }
+
     const handleMouseUp = () => {
       // Small delay to allow selection to complete
       setTimeout(() => {
         const selection = window.getSelection()
         const selectedText = selection?.toString().trim() || ''
-        
+
         if (selectedText === '') {
           // No text selected, can disable selection
           document.querySelectorAll('.sidenote.selecting, .marginnote.selecting').forEach(el => {
@@ -233,6 +242,9 @@ export function SidenoteSelection() {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('selectionchange', handleSelectionChange)
       document.removeEventListener('mouseup', handleMouseUp)
+      if (selectionFrame !== null) {
+        window.cancelAnimationFrame(selectionFrame)
+      }
     }
   }, [])
 
@@ -328,7 +340,7 @@ export function SidenoteSelection() {
 
       const targetId = href.slice(1)
       const targetEl = document.getElementById(targetId)
-      
+
       if (!targetEl) return
 
       // Prevent default automatic jump
@@ -379,7 +391,7 @@ export function SidenoteSelection() {
 
       const targetId = href.slice(1)
       const targetEl = document.getElementById(targetId)
-      
+
       if (!targetEl) return
 
       // Scroll superscript (or its parent line) into view minimal
@@ -406,37 +418,12 @@ export function SidenoteSelection() {
 
     document.addEventListener('click', handleReturnLinkClick)
 
-    // Observe DOM mutations to catch late-rendered sidenotes (e.g. MDX content)
-    const observer = new MutationObserver((mutations) => {
-      let shouldUpdate = false
-      for (const m of mutations) {
-        m.addedNodes.forEach((node) => {
-          if (node instanceof HTMLElement) {
-            if (
-              node.classList.contains('sidenote') ||
-              node.classList.contains('marginnote') ||
-              node.querySelector('.sidenote, .marginnote')
-            ) {
-              shouldUpdate = true
-            }
-          }
-        })
-      }
-      if (shouldUpdate) {
-        // No id juggling needed any more – mutation observer kept for future
-        // enhancements but left empty.
-      }
-    })
-
-    observer.observe(document.body, { childList: true, subtree: true })
-
     // Clean-up
     return () => {
       document.removeEventListener('click', handleAnchorClick)
       document.removeEventListener('click', handleReturnLinkClick)
-      observer.disconnect()
     }
   }, [])
 
   return null
-} 
+}

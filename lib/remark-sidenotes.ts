@@ -1,6 +1,7 @@
 import { visit, SKIP } from 'unist-util-visit'
 import type { Root, FootnoteDefinition, FootnoteReference, Text, Paragraph } from 'mdast'
 import { uiConfig } from '@/lib/config/ui'
+import { isLikelySidenoteCodeExample } from '@/lib/sidenote-code-example'
 
 export function remarkSidenotes() {
   return (tree: Root) => {
@@ -16,7 +17,7 @@ export function remarkSidenotes() {
 
         // Skip footnote definitions that are too short or look like code examples
         // This helps avoid processing inline code examples as real footnotes
-        if (textContent.length < 15 || isLikelyCodeExample(textContent, node)) {
+        if (textContent.length < 15 || isLikelySidenoteCodeExample(textContent)) {
           return // Don't process this footnote, leave it as-is
         }
 
@@ -42,7 +43,7 @@ export function remarkSidenotes() {
         const definition = footnoteDefinitions.get(node.identifier)
         if (definition) {
           sidenoteCounter++
-          
+
           // Create a JSX element for the sidenote
           const sidenoteElement = {
             type: 'mdxJsxTextElement',
@@ -54,7 +55,7 @@ export function remarkSidenotes() {
                 value: node.identifier
               },
               {
-                type: 'mdxJsxAttribute', 
+                type: 'mdxJsxAttribute',
                 name: 'content',
                 value: definition
               },
@@ -66,7 +67,7 @@ export function remarkSidenotes() {
             ],
             children: []
           }
-          
+
           // Replace the footnote reference with the sidenote element
           parent.children[index] = sidenoteElement as any
         }
@@ -78,10 +79,10 @@ export function remarkSidenotes() {
     visit(tree, 'mdxJsxFlowElement', (node: any) => {
       if (node.name === 'NoteScope') {
         noteScopeCount++
-        
+
         // Strip whitespace around MarginNote elements
         stripWhitespaceAroundMarginNotes(node)
-        
+
         processNoteScopeTargets(node)
       }
     })
@@ -130,11 +131,11 @@ function markMarginNoteAsPositioned(marginNoteNode: any) {
   const hasTopAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'top')
   const hasTargetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
   const hasDataTargetPosition = marginNoteNode.attributes?.find((attr: any) => attr.name === 'dataTargetPosition')
-  
+
   // If this MarginNote has positioning attributes, mark it as positioned
   if (hasTopAttr || hasTargetAttr || hasDataTargetPosition) {
     marginNoteNode.attributes = marginNoteNode.attributes || []
-    
+
     // Add a data attribute to indicate this should not affect document flow
     const existingDataPositioned = marginNoteNode.attributes.find((attr: any) => attr.name === 'dataPositioned')
     if (!existingDataPositioned) {
@@ -150,42 +151,42 @@ function markMarginNoteAsPositioned(marginNoteNode: any) {
 // Process MarginNote elements with target props within a NoteScope
 function processNoteScopeTargets(noteScopeNode: any) {
   const scopeTextContent = extractAllTextFromNode(noteScopeNode)
-  
+
   // Collect all MarginNote elements that need processing first
   const notesToProcess: Array<{node: any, index: number, parent: any, type: 'text' | 'flow'}> = []
-  
+
   // Find all MarginNote elements within this scope (check both text and flow elements)
   visit(noteScopeNode, 'mdxJsxTextElement', (marginNoteNode: any, index: number | undefined, parent: any) => {
     if (marginNoteNode.name === 'MarginNote') {
       const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
-      
+
       if (targetAttr && targetAttr.value && parent && index !== undefined) {
         notesToProcess.push({node: marginNoteNode, index, parent, type: 'text'})
       }
     }
   })
-  
+
   // Also check for flow elements
   visit(noteScopeNode, 'mdxJsxFlowElement', (marginNoteNode: any, index: number | undefined, parent: any) => {
     if (marginNoteNode.name === 'MarginNote') {
       const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
-      
+
       if (targetAttr && targetAttr.value && parent && index !== undefined) {
         notesToProcess.push({node: marginNoteNode, index, parent, type: 'flow'})
       }
     }
   })
-  
+
   // Process notes in reverse order to maintain correct indices when removing
   notesToProcess.reverse().forEach(({node: marginNoteNode, index, parent, type}) => {
     const targetAttr = marginNoteNode.attributes?.find((attr: any) => attr.name === 'target')
     const targetText = targetAttr.value
     const position = findTextPosition(scopeTextContent, targetText, noteScopeNode)
-    
+
     if (position === null) {
       throw new Error(`Target text "${targetText}" not found in NoteScope. Build failed to ensure content accuracy.`)
     }
-    
+
     // Add positioning data attributes to the MarginNote
     marginNoteNode.attributes = marginNoteNode.attributes || []
     marginNoteNode.attributes.push({
@@ -194,26 +195,28 @@ function processNoteScopeTargets(noteScopeNode: any) {
       value: position.toString()
     })
 
-    if (targetInCodeBlock(noteScopeNode, targetText)) {
+    const isCodeTarget = targetInCodeBlock(noteScopeNode, targetText)
+
+    if (isCodeTarget) {
       marginNoteNode.attributes.push({
         type: 'mdxJsxAttribute',
         name: 'dataInCode',
         value: 'true'
       })
     }
-    
+
     // For positioned notes, create a duplicate for mobile display
-    const mobileMarginNote = createMobileMarginNote(marginNoteNode, targetInCodeBlock(noteScopeNode, targetText))
-    
+    const mobileMarginNote = createMobileMarginNote(marginNoteNode, isCodeTarget)
+
     // Remove the original note from its current position FIRST
     parent.children.splice(index, 1)
-    
+
     // Create a clean desktop version (without mobile attributes)
     const desktopMarginNote = JSON.parse(JSON.stringify(marginNoteNode)) // Clone for desktop
     desktopMarginNote.attributes = desktopMarginNote.attributes?.filter((attr: any) => attr.name !== 'dataMobileVersion') || []
-    
+
     // Inject the desktop version inline at the target text location (for non-code targets)
-    if (!targetInCodeBlock(noteScopeNode, targetText)) {
+    if (!isCodeTarget) {
       injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
       // Insert mobile version after the containing paragraph
       insertMobileMarginNoteAfterParagraph(noteScopeNode, mobileMarginNote, targetText)
@@ -223,7 +226,7 @@ function processNoteScopeTargets(noteScopeNode: any) {
       // Inject desktop version at the target location within the code block
       injectMarginNoteAtTarget(noteScopeNode, desktopMarginNote, targetText)
     }
-    
+
     // Remove the target attribute since we've processed it
     marginNoteNode.attributes = marginNoteNode.attributes.filter((attr: any) => attr.name !== 'target')
   })
@@ -232,17 +235,17 @@ function processNoteScopeTargets(noteScopeNode: any) {
 // Create a mobile version of a margin note with unique ID
 function createMobileMarginNote(marginNoteNode: any, followsCodeBlock: boolean = false) {
   const mobileNote = JSON.parse(JSON.stringify(marginNoteNode)) // Deep clone
-  
+
   // Add mobile-specific attributes
   mobileNote.attributes = mobileNote.attributes || []
-  
+
   // Add attribute to mark this as mobile version
   mobileNote.attributes.push({
     type: 'mdxJsxAttribute',
     name: 'dataMobileVersion',
     value: 'true'
   })
-  
+
   // Add attribute to indicate if this follows a code block
   if (followsCodeBlock) {
     mobileNote.attributes.push({
@@ -251,13 +254,13 @@ function createMobileMarginNote(marginNoteNode: any, followsCodeBlock: boolean =
       value: 'true'
     })
   }
-  
+
   // If there's an ID, modify it to prevent conflicts
   const idAttr = mobileNote.attributes.find((attr: any) => attr.name === 'id')
   if (idAttr) {
     idAttr.value = `${idAttr.value}-mobile`
   }
-  
+
   return mobileNote
 }
 
@@ -266,7 +269,7 @@ function insertMobileMarginNoteAfterParagraph(noteScopeNode: any, mobileMarginNo
   let inserted = false
   visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
     if (inserted || !parent || index === undefined) return
-    
+
     // Check if this is a paragraph that contains our target text
     if (node.type === 'paragraph') {
       const paragraphText = extractAllTextFromNode(node).toLowerCase()
@@ -285,7 +288,7 @@ function insertMobileMarginNoteAfterCodeBlock(noteScopeNode: any, mobileMarginNo
   let inserted = false
   visit(noteScopeNode, (node: any, index: number | undefined, parent: any) => {
     if (inserted || !parent || index === undefined) return
-    
+
     // Check if this is a code block
     if (node.type === 'code') {
       // Insert the mobile note after this code block
@@ -300,7 +303,7 @@ function insertMobileMarginNoteAfterCodeBlock(noteScopeNode: any, mobileMarginNo
 function findTextPosition(scopeText: string, targetText: string, scopeNode: any): number | null {
   let searchText = targetText
   let isRegex = false
-  
+
   // Check if target text is a regex pattern (starts and ends with /)
   if (targetText.startsWith('/') && targetText.endsWith('/')) {
     try {
@@ -319,7 +322,7 @@ function findTextPosition(scopeText: string, targetText: string, scopeNode: any)
     // Simple string search
     const index = scopeText.toLowerCase().indexOf(targetText.toLowerCase())
     if (index === -1) return null
-    
+
     return calculateRelativePosition(index, scopeText, scopeNode)
   }
 }
@@ -329,11 +332,11 @@ function calculateRelativePosition(textIndex: number, scopeText: string, scopeNo
   // This is a simplified implementation that returns the character position
   // In a more sophisticated version, this would calculate the actual DOM element
   // position and convert to pixels or relative units
-  
+
   // For now, we'll estimate based on line breaks and average line height
   const textBeforeTarget = scopeText.substring(0, textIndex)
   const lineBreaks = (textBeforeTarget.match(/\n/g) || []).length
-  
+
   // Return line-based position (will be converted to pixels in CSS)
   return lineBreaks
 }
@@ -341,27 +344,27 @@ function calculateRelativePosition(textIndex: number, scopeText: string, scopeNo
 // Extract all text content from a node and its children
 function extractAllTextFromNode(node: any): string {
   let text = ''
-  
+
   if (node.type === 'text') {
     return node.value
   }
-  
+
   // Handle code blocks specifically
   if (node.type === 'code') {
     return node.value + '\n'
   }
-  
+
   // Handle inline code
   if (node.type === 'inlineCode') {
     return node.value
   }
-  
+
   if (node.children) {
     for (const child of node.children) {
       text += extractAllTextFromNode(child)
     }
   }
-  
+
   // Add line breaks for block elements
   if (node.type === 'element' || node.type === 'mdxJsxFlowElement' || node.type === 'paragraph') {
     const blockElements = ['p', 'div', 'pre', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
@@ -369,39 +372,14 @@ function extractAllTextFromNode(node: any): string {
       text += '\n'
     }
   }
-  
+
   // Skip MarginNote elements entirely when extracting text – they should not influence
   // target positioning calculations.
   if ((node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') && node.name === 'MarginNote') {
     return ''
   }
-  
-  return text
-}
 
-// Helper function to check if content looks like a code example
-function isLikelyCodeExample(content: string, node: any): boolean {
-  const trimmedContent = content.trim().toLowerCase()
-  
-  // Check for the specific problematic pattern from the demo
-  if (trimmedContent === 'your sidenote content` for the definition') {
-    return true
-  }
-  
-  // Check for other common patterns that indicate this is a code example
-  const codePatterns = [
-    /^your sidenote content/i, // The specific example from the demo
-    /^.*content.*for.*definition/i, // Generic example pattern
-    /^\w+\s+(content|example|text)$/i, // Short placeholder text
-    /content.*definition/i, // Generic pattern
-    /for the definition$/i, // Ends with "for the definition"
-  ]
-  
-  // Also check if the content is very generic/placeholder-like
-  const isGeneric = trimmedContent.includes('your') && 
-                   trimmedContent.includes('content')
-  
-  return codePatterns.some(pattern => pattern.test(trimmedContent)) || isGeneric
+  return text
 }
 
 // Strip the force-footnote marker from the first text node in a footnoteDefinition
@@ -525,7 +503,7 @@ function injectMarginNoteAtTarget(noteScopeNode: any, marginNoteNode: any, targe
     if (node.type === 'code') {
       const codeText = node.value.toLowerCase()
       const searchLower = targetText.toLowerCase()
-      
+
       if (codeText.includes(searchLower)) {
         // For code blocks, we wrap the entire code block with the note
         const wrapper = {
@@ -592,4 +570,4 @@ function injectMarginNoteAtTarget(noteScopeNode: any, marginNoteNode: any, targe
   if (!injected) {
     // Fallback: if we didn't find the text node (edge cases, e.g., inside links), do nothing.
   }
-} 
+}
