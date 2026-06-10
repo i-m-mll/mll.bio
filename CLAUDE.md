@@ -79,6 +79,11 @@ Uses Tailwind breakpoints defined in `tailwind.config.ts`:
 - Folder-based posts: a post can be a directory `content/posts/<slug>/` containing `<slug>.md` (or `.mdx`) as the main content file, plus any associated assets. All metadata is in the frontmatter of the main file — no separate JSON needed.
 - Series metadata lives in `content/series/<slug>/_series.md`. The frontmatter holds `title`, `excerpt` (short inline-markdown summary), `order`, `status`, `epistemic`, `created`, `updated`, and `tags`. The markdown body (after frontmatter) is the full series description, rendered via MDXContent on the series detail page.
 
+### Issue Ledger Hygiene
+- Do not create Mandible/git-bug issues with placeholder titles or bodies such as `Title`, `title`, `Desc`, `description`, `TODO`, or an empty string.
+- Before filing an issue, write the descriptive title and a body that names the concrete site surface, expected behavior, and evidence. If those details are not known yet, keep investigating instead of creating a placeholder issue.
+- Check for duplicate existing issues before creating a new one, and prefer commenting on the existing issue when the work belongs there.
+
 ### Custom Components (Directive Syntax)
 Use [remark-directive](https://github.com/remarkjs/remark-directive) syntax instead of JSX tags for custom components. The `lib/remark-directives-to-jsx.ts` plugin transforms directives into JSX AST nodes for the existing component registry.
 
