@@ -204,6 +204,32 @@
     }
 }
 
+@layer components {
+    .series-header-content {
+        margin-left: calc(var(--layout-padding, 1rem) + var(--toc-width, 250px) + var(--layout-gap, 2rem));
+        margin-right: var(--layout-padding, 1rem);
+    }
+
+    .series-header-border {
+        left: calc(-1 * var(--layout-gap, 2rem));
+        right: calc(-1 * var(--layout-padding, 1rem));
+    }
+
+    .series-header-nav {
+        width: calc(100% - 4rem);
+    }
+
+    @media (min-width: 1051px) {
+        .series-header-content {
+            margin-right: calc(18vw + var(--layout-gap, 2rem) + var(--layout-padding, 1rem));
+        }
+
+        .series-header-border {
+            right: calc(-1 * (18vw + var(--layout-gap, 2rem) + var(--layout-padding, 1rem)));
+        }
+    }
+}
+
 /* Smooth scrolling for the entire page */
 /* Global font scale applied at html level so rem units scale proportionally */
 html {

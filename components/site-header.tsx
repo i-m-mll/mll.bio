@@ -349,54 +349,23 @@ export function SiteHeader() {
             top: '100%',
           }}
         >
-          {/* Series header content - offset to align with content column */}
+          {/* Series header content - offset to align with the post content grid column. */}
           <div
             className={cn(
-              "relative",
+              "series-header-content relative",
               uiConfig.series.header?.backgroundColor || "bg-background"
             )}
-            style={{
-              // Offset from left: page padding (1rem on tablet) + TOC width (250px) + gap (2rem)
-              marginLeft: 'calc(1rem + 250px + 2rem)',
-              // Right margin matches page padding
-              marginRight: '1rem',
-            }}
           >
             {/* Border line - extends from TOC right edge to page right edge */}
             <div
-              className="absolute bottom-0 h-px bg-border pointer-events-none"
-              style={{
-                // Extend left into the gap to align with TOC's right border
-                left: '-2rem',
-                // Extend right to page edge
-                right: '-1rem',
-              }}
+              className="series-header-border absolute bottom-0 h-px bg-border pointer-events-none"
             />
-            {/* Nav content - aligned with prose width (48rem) */}
+            {/* Nav content aligned to the article.prose body measure inside the content column. */}
             <nav
-              className="flex items-center justify-between py-1.5 text-sm max-w-[48rem]"
+              className="series-header-nav mx-auto flex flex-col gap-0.5 py-1 text-sm"
               aria-label="Series navigation"
             >
-              {/* Previous link */}
-              <div className="flex-1 min-w-0">
-                {seriesHeaderData.prevPost ? (
-                  <Link
-                    href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.prevPost.slug}`}
-                    className="group inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
-                  >
-                    <span aria-hidden="true">←</span>
-                    <span className="hidden sm:inline truncate max-w-[150px]">
-                      {seriesHeaderData.prevPost.frontmatter.title}
-                    </span>
-                    <span className="sm:hidden">Prev</span>
-                  </Link>
-                ) : (
-                  <span className="text-muted-foreground/40">←</span>
-                )}
-              </div>
-
-              {/* Center: Series info */}
-              <div className="flex-shrink-0 text-center px-4">
+              <div className="text-center leading-5">
                 <Link
                   href={`/series/${seriesHeaderData.series.slug}`}
                   className="hover:text-foreground transition-colors no-underline"
@@ -406,22 +375,42 @@ export function SiteHeader() {
                 </Link>
               </div>
 
-              {/* Next link */}
-              <div className="flex-1 min-w-0 text-right">
-                {seriesHeaderData.nextPost ? (
-                  <Link
-                    href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.nextPost.slug}`}
-                    className="group inline-flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
-                  >
-                    <span className="hidden sm:inline truncate max-w-[150px]">
-                      {seriesHeaderData.nextPost.frontmatter.title}
-                    </span>
-                    <span className="sm:hidden">Next</span>
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                ) : (
-                  <span className="text-muted-foreground/40">→</span>
-                )}
+              <div className="grid grid-cols-[minmax(0,1fr)_2rem_minmax(0,1fr)] items-center leading-5">
+                <div className="min-w-0">
+                  {seriesHeaderData.prevPost ? (
+                    <Link
+                      href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.prevPost.slug}`}
+                      className="group inline-flex max-w-full min-w-0 items-center gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
+                    >
+                      <span aria-hidden="true" className="shrink-0">←</span>
+                      <span className="hidden min-w-0 truncate sm:inline">
+                        {seriesHeaderData.prevPost.frontmatter.title}
+                      </span>
+                      <span className="sm:hidden">Prev</span>
+                    </Link>
+                  ) : (
+                    <span className="text-muted-foreground/40">←</span>
+                  )}
+                </div>
+
+                <div aria-hidden="true" />
+
+                <div className="min-w-0 text-right">
+                  {seriesHeaderData.nextPost ? (
+                    <Link
+                      href={`/series/${seriesHeaderData.series.slug}/${seriesHeaderData.nextPost.slug}`}
+                      className="group inline-flex max-w-full min-w-0 items-center justify-end gap-1 text-muted-foreground hover:text-foreground transition-colors no-underline"
+                    >
+                      <span className="hidden min-w-0 truncate sm:inline">
+                        {seriesHeaderData.nextPost.frontmatter.title}
+                      </span>
+                      <span className="sm:hidden">Next</span>
+                      <span aria-hidden="true" className="shrink-0">→</span>
+                    </Link>
+                  ) : (
+                    <span className="text-muted-foreground/40">→</span>
+                  )}
+                </div>
               </div>
             </nav>
           </div>
