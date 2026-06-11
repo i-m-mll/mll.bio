@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, ReactNode, useEffect, CSSProperties } from "react"
+import { useId, useState, ReactNode, useEffect, CSSProperties } from "react"
 import { useMediaQuery } from "../hooks/use-media-query"
 import tailwindConfig from "../tailwind.config"
 
@@ -120,6 +120,7 @@ export function CollapsibleCallout({
   defaultOpen = false,
   collapsible = true,
 }: CollapsibleCalloutProps) {
+  const contentId = useId()
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const styles = typeStyles[type] ?? typeStyles.info
 
@@ -157,6 +158,7 @@ export function CollapsibleCallout({
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center justify-between w-full px-4 py-2 font-semibold text-left hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${isOpen ? "bg-black/5 dark:bg-white/5 rounded-t-md" : "rounded-md"}`}
         aria-expanded={isOpen}
+        aria-controls={contentId}
       >
         <span className="flex items-center gap-2">
           <CalloutIcon type={type} />
@@ -176,7 +178,7 @@ export function CollapsibleCallout({
         </svg>
       </button>
       {isOpen && (
-        <div className="px-4 py-3 border-t border-inherit prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0" style={{"--callout-padding-right": "1rem"} as CSSProperties}>
+        <div id={contentId} className="px-4 py-3 border-t border-inherit prose dark:prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0" style={{"--callout-padding-right": "1rem"} as CSSProperties}>
           {children}
         </div>
       )}

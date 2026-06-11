@@ -40,6 +40,10 @@ yarn-error.log*
 .vercel
 
 # generated/optimized assets (regenerated during build)
+/generated/
+/lib/active-code-themes.ts
+/public/feed.xml
+/public/search/
 /public/optimized/
 /public/content/
 

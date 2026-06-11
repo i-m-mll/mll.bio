@@ -3,47 +3,68 @@
 /* Normal weight */
 @font-face {
   font-family: "et-book";
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot");
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff") format("woff"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf") format("truetype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book/et-book-roman-line-figures.woff") format("woff");
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Italic */
 @font-face {
   font-family: "et-book";
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot");
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff") format("woff"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf") format("truetype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book/et-book-display-italic-old-style-figures.woff") format("woff");
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
 }
 
-/* Semibold - This was missing! */
+/* Semibold */
 @font-face {
   font-family: "et-book";
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-semi-bold-old-style-figures/et-book-semi-bold-old-style-figures.eot");
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-semi-bold-old-style-figures/et-book-semi-bold-old-style-figures.eot?#iefix") format("embedded-opentype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-semi-bold-old-style-figures/et-book-semi-bold-old-style-figures.woff") format("woff"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-semi-bold-old-style-figures/et-book-semi-bold-old-style-figures.ttf") format("truetype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-semi-bold-old-style-figures/et-book-semi-bold-old-style-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book/et-book-semi-bold-old-style-figures.woff") format("woff");
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Bold */
 @font-face {
   font-family: "et-book";
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot");
-  src: url("../node_modules/typeface-et-book/et-book/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff") format("woff"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf") format("truetype"), 
-       url("../node_modules/typeface-et-book/et-book/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book/et-book-bold-line-figures.woff") format("woff");
   font-weight: 700;
   font-style: normal;
-} 
+  font-display: swap;
+}
+
+/* Iosevka for code blocks */
+@font-face {
+  font-family: "Iosevka Web";
+  src: url("/fonts/iosevka/iosevka-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Iosevka Web";
+  src: url("/fonts/iosevka/iosevka-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Iosevka";
+  src: url("/fonts/iosevka/iosevka-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Iosevka";
+  src: url("/fonts/iosevka/iosevka-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

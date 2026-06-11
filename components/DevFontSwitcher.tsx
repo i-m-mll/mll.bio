@@ -18,22 +18,8 @@ const FONT_META: Record<string, FontMeta> = {
   ...(variants as Record<string, FontMeta>),
 }
 
-function loadFont(family: string, weight: string, italic: boolean) {
-  const italFlag = italic ? '1' : '0'
-  if (family !== DEFAULT_FONT) {
-    const href =
-      `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:` +
-      `ital,wght@${italFlag},${weight}&display=swap`
-
-    let link = document.querySelector<HTMLLinkElement>('link[data-dev-font]')
-    if (!link) {
-      link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.dataset.devFont = 'true'
-      document.head.appendChild(link)
-    }
-    link.href = href
-  }
+function loadFont(family: string) {
+  document.querySelector<HTMLLinkElement>('link[data-dev-font]')?.remove()
   document.documentElement.style.setProperty('--dev-title-font', `'${family}', serif`)
 }
 
@@ -93,7 +79,7 @@ export default function DevFontSwitcher() {
 
   useEffect(() => {
     if (size === null) return
-    loadFont(family, weight, italic)
+    loadFont(family)
     document.documentElement.style.setProperty('--dev-title-font-size', `${size}rem`)
   }, [family, weight, italic, size])
 
@@ -198,4 +184,4 @@ export default function DevFontSwitcher() {
       </div>
     </aside>
   )
-} 
+}

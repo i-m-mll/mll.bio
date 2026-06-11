@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { renderInlineMarkdown } from "@/lib/utils"
 import { MDXContent } from "@/components/mdx-content"
+import { buildPageMetadata } from "@/lib/metadata"
 
 export async function generateStaticParams() {
   const slugs = await getAllSeriesSlugs()
@@ -13,21 +14,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const series = await getSeries(slug)
 
-  if (!series) {
+  if (!series || series.draft) {
     return {}
   }
 
-  return {
+  return buildPageMetadata({
     title: series.title,
     description: series.excerpt ?? "",
-  }
+    path: `/series/${slug}`,
+  })
 }
 
 export default async function SeriesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const series = await getSeries(slug)
 
-  if (!series) {
+  if (!series || series.draft) {
     notFound()
   }
 

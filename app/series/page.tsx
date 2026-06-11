@@ -3,11 +3,13 @@ import { siteConfig } from "@/lib/config/site"
 import { Metadata } from "next"
 import { renderInlineMarkdown } from "@/lib/utils"
 import Link from "next/link"
+import { buildPageMetadata } from "@/lib/metadata"
 
-export const metadata: Metadata = {
-  title: `Series | ${siteConfig.name}`,
-  description: "Multi-part series and tutorials",
-}
+export const metadata: Metadata = buildPageMetadata({
+  title: "Series",
+  description: "Multi-part series and essays.",
+  path: "/series",
+})
 
 export default async function SeriesIndexPage() {
   const allSeries = await getAllSeries()

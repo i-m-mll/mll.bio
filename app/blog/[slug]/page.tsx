@@ -13,6 +13,7 @@ import { renderInlineMarkdown, stripMarkdown } from "@/lib/utils"
 import SearchHighlighter from "@/components/search-highlighter"
 import { getDiffData } from "@/lib/diff-utils"
 import { DiffToolbar } from "@/components/diff-toolbar"
+import { absoluteUrl, buildPageMetadata, jsonLdScript } from "@/lib/metadata"
 
 // Check if diff mode is enabled (used at runtime only, not for static config)
 const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
@@ -44,21 +45,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = post.frontmatter.description
   const ogImage = post.frontmatter.ogImage
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: ogImage ? [{ url: ogImage }] : [],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: ogImage ? [ogImage] : [],
-    },
-  }
+    path: `/blog/${slug}`,
+    ogImage,
+    type: "article",
+  })
 }
 
 export default async function BlogPostPage({
@@ -98,6 +91,28 @@ export default async function BlogPostPage({
       )}
       <div className="container min-w-0 pt-6 pb-6 tablet:py-10 desktop:py-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={jsonLdScript({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: stripMarkdown(post.frontmatter.title),
+              description: post.frontmatter.description || siteConfig.description,
+              url: absoluteUrl(`/blog/${slug}`),
+              datePublished: post.frontmatter.publishedRaw,
+              dateModified: post.frontmatter.updatedRaw || post.frontmatter.publishedRaw,
+              author: {
+                "@type": "Person",
+                name: siteConfig.author,
+                url: siteConfig.url,
+              },
+              image: absoluteUrl(post.frontmatter.ogImage || "/egg1.png"),
+            })}
+          />
+          <h1
+            className="mb-2 font-heading"
+            dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
+          />
           <div className="text-muted-foreground text-sm mb-6 space-y-0.5">
             <div>{post.readingTime}</div>
             <div>Published: {post.frontmatter.published}</div>
@@ -137,10 +152,6 @@ export default async function BlogPostPage({
               </div>
             )}
           </div>
-          <h1
-            className="mb-2 font-heading"
-            dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(post.frontmatter.title) }}
-          />
           {post.frontmatter.abstract && (
             <div
               className="p-4 rounded-md bg-stone-75 dark:bg-stone-925 mb-6"

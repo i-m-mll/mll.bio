@@ -4,6 +4,7 @@ import matter from "gray-matter"
 import { unified } from "unified"
 import remarkParse from "remark-parse"
 import remarkHtml from "remark-html"
+import { sanitizeHtml } from "./html-sanitizer.mjs"
 
 export interface Project {
   slug: string
@@ -22,7 +23,7 @@ async function markdownToHtml(markdown: string): Promise<string> {
   // the cast to `any` avoids the false-positive type error at the .use() call site.
   const processor = (unified() as any).use(remarkParse).use(remarkHtml, { sanitize: false })
   const result = await processor.process(markdown)
-  return String(result)
+  return sanitizeHtml(String(result))
 }
 
 export async function getProjects(): Promise<Project[]> {

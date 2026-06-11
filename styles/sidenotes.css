@@ -87,25 +87,22 @@
   @apply max-desktop:inline;
 }
 
-/* Ensure positioned notes within wrappers are hidden on mobile */
-.note-anchor-wrapper .marginnote-positioned {
-  @apply max-desktop:!hidden max-desktop:!invisible max-desktop:!opacity-0;
-}
-
-/* Positioned margin notes inherit the same horizontal float behaviour */
+/* Targeted margin notes use one canonical DOM node. On desktop it floats into
+   the margin; on smaller screens the same node becomes an inline note. */
 .marginnote-positioned {
   float: right !important;
   clear: right !important;
   margin-right: calc(-1 * min(var(--sidenote-area-width), calc(var(--sidenote-max-width) + var(--sidenote-width-offset))) + var(--sidenote-margin-offset));
 
-  /* Show on desktop only - mobile versions handled by .marginnote-mobile */
   @apply desktop:block;
-  
-  /* Force hide on mobile with !important */
   display: block !important;
-  
-  /* Hide on mobile using Tailwind desktop breakpoint */
-  @apply max-desktop:!hidden max-desktop:!invisible max-desktop:!opacity-0;
+  @apply max-desktop:!block max-desktop:!visible max-desktop:!opacity-100;
+  @apply max-desktop:!static max-desktop:!float-none max-desktop:!clear-none max-desktop:!mr-0;
+  @apply max-desktop:italic max-desktop:text-gray-600;
+  @apply max-desktop:ml-6 max-desktop:py-4 max-desktop:px-0;
+  @apply max-desktop:text-note max-desktop:leading-note max-desktop:bg-transparent max-desktop:border-none;
+  @apply max-desktop:max-w-[calc(100%-4rem)] max-desktop:w-[calc(100%-4rem)];
+  @apply max-desktop:select-text;
 }
 
 .dark .marginnote-positioned {
@@ -118,8 +115,8 @@
  * You can adjust the `max-desktop:!-mt-1` value to fine-tune the spacing.
  */
 .note-anchor-wrapper.ends-with-pre > .marginnote-positioned {
-  @apply max-desktop:!-mt-8;
-  @apply max-desktop:!-mb-2;
+  @apply max-desktop:!mt-[var(--inline-note-margin-top)];
+  @apply max-desktop:!mb-[var(--inline-note-margin-bottom)];
 }
 
 /* Add visual feedback when sidenote is targeted by anchor link */

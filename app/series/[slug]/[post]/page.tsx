@@ -12,6 +12,8 @@ import SearchHighlighter from "@/components/search-highlighter"
 import { SeriesHeaderSetter } from "@/components/series-header-setter"
 import { getDiffData } from "@/lib/diff-utils"
 import { DiffToolbar } from "@/components/diff-toolbar"
+import { absoluteUrl, buildPageMetadata, jsonLdScript } from "@/lib/metadata"
+import { siteConfig } from "@/lib/config/site"
 
 // Check if diff mode is enabled (used at runtime only, not for static config)
 const enableDiff = process.env.ENABLE_DIFF === 'true' || process.env.ENABLE_EDIT === 'true'
@@ -55,21 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const description = post.frontmatter.description
   const ogImage = post.frontmatter.ogImage
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: ogImage ? [{ url: ogImage }] : [],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: ogImage ? [ogImage] : [],
-    },
-  }
+    path: `/series/${slug}/${postSlug}`,
+    ogImage,
+    type: "article",
+  })
 }
 
 export default async function SeriesPostPage({
@@ -121,8 +115,32 @@ export default async function SeriesPostPage({
       />
 
       {/* Content container - extra top padding on tablet+ for spacing below series header */}
-      <div className="container min-w-0 pt-2 pb-6 tablet:pt-12 tablet:pb-10 desktop:pt-12 desktop:pb-10 tablet:col-start-2 desktop:col-start-2">
+      <div className="container min-w-0 pt-2 pb-6 tablet:pt-16 tablet:pb-10 desktop:pt-16 desktop:pb-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={jsonLdScript({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: post.frontmatter.title,
+              description: post.frontmatter.description || series.excerpt || siteConfig.description,
+              url: absoluteUrl(`/series/${slug}/${postSlug}`),
+              isPartOf: {
+                "@type": "CreativeWorkSeries",
+                name: series.title,
+                url: absoluteUrl(`/series/${slug}`),
+              },
+              datePublished: post.frontmatter.createdRaw,
+              dateModified: post.frontmatter.updatedRaw || post.frontmatter.createdRaw,
+              author: {
+                "@type": "Person",
+                name: siteConfig.author,
+                url: siteConfig.url,
+              },
+              image: absoluteUrl(post.frontmatter.ogImage || "/egg1.png"),
+            })}
+          />
+          <h1 className="mb-2 font-heading">{post.frontmatter.title}</h1>
           <div className="text-muted-foreground text-sm mb-6 space-y-0.5">
             <div>{post.readingTime}</div>
             {post.frontmatter.created && (
@@ -132,7 +150,6 @@ export default async function SeriesPostPage({
               <div>Updated: {post.frontmatter.updated}</div>
             )}
           </div>
-          <h1 className="mb-2 font-heading">{post.frontmatter.title}</h1>
         </article>
 
         {uiConfig.mobileToc.enableInlineToc && (

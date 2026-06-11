@@ -35,12 +35,21 @@ export function ModeToggle({ size = "md" }: ModeToggleProps) {
   const showSunIcon = mounted && theme === "light"
   const showMoonIcon = mounted && (theme === "dark" || (!uiConfig.theme.followSystemTheme && theme === "system"))
   const showSystemIcon = mounted && uiConfig.theme.followSystemTheme && theme === "system"
+  const currentTheme = mounted ? (theme || "system") : "theme"
+  const nextTheme = uiConfig.theme.followSystemTheme
+    ? currentTheme === "system" ? "light" : currentTheme === "light" ? "dark" : "system"
+    : currentTheme === "dark" ? "light" : "dark"
+  const ariaLabel = mounted
+    ? `Theme: ${currentTheme}. Activate to switch to ${nextTheme}.`
+    : "Toggle theme"
 
   return (
     <button
       className={`theme-toggle-button inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground js-only${size === "sm" ? " theme-toggle-button--sm" : ""}`}
       onClick={handleThemeToggle}
       disabled={!mounted}
+      aria-label={ariaLabel}
+      aria-pressed={uiConfig.theme.followSystemTheme ? undefined : theme === "dark"}
       title={
         !mounted 
           ? "Toggle theme"

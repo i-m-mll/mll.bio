@@ -1,5 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { escapeHtml, sanitizeUrl } from "./html-sanitizer.mjs"
+
+export { escapeHtml, sanitizeClassName, sanitizeHtml, sanitizeUrl } from "./html-sanitizer.mjs"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -10,7 +13,8 @@ export function cn(...inputs: ClassValue[]) {
  * Handles common inline formatting without the overhead of full MDX compilation.
  */
 export function renderInlineMarkdown(text: string): string {
-  return text
+  const escaped = escapeHtml(text)
+  return escaped
     // Bold: **text** or __text__
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.*?)__/g, '<strong>$1</strong>')
@@ -22,7 +26,11 @@ export function renderInlineMarkdown(text: string): string {
     // Strikethrough: ~~text~~
     .replace(/~~(.*?)~~/g, '<del>$1</del>')
     // Inline links: [text](url)
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="underline hover:opacity-80">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, href) => {
+      const safeHref = sanitizeUrl(href)
+      if (!safeHref) return label
+      return `<a href="${escapeHtml(safeHref)}" class="underline hover:opacity-80">${label}</a>`
+    })
 }
 
 /**
@@ -48,7 +56,7 @@ export function stripMarkdown(text: string): string {
  * The abstract itself is rendered in italic, so markdown *italic* becomes regular text (inverted).
  */
 export function renderAbstractMarkdown(text: string): string {
-  return text
+  return escapeHtml(text)
     // Bold: **text** or __text__ - keep as bold
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.*?)__/g, '<strong>$1</strong>')

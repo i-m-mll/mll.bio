@@ -2,11 +2,15 @@
 
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
+import { inferDimensionsFromSrc } from "@/lib/image-dimensions"
 
 interface MdxImageProps {
   src: string
   alt?: string
   title?: string
+  width?: number
+  height?: number
+  [key: string]: any
 }
 
 /**
@@ -28,9 +32,23 @@ export function MdxImage({ src, alt = "", title, ...rest }: MdxImageProps) {
     ? src.replace(/\.svg$/i, '-dark.svg')
     : src
 
+  const inferred = inferDimensionsFromSrc(src)
+  const width = typeof rest.width === "number" ? rest.width : inferred.width
+  const height = typeof rest.height === "number" ? rest.height : inferred.height
+
   return (
     <span className="block my-6 flex justify-center">
-      <img src={actualSrc} alt={alt} title={title} className="rounded-md" {...rest} />
+      <img
+        src={actualSrc}
+        alt={alt}
+        title={title}
+        className="rounded-md max-w-full h-auto"
+        loading="lazy"
+        decoding="async"
+        width={width}
+        height={height}
+        {...rest}
+      />
     </span>
   )
 }
