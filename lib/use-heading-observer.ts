@@ -6,9 +6,8 @@ import { useEffect, useState } from "react"
  * Provides the id of the heading currently nearest the top of the viewport and
  * whether the main <h1> title is out of view (scrolled past).
  *
- * Internally uses a single IntersectionObserver so we avoid work on every
- * scroll tick.  Works for pages that render their Markdown/MDX headings into
- * the document during initial mount (static export).
+ * Uses an IntersectionObserver for section headings.  The main title uses a
+ * throttled geometry check so sticky headers count as the top occlusion edge.
  *
  * selector – CSS selector for headings to observe.  Default targets h2-h4 that
  * appear inside the article element.
@@ -50,22 +49,65 @@ export function useHeadingObserver(
 
     headings.forEach((h) => h.id && headingObserver.observe(h))
 
-    // Observer for the main <h1> – we want it marked "out" only when fully
-    // outside viewport, so use default margins/threshold.
-    let titleObserver: IntersectionObserver | null = null
-    if (mainTitle) {
-      titleObserver = new IntersectionObserver(
-        ([entry]) => {
-          setMainTitleOut(!entry.isIntersecting)
-        },
-        { threshold: 0 },
+    const headerComplexBottom = () => {
+      let bottom = 0
+      const header = document.querySelector<HTMLElement>("header")
+
+      if (header) {
+        const rect = header.getBoundingClientRect()
+        const style = window.getComputedStyle(header)
+        if (style.display !== "none" && style.visibility !== "hidden" && rect.bottom > 0) {
+          bottom = Math.max(bottom, rect.bottom)
+        }
+      }
+
+      const seriesHeader = document.querySelector<HTMLElement>(
+        '[data-series-header-visible="true"] nav[aria-label="Series navigation"]',
       )
-      titleObserver.observe(mainTitle)
+
+      if (seriesHeader) {
+        const rect = seriesHeader.getBoundingClientRect()
+        const style = window.getComputedStyle(seriesHeader)
+        if (style.display !== "none" && style.visibility !== "hidden" && rect.bottom > 0) {
+          bottom = Math.max(bottom, rect.bottom)
+        }
+      }
+
+      return bottom
+    }
+
+    let titleFrame: number | null = null
+
+    const updateTitleVisibility = () => {
+      titleFrame = null
+
+      if (!mainTitle) return
+
+      const titleBottom = mainTitle.getBoundingClientRect().bottom
+      const isOut = titleBottom <= headerComplexBottom() + 0.5
+      setMainTitleOut((current) => current === isOut ? current : isOut)
+    }
+
+    const queueTitleVisibilityUpdate = () => {
+      if (titleFrame !== null) return
+      titleFrame = window.requestAnimationFrame(updateTitleVisibility)
+    }
+
+    if (mainTitle) {
+      queueTitleVisibilityUpdate()
+      window.addEventListener("scroll", queueTitleVisibilityUpdate, { passive: true })
+      window.addEventListener("resize", queueTitleVisibilityUpdate)
     }
 
     return () => {
       headingObserver.disconnect()
-      titleObserver?.disconnect()
+      if (titleFrame !== null) {
+        window.cancelAnimationFrame(titleFrame)
+      }
+      if (mainTitle) {
+        window.removeEventListener("scroll", queueTitleVisibilityUpdate)
+        window.removeEventListener("resize", queueTitleVisibilityUpdate)
+      }
     }
   }, [selector, offset])
 

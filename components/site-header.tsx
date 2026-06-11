@@ -344,6 +344,7 @@ export function SiteHeader() {
             "transition-opacity duration-150 ease-in-out",
             isVisible ? "opacity-100" : "opacity-0"
           )}
+          data-series-header-visible={isVisible}
           style={{
             // Position at bottom of header, flush with border
             top: '100%',
@@ -388,9 +389,7 @@ export function SiteHeader() {
                       </span>
                       <span className="sm:hidden">Prev</span>
                     </Link>
-                  ) : (
-                    <span className="text-muted-foreground/40">←</span>
-                  )}
+                  ) : null}
                 </div>
 
                 <div aria-hidden="true" />
@@ -407,9 +406,7 @@ export function SiteHeader() {
                       <span className="sm:hidden">Next</span>
                       <span aria-hidden="true" className="shrink-0">→</span>
                     </Link>
-                  ) : (
-                    <span className="text-muted-foreground/40">→</span>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </nav>
