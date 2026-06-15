@@ -1,6 +1,7 @@
 import { MDXContent } from "@/components/mdx-content"
 import { PostList } from "@/components/post-list"
 import { getPosts } from "@/lib/blog"
+import { getAllSeries } from "@/lib/series"
 import { SocialLinks } from "@/components/social-links"
 import { SubscribeBox } from "@/components/subscribe-box"
 import { siteConfig } from "@/lib/config/site"
@@ -8,6 +9,7 @@ import { absoluteUrl, buildPageMetadata, jsonLdScript } from "@/lib/metadata"
 import { getSection } from "@/lib/sections"
 import { getProjects } from "@/lib/projects"
 import { ProjectList } from "@/components/project-card"
+import { seriesPostsToPostListItems, sortPostListItemsByPublishedDate } from "@/lib/post-listing"
 
 // Unified size for all homepage section headings — change here to restyle all at once
 const sectionHeadingClass = "text-3xl font-bold tracking-tight font-heading"
@@ -115,8 +117,14 @@ function SubscribeSection() {
 }
 
 async function RecentPostsSection() {
-  const posts = await getPosts()
-  const recentPosts = posts.slice(0, 3)
+  const [posts, allSeries] = await Promise.all([
+    getPosts(),
+    getAllSeries(),
+  ])
+  const recentPosts = sortPostListItemsByPublishedDate([
+    ...posts,
+    ...seriesPostsToPostListItems(allSeries),
+  ]).slice(0, 3)
 
   if (recentPosts.length === 0) return null
 

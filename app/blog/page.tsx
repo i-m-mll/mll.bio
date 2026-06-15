@@ -9,6 +9,7 @@ import { SubscribeBox } from "@/components/subscribe-box"
 import { renderInlineMarkdown } from "@/lib/utils"
 import Link from "next/link"
 import { buildPageMetadata } from "@/lib/metadata"
+import { seriesPostsToPostListItems, sortPostListItemsByPublishedDate } from "@/lib/post-listing"
 
 export const metadata = buildPageMetadata({
   title: "Posts",
@@ -28,31 +29,8 @@ export default async function BlogPage() {
     getSection("posts-intro"),
   ])
 
-  // Convert series posts to the same format as regular posts
-  const seriesPosts = allSeries.flatMap(series =>
-    series.posts.map(post => ({
-      slug: `series/${series.slug}/${post.slug}`,
-      content: post.content,
-      readingTime: post.readingTime,
-      frontmatter: {
-        title: post.frontmatter.title,
-        published: post.frontmatter.created || "",
-        publishedRaw: post.frontmatter.created || "",
-        updated: post.frontmatter.updated,
-        updatedRaw: post.frontmatter.updated,
-        description: post.frontmatter.description || "",
-        series: series.title,
-        seriesSlug: series.slug,
-      },
-    }))
-  )
-
-  // Sort regular posts by date
-  const sortedPosts = [...posts].sort((a, b) => {
-    const dateA = new Date(a.frontmatter.publishedRaw || "").getTime() || 0
-    const dateB = new Date(b.frontmatter.publishedRaw || "").getTime() || 0
-    return dateB - dateA
-  })
+  const seriesPosts = seriesPostsToPostListItems(allSeries)
+  const sortedPosts = sortPostListItemsByPublishedDate(posts)
 
   return (
     <div className="container max-w-4xl py-10">
