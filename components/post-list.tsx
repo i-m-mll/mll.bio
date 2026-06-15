@@ -1,16 +1,8 @@
 import Link from "next/link"
-import type { Post } from "@/lib/blog"
 import { renderInlineMarkdown } from "@/lib/utils"
+import type { PostListItem } from "@/lib/post-listing"
 
-// Extended post type that may include series info
-interface ExtendedPost extends Post {
-  frontmatter: Post["frontmatter"] & {
-    series?: string
-    seriesSlug?: string
-  }
-}
-
-export function PostList({ posts }: { posts: ExtendedPost[] }) {
+export function PostList({ posts }: { posts: PostListItem[] }) {
   return (
     <div className="space-y-8">
       {posts.map((post) => {

@@ -2,19 +2,12 @@
 
 import { useState } from "react"
 import { PostList } from "@/components/post-list"
-import type { Post } from "@/lib/blog"
-
-// Extended post type that may include series info (matches PostList's expected type)
-type ExtendedPost = Post & {
-  frontmatter: Post["frontmatter"] & {
-    series?: string
-    seriesSlug?: string
-  }
-}
+import type { PostListItem } from "@/lib/post-listing"
+import { sortPostListItemsByPublishedDate } from "@/lib/post-listing"
 
 interface FilterablePostListProps {
-  posts: ExtendedPost[]
-  seriesPosts: ExtendedPost[]
+  posts: PostListItem[]
+  seriesPosts: PostListItem[]
   showSeriesByDefault: boolean
   title?: string
 }
@@ -28,11 +21,7 @@ export function FilterablePostList({
   const [showSeries, setShowSeries] = useState(showSeriesByDefault)
 
   const displayedPosts = showSeries
-    ? [...posts, ...seriesPosts].sort((a, b) => {
-        const dateA = new Date(a.frontmatter.publishedRaw || "").getTime() || 0
-        const dateB = new Date(b.frontmatter.publishedRaw || "").getTime() || 0
-        return dateB - dateA
-      })
+    ? sortPostListItemsByPublishedDate([...posts, ...seriesPosts])
     : posts
 
   return (
