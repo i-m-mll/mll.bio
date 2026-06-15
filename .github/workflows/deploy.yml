@@ -25,7 +25,7 @@ jobs:
           MAIN_REPO_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
           MONO_CHECKOUT_DIR: /tmp/main-repo
           MONO_PREFIX: /Users/mll/Main/
-          EXPECTED_CONTENT_SYMLINK_COUNT: "4"
+          EXPECTED_CONTENT_SYMLINK_COUNT: "5"
         run: |
           set -euo pipefail
 
