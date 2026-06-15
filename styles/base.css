@@ -210,6 +210,16 @@
         margin-right: var(--layout-padding, 1rem);
     }
 
+    .series-header-content::after {
+        content: "";
+        position: absolute;
+        inset-block: 0;
+        left: 100%;
+        right: calc(-1 * var(--layout-padding, 1rem));
+        background: inherit;
+        pointer-events: none;
+    }
+
     .series-header-border {
         left: calc(-1 * var(--layout-gap, 2rem));
         right: calc(-1 * var(--layout-padding, 1rem));
@@ -226,6 +236,10 @@
         }
 
         .series-header-border {
+            right: calc(-1 * (18vw + var(--layout-gap, 2rem) + var(--layout-padding, 1rem)));
+        }
+
+        .series-header-content::after {
             right: calc(-1 * (18vw + var(--layout-gap, 2rem) + var(--layout-padding, 1rem)));
         }
     }
