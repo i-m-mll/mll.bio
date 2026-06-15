@@ -342,6 +342,7 @@ export function SiteHeader() {
             "hidden tablet:block",
             "absolute left-0 right-0",
             "transition-opacity duration-150 ease-in-out",
+            uiConfig.series.header?.backgroundColor || "bg-background",
             isVisible ? "opacity-100" : "opacity-0"
           )}
           data-series-header-visible={isVisible}

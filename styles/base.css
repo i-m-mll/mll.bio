@@ -217,6 +217,7 @@
 
     .series-header-nav {
         width: calc(100% - 4rem);
+        max-width: var(--content-width, 48rem);
     }
 
     @media (min-width: 1051px) {
