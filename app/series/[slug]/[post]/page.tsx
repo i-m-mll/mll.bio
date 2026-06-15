@@ -115,7 +115,7 @@ export default async function SeriesPostPage({
       />
 
       {/* Content container - extra top padding on tablet+ for spacing below series header */}
-      <div className="container min-w-0 pt-2 pb-6 tablet:pt-16 tablet:pb-10 desktop:pt-16 desktop:pb-10 tablet:col-start-2 desktop:col-start-2">
+      <div className="container min-w-0 pt-2 pb-6 tablet:pt-24 tablet:pb-10 desktop:pt-24 desktop:pb-10 tablet:col-start-2 desktop:col-start-2">
         <article className="prose dark:prose-invert mx-auto relative mb-8">
           <script
             type="application/ld+json"
